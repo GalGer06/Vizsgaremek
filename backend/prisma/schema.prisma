@@ -14,3 +14,35 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  access    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userDatas UserDatas[]
+}
+
+model Feladatok{
+  id          Int      @id @default(autoincrement())
+  title       String
+  question    String
+  answers     String
+  correct     String
+  funfact     String
+  history     String
+}
+
+model UserDatas{
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  streak      Int      @default(0)
+  totalPoints Int      @default(0)
+  level       Int      @default(1)
+  date        DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+}
