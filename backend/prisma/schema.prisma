@@ -26,7 +26,7 @@ model User {
   userDatas UserDatas[]
 }
 
-model Feladatok{
+model Feladatok {
   id          Int      @id @default(autoincrement())
   title       String
   question    String
@@ -36,7 +36,7 @@ model Feladatok{
   history     String
 }
 
-model UserDatas{
+model UserDatas {
   id          Int      @id @default(autoincrement())
   userId      Int
   streak      Int      @default(0)
