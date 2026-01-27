@@ -43,7 +43,6 @@ model UserDatas {
   streak      Int      @default(0)
   totalPoints Int      @default(0)
   level       Int      @default(1)
-  date        DateTime @default(now())
 
   user        User     @relation(fields: [userId], references: [id])
 }
