@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, IsObject } from "class-validator";
 
 export class CreateFeladatokDto {
   @IsString()
@@ -9,9 +9,9 @@ export class CreateFeladatokDto {
   @IsNotEmpty()
   question: string;
 
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  answer: string;
+  answers: object;
 
   @IsString()
   @IsNotEmpty()

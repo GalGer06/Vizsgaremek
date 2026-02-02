@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFeladatokDto } from './dto/create-feladatok.dto';
 import { UpdateFeladatokDto } from './dto/update-feladatok.dto';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class FeladatokService {
-  create(createFeladatokDto: CreateFeladatokDto) {
-    return 'This action adds a new feladatok';
+  constructor (private prisma: PrismaService) {}
+
+  async create(createFeladatokDto: CreateFeladatokDto) {
+    return this.prisma.feladatok.create({
+      data: createFeladatokDto,
+    });
   }
 
-  findAll() {
-    return `This action returns all feladatok`;
+  async findAll() {
+    return this.prisma.feladatok.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} feladatok`;
+    return this.prisma.feladatok.findUnique({
+      where: { id },
+    });
   }
 
   update(id: number, updateFeladatokDto: UpdateFeladatokDto) {
-    return `This action updates a #${id} feladatok`;
+    return this.prisma.feladatok.update({
+      where: { id },
+      data: updateFeladatokDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} feladatok`;
+    return this.prisma.feladatok.delete({
+      where: { id },
+    });
   }
 }
