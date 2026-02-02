@@ -17,20 +17,20 @@ export class FeladatokService {
     return this.prisma.feladatok.findMany();
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return this.prisma.feladatok.findUnique({
       where: { id },
     });
   }
 
-  update(id: number, updateFeladatokDto: UpdateFeladatokDto) {
+  async update(id: number, updateFeladatokDto: UpdateFeladatokDto) {
     return this.prisma.feladatok.update({
       where: { id },
       data: updateFeladatokDto,
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.prisma.feladatok.delete({
       where: { id },
     });
