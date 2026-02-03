@@ -1,37 +1,34 @@
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
 function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>🌱 Környezetvédelem</h1>
-        <p>Tanulj játékosan a Föld védelméről</p>
-      </header>
-
-      <section className="card-grid">
-        <div className="lesson-card">
-          <span>🌍</span>
-          <h3>Alapfogalmak</h3>
-        </div>
-
-        <div className="lesson-card">
-          <span>♻️</span>
-          <h3>Újrahasznosítás</h3>
-        </div>
-
-        <div className="lesson-card">
-          <span>💧</span>
-          <h3>Vízvédelem</h3>
-        </div>
-
-        <div className="lesson-card">
-          <span>🌳</span>
-          <h3>Erdők</h3>
-        </div>
-      </section>
-
-      <div className="button-wrapper">
-        <button className="button">Kezdés</button>
+    <>
+      <div>
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
       </div>
-    </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </>
   )
 }
 
