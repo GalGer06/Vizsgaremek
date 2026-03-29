@@ -249,6 +249,7 @@ function AdminPage({ user }: { user: AuthUser | null }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
+  const [usernameSearch, setUsernameSearch] = useState('');
 
   useEffect(() => {
     const loadAdminData = async () => {
@@ -297,6 +298,10 @@ function AdminPage({ user }: { user: AuthUser | null }) {
 
   const adminCount = users.filter((item) => item.access).length;
   const isOriginalAdmin = user.username === 'Admin';
+  const searchValue = usernameSearch.trim().toLowerCase();
+  const filteredUsers = users.filter((listedUser) =>
+    listedUser.username.toLowerCase().includes(searchValue),
+  );
 
   const setAdminAccess = async (targetUserId: number, nextAccess: boolean) => {
     const token = localStorage.getItem(TOKEN_KEY);
@@ -364,9 +369,16 @@ function AdminPage({ user }: { user: AuthUser | null }) {
           </div>
 
           <div className="admin-users">
-            <h3>Legutóbbi felhasználók</h3>
+            <h3>Felhasználók</h3>
+            <input
+              className="admin-search"
+              onChange={(event) => setUsernameSearch(event.target.value)}
+              placeholder="Keresés felhasználónév alapján"
+              type="search"
+              value={usernameSearch}
+            />
             <ul>
-              {users.slice(0, 8).map((listedUser) => (
+              {filteredUsers.map((listedUser) => (
                 <li key={listedUser.id}>
                   <span>{listedUser.username}</span>
                   <span>{listedUser.email}</span>
@@ -397,6 +409,7 @@ function AdminPage({ user }: { user: AuthUser | null }) {
                 </li>
               ))}
             </ul>
+            {!filteredUsers.length && <p className="message">Nincs találat erre a felhasználónévre.</p>}
           </div>
         </>
       )}
@@ -405,33 +418,75 @@ function AdminPage({ user }: { user: AuthUser | null }) {
 }
 
 function HomePage() {
+  return (
+    <section className="home-menu">
+      <Link to="/topics" className="home-menu-button link-button">Témák</Link>
+      <Link to="/achievements" className="home-menu-button link-button">Teljesítmények</Link>
+      <Link to="/daily-tasks" className="home-menu-button link-button">Napi Feladatok</Link>
+      <Link to="/friends" className="home-menu-button link-button">Barátok</Link>
+    </section>
+  );
+}
+
+function TopicsPage() {
   const navigate = useNavigate();
-  const [topicsOpen, setTopicsOpen] = useState(false);
 
   return (
-    <section className="topics-wrapper">
-      <button className="button" type="button" onClick={() => setTopicsOpen((prev) => !prev)}>
-        Témák
-      </button>
+    <section>
+      <div className="section-header">
+        <h2>Témák</h2>
+        <Link to="/" className="button secondary link-button">Vissza</Link>
+      </div>
 
-      {topicsOpen && (
-        <div className="topics-panel">
-          {TOPICS.map((topic) => (
-            <button
-              key={topic.slug}
-              className="topics-item"
-              onClick={() => {
-                setTopicsOpen(false);
-                navigate(`/topics/${topic.slug}`);
-              }}
-              type="button"
-            >
-              <span>{topic.icon}</span>
-              <span>{topic.title}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="topics-grid">
+        {TOPICS.map((topic) => (
+          <button
+            key={topic.slug}
+            className="topics-item"
+            onClick={() => navigate(`/topics/${topic.slug}`)}
+            type="button"
+          >
+            <span>{topic.icon}</span>
+            <span>{topic.title}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AchievementsPage() {
+  return (
+    <section>
+      <div className="section-header">
+        <h2>Teljesítmények</h2>
+        <Link to="/" className="button secondary link-button">Vissza</Link>
+      </div>
+      <p className="message">Itt fogod látni az elért teljesítményeidet.</p>
+    </section>
+  );
+}
+
+function DailyTasksPage() {
+  return (
+    <section>
+      <div className="section-header">
+        <h2>Napi Feladatok</h2>
+        <Link to="/" className="button secondary link-button">Vissza</Link>
+      </div>
+      <p className="message">Itt jelennek majd meg a napi feladataid.</p>
+    </section>
+  );
+}
+
+function FriendsPage() {
+  return (
+    <section>
+      <div className="section-header">
+        <h2>Barátok</h2>
+        <Link to="/" className="button secondary link-button">Vissza</Link>
+      </div>
+      <p className="message">Itt kezelheted a barátaid listáját.</p>
     </section>
   );
 }
@@ -672,7 +727,11 @@ function AppShell() {
       <AppHeader user={user} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/topics" element={<TopicsPage />} />
         <Route path="/topics/:topicSlug" element={<TopicQuestionsPage />} />
+        <Route path="/achievements" element={<AchievementsPage />} />
+        <Route path="/daily-tasks" element={<DailyTasksPage />} />
+        <Route path="/friends" element={<FriendsPage />} />
         <Route path="/auth" element={<AuthPage onAuthSuccess={handleAuthSuccess} />} />
         <Route path="/admin" element={user?.access ? <AdminPage user={user} /> : <Navigate to="/auth" replace />} />
         <Route path="/profile" element={user ? <ProfilePage user={user} onUserUpdate={handleUserUpdate} /> : <Navigate to="/auth" replace />} />

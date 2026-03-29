@@ -69,9 +69,73 @@
 	margin-bottom: 20px;
 }
 
-.topics-wrapper {
+.home-menu {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	min-height: 52vh;
+}
+
+.home-menu-button {
 	position: relative;
-	max-width: 320px;
+	overflow: hidden;
+	border: 1px solid #d4dce6;
+	border-radius: 20px;
+	background: linear-gradient(145deg, #f4f8ff 0%, #e7f0fc 100%);
+	padding: 26px;
+	font-size: 1.3rem;
+	font-weight: 700;
+	color: var(--secondary-text);
+	justify-content: center;
+	min-height: 155px;
+	letter-spacing: 0.02em;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+	box-shadow: 0 12px 26px rgba(31, 41, 51, 0.1);
+	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
+}
+
+.home-menu-button::after {
+	content: '';
+	position: absolute;
+	inset: -45% auto auto -35%;
+	width: 85%;
+	height: 180%;
+	background: linear-gradient(120deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.05));
+	transform: rotate(18deg);
+	pointer-events: none;
+}
+
+.home-menu-button:nth-child(1) {
+	background: linear-gradient(145deg, #dff6ff 0%, #bfe8ff 100%);
+}
+
+.home-menu-button:nth-child(2) {
+	background: linear-gradient(145deg, #e9ffe7 0%, #ccf5c7 100%);
+}
+
+.home-menu-button:nth-child(3) {
+	background: linear-gradient(145deg, #fff6df 0%, #ffe4ba 100%);
+}
+
+.home-menu-button:nth-child(4) {
+	background: linear-gradient(145deg, #ffe8ee 0%, #ffcddd 100%);
+}
+
+.home-menu-button:hover {
+	transform: translateY(-3px) scale(1.01);
+	border-color: #9db4cc;
+	box-shadow: 0 18px 34px rgba(31, 41, 51, 0.15);
+	filter: saturate(1.08);
+}
+
+.home-menu-button:active {
+	transform: translateY(-1px) scale(1.005);
+}
+
+.topics-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 10px;
 }
 
 .topics-panel {
@@ -90,8 +154,8 @@
 }
 
 .topics-item {
-	border: none;
-	background: transparent;
+	border: 1px solid var(--border);
+	background: #ffffff;
 	padding: 9px 10px;
 	border-radius: 8px;
 	cursor: pointer;
@@ -322,6 +386,11 @@
 	font-size: 1rem;
 }
 
+.admin-search {
+	width: 100%;
+	margin-bottom: 10px;
+}
+
 .admin-users ul {
 	list-style: none;
 	display: grid;
@@ -341,6 +410,17 @@
 @media (max-width: 740px) {
 	.app-container {
 		padding: 18px;
+	}
+
+	.home-menu {
+		grid-template-columns: 1fr;
+		min-height: auto;
+	}
+
+	.home-menu-button {
+		min-height: 120px;
+		font-size: 1.15rem;
+		padding: 20px;
 	}
 
 	.app-header {
