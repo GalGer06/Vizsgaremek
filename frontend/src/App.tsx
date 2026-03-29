@@ -49,6 +49,18 @@ type AdminUser = {
   createdAt: string;
 };
 
+type Achievement = {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
+};
+
+type AchievementsResponse = {
+  userId: number;
+  achievements: Achievement[];
+};
+
 const API_BASE_URL = 'http://localhost:3000';
 
 const TOPICS: Topic[] = [
@@ -56,6 +68,19 @@ const TOPICS: Topic[] = [
   { slug: 'ujrahasznositas', title: 'Újrahasznosítás', icon: '♻️', keywords: ['újrahasznosítás', 'szelektív'] },
   { slug: 'vizvedelem', title: 'Vízvédelem', icon: '💧', keywords: ['vízvédelem', 'víz'] },
   { slug: 'erdok', title: 'Erdők', icon: '🌳', keywords: ['erdők', 'erdő', 'fa'] },
+];
+
+const ACHIEVEMENT_TEMPLATES: Achievement[] = [
+  { id: 1, title: 'Első lépések', description: 'Lépj be először az alkalmazásba.', completed: true },
+  { id: 2, title: 'Kíváncsi felfedező', description: 'Nyiss meg legalább 1 témát.', completed: true },
+  { id: 3, title: 'Hulladékharcos', description: 'Olvass el 5 újrahasznosításhoz kapcsolódó kérdést.', completed: false },
+  { id: 4, title: 'Vízőr', description: 'Nyisd meg a Vízvédelem témát 3 alkalommal.', completed: false },
+  { id: 5, title: 'Erdőbarát', description: 'Olvass el 10 erdőkkel kapcsolatos kérdést.', completed: false },
+  { id: 6, title: 'Kitartó tanuló', description: 'Lépj be 7 egymást követő napon.', completed: false },
+  { id: 7, title: 'Napi hős', description: 'Teljesíts 3 napi feladatot.', completed: false },
+  { id: 8, title: 'Közösségi tag', description: 'Adj hozzá legalább 1 barátot.', completed: false },
+  { id: 9, title: 'Pontgyűjtő', description: 'Gyűjts össze 500 pontot.', completed: false },
+  { id: 10, title: 'Öko mester', description: 'Nyisd meg az összes témát legalább egyszer.', completed: false },
 ];
 
 const TOKEN_KEY = 'wdad_access_token';
@@ -455,14 +480,134 @@ function TopicsPage() {
   );
 }
 
-function AchievementsPage() {
+function AchievementsPage({ user }: { user: AuthUser | null }) {
+  const [achievements, setAchievements] = useState<Achievement[]>(ACHIEVEMENT_TEMPLATES);
+  const [loading, setLoading] = useState(true);
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadAchievements = async () => {
+      if (!user) {
+        return;
+      }
+
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        setError('Hiányzó token. Jelentkezz be újra.');
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError('');
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/achievements`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorResponse = await response.json().catch(() => ({}));
+          throw new Error(errorResponse.message ?? 'Nem sikerült betölteni a teljesítményeket.');
+        }
+
+        const data = (await response.json()) as AchievementsResponse;
+        setAchievements(data.achievements?.length ? data.achievements : ACHIEVEMENT_TEMPLATES);
+      } catch (loadError) {
+        const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadAchievements();
+  }, [user]);
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  const toggleAchievement = async (achievementId: number) => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      setError('Hiányzó token. Jelentkezz be újra.');
+      return;
+    }
+
+    const updatedAchievements = achievements.map((achievement) =>
+      achievement.id === achievementId
+        ? { ...achievement, completed: !achievement.completed }
+        : achievement,
+    );
+
+    setSavingId(achievementId);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/achievements`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ achievements: updatedAchievements }),
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json().catch(() => ({}));
+        throw new Error(errorResponse.message ?? 'Nem sikerült menteni a teljesítményt.');
+      }
+
+      setAchievements(updatedAchievements);
+    } catch (saveError) {
+      const message = saveError instanceof Error ? saveError.message : 'Ismeretlen hiba történt.';
+      setError(message);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
   return (
     <section>
       <div className="section-header">
         <h2>Teljesítmények</h2>
         <Link to="/" className="button secondary link-button">Vissza</Link>
       </div>
-      <p className="message">Itt fogod látni az elért teljesítményeidet.</p>
+
+      {loading && <p className="message">Teljesítmények betöltése...</p>}
+      {error && <p className="message error">{error}</p>}
+
+      {!loading && (
+        <div className="achievements-grid">
+          {achievements.map((achievement) => (
+            <article key={achievement.id} className={`achievement-card ${achievement.completed ? 'completed' : ''}`}>
+              <h3>{achievement.title}</h3>
+              <p>{achievement.description}</p>
+              <div className="achievement-row">
+                <span className="achievement-status">
+                  {achievement.completed ? 'Teljesítve' : 'Folyamatban'}
+                </span>
+                <button
+                  className="button secondary"
+                  disabled={savingId === achievement.id}
+                  onClick={() => void toggleAchievement(achievement.id)}
+                  type="button"
+                >
+                  {savingId === achievement.id
+                    ? 'Mentés...'
+                    : achievement.completed
+                      ? 'Visszaállítás'
+                      : 'Teljesítve'}
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -729,7 +874,7 @@ function AppShell() {
         <Route path="/" element={<HomePage />} />
         <Route path="/topics" element={<TopicsPage />} />
         <Route path="/topics/:topicSlug" element={<TopicQuestionsPage />} />
-        <Route path="/achievements" element={<AchievementsPage />} />
+        <Route path="/achievements" element={user ? <AchievementsPage user={user} /> : <Navigate to="/auth" replace />} />
         <Route path="/daily-tasks" element={<DailyTasksPage />} />
         <Route path="/friends" element={<FriendsPage />} />
         <Route path="/auth" element={<AuthPage onAuthSuccess={handleAuthSuccess} />} />

@@ -254,6 +254,58 @@
 	gap: 12px;
 }
 
+.achievements-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 12px;
+}
+
+.achievement-card {
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 14px;
+	background: #fcfdff;
+	display: grid;
+	gap: 8px;
+}
+
+.achievement-card h3 {
+	font-size: 1rem;
+	color: var(--text);
+}
+
+.achievement-card p {
+	font-size: 0.92rem;
+	color: var(--muted);
+}
+
+.achievement-status {
+	justify-self: start;
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 0.82rem;
+	font-weight: 700;
+	background: #eef3f7;
+	color: var(--secondary-text);
+}
+
+.achievement-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+}
+
+.achievement-card.completed {
+	border-color: #9bd3a0;
+	background: #f0fbf1;
+}
+
+.achievement-card.completed .achievement-status {
+	background: #d9f4dc;
+	color: #22543d;
+}
+
 .question-card {
 	border: 1px solid var(--border);
 	border-radius: 12px;

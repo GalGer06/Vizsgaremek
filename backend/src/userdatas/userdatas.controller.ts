@@ -1,7 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserdatasService } from './userdatas.service';
 import { CreateUserdataDto } from './dto/create-userdata.dto';
 import { UpdateUserdataDto } from './dto/update-userdata.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateAchievementsDto } from './dto/update-achievements.dto';
 
 @Controller('userdatas')
 export class UserdatasController {
@@ -20,6 +33,44 @@ export class UserdatasController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userdatasService.findOne(+id);
+  }
+
+  @Get('user/:userId/achievements')
+  @UseGuards(JwtAuthGuard)
+  findAchievementsByUserId(
+    @Param('userId') userId: string,
+    @Req() req: { user?: { userId?: number; access?: boolean } },
+  ) {
+    const targetUserId = +userId;
+    const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
+
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('You can only view your own achievements');
+    }
+
+    return this.userdatasService.getAchievementsByUserId(targetUserId);
+  }
+
+  @Patch('user/:userId/achievements')
+  @UseGuards(JwtAuthGuard)
+  updateAchievementsByUserId(
+    @Param('userId') userId: string,
+    @Body() updateAchievementsDto: UpdateAchievementsDto,
+    @Req() req: { user?: { userId?: number; access?: boolean } },
+  ) {
+    const targetUserId = +userId;
+    const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
+
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('You can only update your own achievements');
+    }
+
+    return this.userdatasService.updateAchievementsByUserId(
+      targetUserId,
+      updateAchievementsDto.achievements,
+    );
   }
 
   @Patch(':id')
