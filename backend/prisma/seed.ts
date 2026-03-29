@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import { hash } from "bcryptjs";
 
 // Load environment variables
 config();
@@ -11,6 +12,13 @@ config();
 
 const prisma = new PrismaClient();
 //console.log("✅ Prisma Client created successfully");
+
+const DEFAULT_ADMIN = {
+    name: "Admin",
+    username: "Admin",
+    email: "admin@vizsgaremek.local",
+    password: "Admin1234",
+};
 
 function daysBetween(date: Date) {
     const now = new Date();
@@ -27,6 +35,30 @@ function calculateLevel(totalPoints: number) {
 
 async function main() {
     console.log(`🌱 Start seeding ...`);
+
+    const hashedAdminPassword = await hash(DEFAULT_ADMIN.password, 10);
+
+    await prisma.user.upsert({
+        where: { username: DEFAULT_ADMIN.username },
+        update: {
+            name: DEFAULT_ADMIN.name,
+            email: DEFAULT_ADMIN.email,
+            password: hashedAdminPassword,
+            access: true,
+        },
+        create: {
+            name: DEFAULT_ADMIN.name,
+            username: DEFAULT_ADMIN.username,
+            email: DEFAULT_ADMIN.email,
+            password: hashedAdminPassword,
+            access: true,
+        },
+    });
+
+    await prisma.user.updateMany({
+        where: { username: { not: DEFAULT_ADMIN.username } },
+        data: { access: false },
+    });
 
     const USER_COUNT = faker.number.int({ min: 10, max: 20 });
 
@@ -45,7 +77,7 @@ async function main() {
                 username: faker.internet.username().toLowerCase() + faker.number.int({ min: 1, max: 600 }),
                 email: faker.internet.email().toLowerCase(),
                 password: faker.internet.password(),
-                access: faker.datatype.boolean(),
+                access: false,
                 createdAt,
 
                 userDatas: {
@@ -58,6 +90,22 @@ async function main() {
             },
         });
     }
+
+    await prisma.user.updateMany({
+        where: { username: { not: DEFAULT_ADMIN.username } },
+        data: { access: false },
+    });
+
+    await prisma.user.update({
+        where: { username: DEFAULT_ADMIN.username },
+        data: {
+            name: DEFAULT_ADMIN.name,
+            email: DEFAULT_ADMIN.email,
+            password: hashedAdminPassword,
+            access: true,
+        },
+    });
+
     console.log(`🌱 Seeding finished.`);
 }
 

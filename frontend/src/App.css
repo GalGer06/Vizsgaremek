@@ -330,7 +330,7 @@
 
 .admin-users li {
 	display: grid;
-	grid-template-columns: 1fr 1.3fr auto;
+	grid-template-columns: 1fr 1.3fr auto auto;
 	gap: 8px;
 	padding: 8px;
 	border: 1px solid #e6ecf1;

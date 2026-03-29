@@ -30,6 +30,13 @@ export class UserService {
     });
   }
 
+  async updateAccess(id: number, access: boolean) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { access },
+    });
+  }
+
   async remove(id: number) {
     return this.prisma.user.delete({
       where: { id },

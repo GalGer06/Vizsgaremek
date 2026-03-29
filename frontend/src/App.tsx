@@ -248,6 +248,7 @@ function AdminPage({ user }: { user: AuthUser | null }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadAdminData = async () => {
@@ -295,6 +296,45 @@ function AdminPage({ user }: { user: AuthUser | null }) {
   }
 
   const adminCount = users.filter((item) => item.access).length;
+  const isOriginalAdmin = user.username === 'Admin';
+
+  const setAdminAccess = async (targetUserId: number, nextAccess: boolean) => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      setError('Hiányzó token. Jelentkezz be újra.');
+      return;
+    }
+
+    setUpdatingUserId(targetUserId);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${targetUserId}/access`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ access: nextAccess }),
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json().catch(() => ({}));
+        throw new Error(errorResponse.message ?? 'Nem sikerült frissíteni a jogosultságot.');
+      }
+
+      setUsers((prev) =>
+        prev.map((listedUser) =>
+          listedUser.id === targetUserId ? { ...listedUser, access: nextAccess } : listedUser,
+        ),
+      );
+    } catch (updateError) {
+      const message = updateError instanceof Error ? updateError.message : 'Ismeretlen hiba történt.';
+      setError(message);
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
 
   return (
     <section>
@@ -331,6 +371,29 @@ function AdminPage({ user }: { user: AuthUser | null }) {
                   <span>{listedUser.username}</span>
                   <span>{listedUser.email}</span>
                   <span>{listedUser.access ? 'admin' : 'user'}</span>
+                  {listedUser.access ? (
+                    <button
+                      className="button secondary"
+                      disabled={
+                        listedUser.username === 'Admin' ||
+                        !isOriginalAdmin ||
+                        updatingUserId === listedUser.id
+                      }
+                      onClick={() => void setAdminAccess(listedUser.id, false)}
+                      type="button"
+                    >
+                      {updatingUserId === listedUser.id ? 'Folyamatban...' : 'Admin jog elvétele'}
+                    </button>
+                  ) : (
+                    <button
+                      className="button secondary"
+                      disabled={updatingUserId === listedUser.id}
+                      onClick={() => void setAdminAccess(listedUser.id, true)}
+                      type="button"
+                    >
+                      {updatingUserId === listedUser.id ? 'Folyamatban...' : 'Adminná tétel'}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -455,7 +518,6 @@ function TopicQuestionsPage() {
 function AuthPage({ onAuthSuccess }: { onAuthSuccess: (result: AuthResponse) => void }) {
   const navigate = useNavigate();
   const [mode, setMode] = useState<'login' | 'register'>('login');
-  const [adminMode, setAdminMode] = useState(false);
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -470,14 +532,7 @@ function AuthPage({ onAuthSuccess }: { onAuthSuccess: (result: AuthResponse) => 
     setError('');
 
     try {
-      const endpoint =
-        mode === 'login'
-          ? adminMode
-            ? '/auth/admin/login'
-            : '/auth/login'
-          : adminMode
-            ? '/auth/admin/register'
-            : '/auth/register';
+      const endpoint = mode === 'login' ? '/auth/login' : '/auth/register';
 
       const payload =
         mode === 'login'
@@ -530,15 +585,6 @@ function AuthPage({ onAuthSuccess }: { onAuthSuccess: (result: AuthResponse) => 
             Regisztráció
           </button>
         </div>
-
-        <label className="checkbox-row">
-          <input
-            checked={adminMode}
-            onChange={(event) => setAdminMode(event.target.checked)}
-            type="checkbox"
-          />
-          Admin mód
-        </label>
 
         {mode === 'register' && (
           <>
