@@ -23,6 +23,34 @@ model User {
   createdAt DateTime @default(now())
 
   userDatas UserDatas[]
+  friendsAdded Friend[] @relation("FriendRequester")
+  friendsReceived Friend[] @relation("FriendReceiver")
+  friendRequestsSent FriendRequest[] @relation("FriendRequestSender")
+  friendRequestsReceived FriendRequest[] @relation("FriendRequestReceiver")
+}
+
+model Friend {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  friendId  Int
+  createdAt DateTime @default(now())
+
+  user      User     @relation("FriendRequester", fields: [userId], references: [id])
+  friend    User     @relation("FriendReceiver", fields: [friendId], references: [id])
+
+  @@unique([userId, friendId])
+}
+
+model FriendRequest {
+  id          Int      @id @default(autoincrement())
+  requesterId Int
+  receiverId  Int
+  createdAt   DateTime @default(now())
+
+  requester   User     @relation("FriendRequestSender", fields: [requesterId], references: [id])
+  receiver    User     @relation("FriendRequestReceiver", fields: [receiverId], references: [id])
+
+  @@unique([requesterId, receiverId])
 }
 
 model Feladatok {
