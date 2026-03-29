@@ -60,11 +60,10 @@ export class UserdatasController {
     @Req() req: { user?: { userId?: number; access?: boolean } },
   ) {
     const targetUserId = +userId;
-    const requesterId = req.user?.userId;
     const isAdmin = !!req.user?.access;
 
-    if (requesterId !== targetUserId && !isAdmin) {
-      throw new ForbiddenException('You can only update your own achievements');
+    if (!isAdmin) {
+      throw new ForbiddenException('Only admin can change achievement status');
     }
 
     return this.userdatasService.updateAchievementsByUserId(

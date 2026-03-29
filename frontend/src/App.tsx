@@ -548,6 +548,10 @@ function AchievementsPage({ user }: { user: AuthUser | null }) {
   }
 
   const toggleAchievement = async (achievementId: number) => {
+    if (!user.access) {
+      return;
+    }
+
     const token = localStorage.getItem(TOKEN_KEY);
     if (!token) {
       setError('Hiányzó token. Jelentkezz be újra.');
@@ -607,18 +611,20 @@ function AchievementsPage({ user }: { user: AuthUser | null }) {
                 <span className="achievement-status">
                   {achievement.completed ? 'Teljesítve' : 'Folyamatban'}
                 </span>
-                <button
-                  className="button secondary"
-                  disabled={savingId === achievement.id}
-                  onClick={() => void toggleAchievement(achievement.id)}
-                  type="button"
-                >
-                  {savingId === achievement.id
-                    ? 'Mentés...'
-                    : achievement.completed
-                      ? 'Visszaállítás'
-                      : 'Teljesítve'}
-                </button>
+                {user.access && (
+                  <button
+                    className="button secondary"
+                    disabled={savingId === achievement.id}
+                    onClick={() => void toggleAchievement(achievement.id)}
+                    type="button"
+                  >
+                    {savingId === achievement.id
+                      ? 'Mentés...'
+                      : achievement.completed
+                        ? 'Visszaállítás'
+                        : 'Teljesítve'}
+                  </button>
+                )}
               </div>
             </article>
           ))}

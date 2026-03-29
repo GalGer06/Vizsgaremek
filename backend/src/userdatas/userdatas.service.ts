@@ -17,6 +17,13 @@ const DEFAULT_ACHIEVEMENTS = [
   { id: 10, title: 'Öko mester', description: 'Nyisd meg az összes témát legalább egyszer.', completed: false },
 ];
 
+type AchievementTemplate = {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
+};
+
 @Injectable()
 export class UserdatasService {
   constructor (private prisma: PrismaService) {}
@@ -60,23 +67,35 @@ export class UserdatasService {
       userData = await this.prisma.userDatas.create({
         data: {
           userId,
-          achievements: DEFAULT_ACHIEVEMENTS as Prisma.InputJsonValue,
         },
       });
     }
 
-    if (!userData.achievements) {
-      userData = await this.prisma.userDatas.update({
-        where: { id: userData.id },
-        data: {
-          achievements: DEFAULT_ACHIEVEMENTS as Prisma.InputJsonValue,
-        },
-      });
-    }
+    const friendsCount = await this.prisma.friend.count({
+      where: {
+        OR: [{ userId }, { friendId: userId }],
+      },
+    });
+
+    const autoAchievements = this.buildAutomaticAchievements(
+      userData.streak,
+      userData.totalPoints,
+      userData.level,
+      friendsCount,
+    );
+
+    const adminOverrides = this.extractAdminOverrides(userData.achievements);
+    const achievements = autoAchievements.map((item) => {
+      const override = adminOverrides.get(item.id);
+      return {
+        ...item,
+        completed: override ?? item.completed,
+      };
+    });
 
     return {
       userId,
-      achievements: userData.achievements ?? DEFAULT_ACHIEVEMENTS,
+      achievements,
     };
   }
 
@@ -87,7 +106,12 @@ export class UserdatasService {
       select: { id: true },
     });
 
-    const achievementsValue = achievements as Prisma.InputJsonValue;
+    const overrides = this.extractAdminOverrides(achievements);
+    const overridesArray = Array.from(overrides.entries()).map(([id, completed]) => ({
+      id,
+      completed,
+    }));
+    const achievementsValue = overridesArray as Prisma.InputJsonValue;
 
     if (!existing) {
       const created = await this.prisma.userDatas.create({
@@ -112,7 +136,80 @@ export class UserdatasService {
 
     return {
       userId,
-      achievements: updated.achievements,
+      achievements: updated.achievements ?? [],
     };
+  }
+
+  private buildAutomaticAchievements(
+    streak: number,
+    totalPoints: number,
+    level: number,
+    friendsCount: number,
+  ): AchievementTemplate[] {
+    return DEFAULT_ACHIEVEMENTS.map((achievement) => ({
+      ...achievement,
+      completed: this.isAutomaticallyCompleted(
+        achievement.id,
+        streak,
+        totalPoints,
+        level,
+        friendsCount,
+      ),
+    }));
+  }
+
+  private isAutomaticallyCompleted(
+    achievementId: number,
+    streak: number,
+    totalPoints: number,
+    level: number,
+    friendsCount: number,
+  ): boolean {
+    switch (achievementId) {
+      case 1:
+        return true;
+      case 2:
+        return totalPoints > 0 || level > 1;
+      case 3:
+        return totalPoints >= 150;
+      case 4:
+        return totalPoints >= 250;
+      case 5:
+        return totalPoints >= 350;
+      case 6:
+        return streak >= 7;
+      case 7:
+        return streak >= 3;
+      case 8:
+        return friendsCount >= 1;
+      case 9:
+        return totalPoints >= 500;
+      case 10:
+        return level >= 10 && friendsCount >= 2;
+      default:
+        return false;
+    }
+  }
+
+  private extractAdminOverrides(achievements: Prisma.JsonValue | unknown): Map<number, boolean> {
+    if (!Array.isArray(achievements)) {
+      return new Map();
+    }
+
+    const overrides = new Map<number, boolean>();
+    for (const item of achievements) {
+      if (!item || typeof item !== 'object') {
+        continue;
+      }
+
+      const candidate = item as { id?: unknown; completed?: unknown };
+      if (typeof candidate.id !== 'number' || typeof candidate.completed !== 'boolean') {
+        continue;
+      }
+
+      overrides.set(candidate.id, candidate.completed);
+    }
+
+    return overrides;
   }
 }
