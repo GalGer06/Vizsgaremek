@@ -23,6 +23,12 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
     navigate('/auth');
   };
 
+  const handleAdminClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate('/admin');
+  };
+
   return (
     <header className="app-header">
       <div 
@@ -39,20 +45,46 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
       </div>
 
       <div className="header-actions">
-        {user && (
-          <span className="user-pill">
-            {user.username}
-            {user.access ? ' (admin)' : ''}
-          </span>
-        )}
+        {user ? (
+          <>
+            {user.access ? (
+              <button 
+                type="button"
+                className="role-badge admin"
+                onClick={handleAdminClick}
+                title="Admin panel megnyitása"
+              >
+                ADMIN
+              </button>
+            ) : (
+              <div className="role-badge user" title="Felhasználói fiók">
+                FELHASZNÁLÓ
+              </div>
+            )}
 
-        {!user ? (
-          <button onClick={handleAuthClick} className="button secondary link-button">
-            Belépés / Regisztráció
-          </button>
+            <button 
+              type="button" 
+              onClick={() => navigate('/profile')} 
+              className="button secondary link-button"
+            >
+              Profil
+            </button>
+
+            <button 
+              type="button" 
+              onClick={onLogout} 
+              className="button secondary link-button"
+            >
+              Kijelentkezés
+            </button>
+          </>
         ) : (
-          <button onClick={onLogout} className="button secondary link-button">
-            Kijelentkezés
+          <button 
+            type="button" 
+            onClick={handleAuthClick} 
+            className="button secondary link-button"
+          >
+            Belépés / Regisztráció
           </button>
         )}
       </div>

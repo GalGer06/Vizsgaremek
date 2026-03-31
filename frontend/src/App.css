@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg-main: #1a2a44;
     --surface-main: #243b55;
     --input-bg: #2c4a6b;
@@ -19,6 +19,9 @@
 
     --duo-border-width: 2px;
     --duo-shadow-depth: 4px;
+
+    --error-light: #ff6b6b;
+    --error-bg: rgba(255, 107, 107, 0.15);
 }
 
 html, body {
@@ -65,6 +68,46 @@ html, body {
 
 .app-header h1 { font-size: 1.8rem; font-weight: 800; color: var(--text-bright); margin: 0; }
 .app-header p { color: var(--text-header); font-weight: 700; font-size: 0.95rem; margin: 0; }
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.role-badge {
+    background: transparent;
+    border: 4px solid var(--duo-green);
+    color: var(--duo-green);
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-weight: 900;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    cursor: default;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 var(--duo-green-shadow);
+    outline: none;
+}
+
+.role-badge.admin {
+    cursor: pointer;
+}
+
+.role-badge.admin:hover {
+    background: var(--duo-green);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 var(--duo-green-shadow);
+}
+
+.role-badge.admin:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--duo-green-shadow);
+}
 
 .button, button, .mode-toggle, .link-button {
     background-color: var(--wood-primary);
@@ -290,17 +333,173 @@ form div, .auth-form div {
 }
 
 .message {
-	border: 1px solid var(--border);
-	border-radius: 8px;
-	background: #f8fafc;
-	padding: 10px;
-	color: var(--muted);
+    background: var(--surface-main);
+    padding: 20px;
+    border-radius: 16px;
+    border: 2px solid var(--border-blue);
+    color: var(--text-main);
+    text-align: center;
+    font-weight: 600;
+}
+
+.message.info {
+    background: rgba(145, 193, 248, 0.1);
+    border-color: var(--text-header);
+    color: var(--text-header);
 }
 
 .message.error {
-	border-color: #f5b5b5;
-	color: var(--danger-text);
-	background: var(--danger-bg);
+    background-color: var(--error-bg);
+    border: 2px solid var(--error-light);
+    color: var(--error-light) !important;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- Achievements & Friends Cards --- */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.achievement-card {
+    background: var(--surface-main);
+    border: 2px solid var(--border-blue);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--duo-green);
+    box-shadow: 0 12px 0 rgba(0,0,0,0.25);
+}
+
+.achievement-card h3 {
+    margin: 0 0 12px 0;
+    color: var(--text-bright);
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--border-blue);
+    padding-bottom: 10px;
+}
+
+.achievement-card p {
+    color: var(--text-muted);
+    line-height: 1.5;
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+.achievement-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(58, 92, 131, 0.3);
+}
+
+.achievement-status {
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--text-header);
+    letter-spacing: 0.5px;
+}
+
+.achievement-card.completed {
+    border-color: var(--duo-green);
+}
+
+.achievement-card.completed .achievement-status {
+    color: var(--duo-green);
+}
+
+.friends-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.friends-panel {
+    background: var(--surface-main);
+    border: 2px solid var(--border-blue);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+}
+
+.friends-panel h3 {
+    margin: 0 0 20px 0;
+    color: var(--text-bright);
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.friends-search-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.friends-search-row input {
+    margin-bottom: 0 !important;
+}
+
+.friends-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.friends-list li {
+    background: rgba(255,255,255,0.05);
+    padding: 18px;
+    border-radius: 18px;
+    border: 2px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.friends-list li:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: var(--border-blue);
+}
+
+.friends-list li strong {
+    display: block;
+    color: var(--text-bright);
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.friends-list li p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.friends-actions {
+    display: flex;
+    gap: 8px;
 }
 
 .user-details-overlay {
@@ -473,3 +672,14 @@ form div, .auth-form div {
     flex: 0 1 auto !important;
 }
 
+
+.friends-empty {
+    text-align: center;
+    color: var(--text-header) !important;
+    padding: 30px;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.1rem;
+    width: 100%;
+    grid-column: 1 / -1;
+}
