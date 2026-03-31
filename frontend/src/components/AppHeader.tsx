@@ -11,7 +11,6 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
   const location = useLocation();
 
   const handleLogoClick = () => {
-    // Check if we are on a page that might have unsaved progress
     if (location.pathname.startsWith('/topics/') && location.pathname.split('/').length > 2) {
       const confirmExit = window.confirm('Biztosan ki szeretnél lépni? A folyamatban lévő feladatok elvesznek.');
       if (!confirmExit) return;
@@ -19,8 +18,10 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
     navigate('/');
   };
 
-  const handleAuthClick = () => {
-    navigate('/auth');
+  const handleAdminClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate('/admin');
   };
 
   const handleAdminClick = (e: React.MouseEvent) => {
@@ -81,7 +82,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
         ) : (
           <button 
             type="button" 
-            onClick={handleAuthClick} 
+            onClick={() => navigate('/auth')} 
             className="button secondary link-button"
           >
             Belépés / Regisztráció
