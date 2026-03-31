@@ -268,4 +268,42 @@ export class UserService {
 
     return request;
   }
+
+  async getLeaderboard(userId: number) {
+    // Get all friends
+    const friends = await this.findFriends(userId);
+    const friendIds = friends.map(f => f.id);
+
+    // Get all users' data (current user + friends)
+    const allUserIds = [userId, ...friendIds];
+    const usersData = await this.prisma.user.findMany({
+      where: {
+        id: { in: allUserIds },
+      },
+      include: {
+        userDatas: true,
+      },
+    });
+
+    // Format leaderboard, then sort by points manually because Prisma 
+    // sorting on to-many relations with ordering can be tricky or restricted
+    const leaderboardRaw = usersData.map((user) => ({
+      id: user.id,
+      username: user.username,
+      points: user.userDatas?.[0]?.totalPoints || 0,
+      level: user.userDatas?.[0]?.level || 1,
+      isCurrentUser: user.id === userId,
+    }));
+
+    // Sort by points descending
+    const sortedLeaderboard = leaderboardRaw.sort((a, b) => b.points - a.points);
+
+    // Format leaderboard with rank
+    const leaderboard = sortedLeaderboard.map((user, index) => ({
+      ...user,
+      rank: index + 1,
+    }));
+
+    return leaderboard;
+  }
 }

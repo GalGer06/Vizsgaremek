@@ -289,6 +289,22 @@ export class UserController {
     });
   }
 
+  @Get(':id/leaderboard')
+  @UseGuards(JwtAuthGuard)
+  getLeaderboard(
+    @Param('id') id: string,
+    @Req() req: { user?: { userId?: number } },
+  ) {
+    const targetUserId = +id;
+    const requesterId = req.user?.userId;
+
+    if (requesterId !== targetUserId) {
+      throw new ForbiddenException('You can only view your own leaderboard');
+    }
+
+    return this.userService.getLeaderboard(targetUserId);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

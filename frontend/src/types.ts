@@ -71,3 +71,12 @@ export type SentFriendRequest = {
   id: number;
   receiver: FriendUser;
 };
+
+export type LeaderboardEntry = {
+  rank: number;
+  id: number;
+  username: string;
+  points: number;
+  level: number;
+  isCurrentUser: boolean;
+};

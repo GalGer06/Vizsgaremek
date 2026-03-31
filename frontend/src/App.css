@@ -155,19 +155,34 @@
 
 .topics-item {
 	border: 1px solid var(--border);
-	background: #ffffff;
-	padding: 9px 10px;
-	border-radius: 8px;
+	background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+	padding: 18px 20px;
+	border-radius: 12px;
 	cursor: pointer;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 8px;
-	text-align: left;
+	justify-content: center;
+	gap: 12px;
+	text-align: center;
 	color: var(--text);
+	font-weight: 500;
+	font-size: 1rem;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 8px rgba(31, 41, 51, 0.06);
+	min-height: 120px;
 }
 
 .topics-item:hover {
-	background: #f1f5f9;
+	background: linear-gradient(135deg, #e8f4f8 0%, #dff0f7 100%);
+	border-color: #9fb3c8;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 16px rgba(31, 41, 51, 0.12);
+}
+
+.topics-item:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 6px rgba(31, 41, 51, 0.08);
 }
 
 .lesson-card {
@@ -247,6 +262,101 @@
 .section-header h2 {
 	color: var(--text);
 	font-size: 1.25rem;
+}
+
+.leaderboard-container {
+	margin-top: 32px;
+	background: linear-gradient(135deg, #f0f9ff 0%, #f5f8fc 100%);
+	border: 1px solid #d4dce6;
+	border-radius: 16px;
+	padding: 20px;
+	box-shadow: 0 4px 12px rgba(31, 41, 51, 0.08);
+}
+
+.leaderboard-container h3 {
+	margin: 0 0 16px 0;
+	color: var(--text);
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.leaderboard-table {
+	display: grid;
+	gap: 10px;
+}
+
+.leaderboard-row {
+	display: grid;
+	grid-template-columns: 50px 1fr 120px 100px;
+	gap: 14px;
+	align-items: center;
+	background: #fff;
+	border: 1px solid #e8ecf1;
+	border-radius: 12px;
+	padding: 14px 16px;
+	transition: all 0.2s ease;
+}
+
+.leaderboard-row:hover {
+	border-color: #9fb3c8;
+	box-shadow: 0 2px 8px rgba(31, 41, 51, 0.06);
+}
+
+.leaderboard-row.current-user {
+	background: linear-gradient(135deg, #e8f4f8 0%, #dff0f7 100%);
+	border-color: #92b8d4;
+	font-weight: 500;
+	box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+}
+
+.leaderboard-rank {
+	font-size: 1.3rem;
+	font-weight: 700;
+	text-align: center;
+	color: var(--text);
+}
+
+.leaderboard-username {
+	color: var(--text);
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.leaderboard-points {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 2px;
+}
+
+.points-value {
+	font-size: 1.2rem;
+	font-weight: 700;
+	color: var(--primary);
+}
+
+.points-label {
+	font-size: 0.75rem;
+	color: var(--muted);
+	font-weight: 500;
+}
+
+.leaderboard-level {
+	text-align: right;
+	font-size: 0.9rem;
+	color: var(--muted);
+	font-weight: 500;
+}
+
+.leaderboard-loading,
+.leaderboard-empty,
+.leaderboard-error {
+	text-align: center;
+	padding: 20px;
+	color: var(--muted);
+	font-size: 0.95rem;
 }
 
 .question-list {
