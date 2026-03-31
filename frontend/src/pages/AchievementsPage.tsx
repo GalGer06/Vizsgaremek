@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ACHIEVEMENT_TEMPLATES, API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { Achievement, AchievementsResponse, AuthUser } from '../types';
 
@@ -8,6 +8,7 @@ type AchievementsPageProps = {
 };
 
 export function AchievementsPage({ user }: AchievementsPageProps) {
+  const navigate = useNavigate();
   const [achievements, setAchievements] = useState<Achievement[]>(ACHIEVEMENT_TEMPLATES);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<number | null>(null);
@@ -106,7 +107,7 @@ export function AchievementsPage({ user }: AchievementsPageProps) {
     <section>
       <div className="section-header">
         <h2>Teljesítmények</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       {loading && <p className="message">Teljesítmények betöltése...</p>}

@@ -1,11 +1,12 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export function DailyTasksPage() {
+  const navigate = useNavigate();
   return (
     <section>
       <div className="section-header">
         <h2>Napi Feladatok</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
       <p className="message">Itt jelennek majd meg a napi feladataid.</p>
     </section>

@@ -8,7 +8,7 @@ export function TopicsPage() {
     <section>
       <div className="section-header">
         <h2>Témák</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       <div className="topics-grid">

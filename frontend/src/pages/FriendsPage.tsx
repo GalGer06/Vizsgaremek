@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { AuthUser, FriendUser, IncomingFriendRequest, SentFriendRequest } from '../types';
 
@@ -8,6 +8,7 @@ type FriendsPageProps = {
 };
 
 export function FriendsPage({ user }: FriendsPageProps) {
+  const navigate = useNavigate();
   const [friends, setFriends] = useState<FriendUser[]>([]);
   const [requests, setRequests] = useState<IncomingFriendRequest[]>([]);
   const [sentRequests, setSentRequests] = useState<SentFriendRequest[]>([]);
@@ -310,7 +311,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
     <section>
       <div className="section-header">
         <h2>Barátok</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       {error && <p className="message error">{error}</p>}
