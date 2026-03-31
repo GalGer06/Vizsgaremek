@@ -527,6 +527,61 @@
 	background: var(--danger-bg);
 }
 
+.user-details-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: grid;
+	place-items: center;
+	padding: 20px;
+	z-index: 1000;
+}
+
+.user-details-modal {
+	background: var(--surface);
+	border-radius: 16px;
+	padding: 24px;
+	width: 100%;
+	max-width: 480px;
+	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	border-bottom: 1px solid var(--border);
+	padding-bottom: 12px;
+}
+
+.modal-header h3 {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
+.modal-body {
+	display: grid;
+	gap: 12px;
+	margin-bottom: 24px;
+}
+
+.modal-body p {
+	margin: 0;
+	display: grid;
+	grid-template-columns: 100px 1fr;
+	gap: 10px;
+}
+
+.modal-body strong {
+	color: var(--muted);
+}
+
+.modal-footer {
+	display: flex;
+	justify-content: flex-end;
+}
+
 .admin-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -578,12 +633,19 @@
 
 .admin-users li {
 	display: grid;
-	grid-template-columns: 1fr 1.3fr auto auto;
+	grid-template-columns: 1fr 1.3fr 100px auto;
 	gap: 8px;
 	padding: 8px;
 	border: 1px solid #e6ecf1;
 	border-radius: 8px;
 	font-size: 0.92rem;
+	align-items: center;
+}
+
+.admin-user-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
 .friends-layout {
