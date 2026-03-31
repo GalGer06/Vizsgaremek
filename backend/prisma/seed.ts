@@ -1,110 +1,24 @@
 import { config } from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { faker } from "@faker-js/faker";
-import { hash } from "bcryptjs";
+import { seedAdmin } from "./seeders/admin.seeder";
+import { seedUsers } from "./seeders/user.seeder";
 
-// Load environment variables
 config();
 
-//console.log("🚀 Seed script started");
-//console.log("DATABASE_URL:", process.env.DATABASE_URL);
-//console.log("Prisma Client importing...");
-
 const prisma = new PrismaClient();
-//console.log("✅ Prisma Client created successfully");
-
-const DEFAULT_ADMIN = {
-    name: "Admin",
-    username: "Admin",
-    email: "admin@vizsgaremek.local",
-    password: "Admin1234",
-};
-
-function daysBetween(date: Date) {
-    const now = new Date();
-    const diffTime = now.getTime() - date.getTime();
-    return Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
-}
-
-function calculateLevel(totalPoints: number) {
-    const MAX_LEVEL = 200;
-    const MAX_POINTS = 3000;
-    const level = Math.floor((totalPoints / MAX_POINTS) * MAX_LEVEL) + 1;
-    return Math.min(level, MAX_LEVEL);
-}
 
 async function main() {
     console.log(`🌱 Start seeding ...`);
 
-    const hashedAdminPassword = await hash(DEFAULT_ADMIN.password, 10);
+    // Clean up or handle relations might be needed depending on DB state if not reset.
+    // However, the original script didn't delete everything, just upserted/added.
 
-    await prisma.user.upsert({
-        where: { username: DEFAULT_ADMIN.username },
-        update: {
-            name: DEFAULT_ADMIN.name,
-            email: DEFAULT_ADMIN.email,
-            password: hashedAdminPassword,
-            access: true,
-        },
-        create: {
-            name: DEFAULT_ADMIN.name,
-            username: DEFAULT_ADMIN.username,
-            email: DEFAULT_ADMIN.email,
-            password: hashedAdminPassword,
-            access: true,
-        },
-    });
+    // Seed Default Admin
+    await seedAdmin(prisma);
 
-    await prisma.user.updateMany({
-        where: { username: { not: DEFAULT_ADMIN.username } },
-        data: { access: false },
-    });
-
-    const USER_COUNT = faker.number.int({ min: 10, max: 20 });
-
-    for (let i = 0; i < USER_COUNT; i++) {
-        const createdAt = faker.date.past({ years: 2 });
-        const daysRegistered = daysBetween(createdAt);
-
-        const streak = faker.number.int({ min: 0, max: Math.min(daysRegistered, 300) });
-
-        const totalPoints = faker.number.int({ min: 0, max: 3000 });
-        const level = calculateLevel(totalPoints);
-
-        await prisma.user.create({
-            data: {
-                name: faker.person.fullName(),
-                username: faker.internet.username().toLowerCase() + faker.number.int({ min: 1, max: 600 }),
-                email: faker.internet.email().toLowerCase(),
-                password: faker.internet.password(),
-                access: false,
-                createdAt,
-
-                userDatas: {
-                    create: {
-                        streak,
-                        totalPoints,
-                        level,
-                    }
-                },
-            },
-        });
-    }
-
-    await prisma.user.updateMany({
-        where: { username: { not: DEFAULT_ADMIN.username } },
-        data: { access: false },
-    });
-
-    await prisma.user.update({
-        where: { username: DEFAULT_ADMIN.username },
-        data: {
-            name: DEFAULT_ADMIN.name,
-            email: DEFAULT_ADMIN.email,
-            password: hashedAdminPassword,
-            access: true,
-        },
-    });
+    // Seed Random Users
+    const randomUserCount = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+    await seedUsers(prisma, randomUserCount);
 
     console.log(`🌱 Seeding finished.`);
 }
@@ -117,3 +31,4 @@ main()
     .finally(() => {
         prisma.$disconnect()
 });
+

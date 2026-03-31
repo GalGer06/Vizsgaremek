@@ -62,7 +62,7 @@ export function AdminPage({ user }: AdminPageProps) {
   }
 
   const adminCount = users.filter((item) => item.access).length;
-  const isOriginalAdmin = user.username === 'Admin';
+  const isOriginalAdmin = user.username === 'Rikimik';
   const searchValue = usernameSearch.trim().toLowerCase();
   const filteredUsers = users.filter((listedUser) =>
     listedUser.username.toLowerCase().includes(searchValue),
@@ -237,9 +237,9 @@ export function AdminPage({ user }: AdminPageProps) {
                     {listedUser.username}
                   </span>
                   <span>{listedUser.email}</span>
-                  <span>{listedUser.username === 'Admin' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}</span>
+                  <span>{listedUser.username === 'Rikimik' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}</span>
                   <div className="admin-user-actions">
-                    {listedUser.username !== 'Admin' && (
+                    {listedUser.username !== 'Rikimik' && (
                       <>
                         <button
                           className="button danger small"
