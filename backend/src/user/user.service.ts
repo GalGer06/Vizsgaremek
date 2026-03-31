@@ -38,8 +38,23 @@ export class UserService {
   }
 
   async remove(id: number) {
-    return this.prisma.user.delete({
-      where: { id },
+    // Check and remove related entities first to avoid foreign key constraint errors
+    await this.prisma.$transaction(async (tx) => {
+      // Delete user data
+      await tx.userDatas.deleteMany({ where: { userId: id } });
+      
+      // Delete friend requests
+      await tx.friendRequest.deleteMany({
+        where: { OR: [{ requesterId: id }, { receiverId: id }] },
+      });
+      
+      // Delete friend links
+      await tx.friend.deleteMany({
+        where: { OR: [{ userId: id }, { friendId: id }] },
+      });
+
+      // Delete the user
+      await tx.user.delete({ where: { id } });
     });
   }
 

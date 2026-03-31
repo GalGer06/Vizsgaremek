@@ -14,6 +14,7 @@ export function AdminPage({ user }: AdminPageProps) {
   const [error, setError] = useState('');
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
   const [usernameSearch, setUsernameSearch] = useState('');
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   useEffect(() => {
     const loadAdminData = async () => {
@@ -105,6 +106,69 @@ export function AdminPage({ user }: AdminPageProps) {
     }
   };
 
+  const deleteUser = async (targetUserId: number) => {
+    if (!window.confirm('Biztosan törölni szeretnéd ezt a felhasználót?')) {
+      return;
+    }
+
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      setError('Hiányzó token. Jelentkezz be újra.');
+      return;
+    }
+
+    setUpdatingUserId(targetUserId);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${targetUserId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json().catch(() => ({}));
+        throw new Error(errorResponse.message ?? 'Nem sikerült törölni a felhasználót.');
+      }
+
+      setUsers((prev) => prev.filter((u) => u.id !== targetUserId));
+    } catch (deleteError) {
+      const message = deleteError instanceof Error ? deleteError.message : 'Ismeretlen hiba történt.';
+      setError(message);
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
+
+  const viewUserDetails = async (targetUserId: number) => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      setError('Hiányzó token. Jelentkezz be újra.');
+      return;
+    }
+
+    setError('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${targetUserId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Nem sikerült lekérni a felhasználó adatait.');
+      }
+
+      const userData = (await response.json()) as AdminUser;
+      setSelectedUser(userData);
+    } catch (viewError) {
+      const message = viewError instanceof Error ? viewError.message : 'Ismeretlen hiba történt.';
+      setError(message);
+    }
+  };
+
   return (
     <section>
       <div className="section-header">
@@ -114,6 +178,19 @@ export function AdminPage({ user }: AdminPageProps) {
 
       {loading && <p className="message">Admin adatok betöltése...</p>}
       {error && <p className="message error">{error}</p>}
+
+      {selectedUser && (
+        <article className="user-details-modal">
+          <div className="modal-content">
+            <h3>Felhasználó részletei: {selectedUser.username}</h3>
+            <p><strong>Név:</strong> {selectedUser.name}</p>
+            <p><strong>Email:</strong> {selectedUser.email}</p>
+            <p><strong>Jogosultság:</strong> {selectedUser.access ? 'Admin' : 'Felhasználó'}</p>
+            <p><strong>Létrehozva:</strong> {new Date(selectedUser.createdAt).toLocaleDateString('hu-HU')}</p>
+            <button className="button secondary" onClick={() => setSelectedUser(null)}>Bezárás</button>
+          </div>
+        </article>
+      )}
 
       {!loading && !error && (
         <>
@@ -144,7 +221,13 @@ export function AdminPage({ user }: AdminPageProps) {
             <ul>
               {filteredUsers.map((listedUser) => (
                 <li key={listedUser.id}>
-                  <span>{listedUser.username}</span>
+                  <span
+                    className="user-name-clickable"
+                    onClick={() => void viewUserDetails(listedUser.id)}
+                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                  >
+                    {listedUser.username}
+                  </span>
                   <span>{listedUser.email}</span>
                   <span>{listedUser.access ? 'admin' : 'user'}</span>
                   {listedUser.access ? (
@@ -170,6 +253,14 @@ export function AdminPage({ user }: AdminPageProps) {
                       {updatingUserId === listedUser.id ? 'Folyamatban...' : 'Adminná tétel'}
                     </button>
                   )}
+                  <button
+                    className="button danger small"
+                    disabled={listedUser.username === 'Admin' || updatingUserId === listedUser.id}
+                    onClick={() => void deleteUser(listedUser.id)}
+                    type="button"
+                  >
+                    {updatingUserId === listedUser.id ? '...' : 'Törlés'}
+                  </button>
                 </li>
               ))}
             </ul>

@@ -52,8 +52,20 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  findOne(
+    @Param('id') id: string,
+    @Req() req: { user?: { userId?: number; access?: boolean } },
+  ) {
+    const targetUserId = +id;
+    const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
+
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('You can only view your own profile');
+    }
+
+    return this.userService.findOne(targetUserId);
   }
 
   @Get(':id/friends')
@@ -306,7 +318,28 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  async remove(
+    @Param('id') id: string,
+    @Req() req: { user?: { userId?: number; access?: boolean; username?: string } },
+  ) {
+    const targetUserId = +id;
+    const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
+
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('You can only delete your own account');
+    }
+
+    const targetUser = await this.userService.findOne(targetUserId);
+    if (!targetUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (targetUser.username === ORIGINAL_ADMIN_USERNAME) {
+      throw new ForbiddenException('The original Admin account cannot be deleted');
+    }
+
+    return this.userService.remove(targetUserId);
   }
 }

@@ -245,6 +245,23 @@
 	background: #dce6f1;
 }
 
+.button.danger {
+	background: var(--danger-bg);
+	color: var(--danger-text);
+	border-color: #fecaca;
+}
+
+.button.danger:hover {
+	background: #fee2e2;
+	border-color: #fca5a5;
+}
+
+.button.small {
+	padding: 4px 8px;
+	font-size: 0.8rem;
+	border-radius: 6px;
+}
+
 .link-button {
 	text-decoration: none;
 	display: inline-flex;
