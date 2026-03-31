@@ -19,6 +19,9 @@
 
     --duo-border-width: 2px;
     --duo-shadow-depth: 4px;
+
+    --error-light: #ff6b6b;
+    --error-bg: rgba(255, 107, 107, 0.15);
 }
 
 html, body {
@@ -298,9 +301,14 @@ form div, .auth-form div {
 }
 
 .message.error {
-	border-color: #f5b5b5;
-	color: var(--danger-text);
-	background: var(--danger-bg);
+    background-color: var(--error-bg);
+    border: 2px solid var(--error-light);
+    color: var(--error-light) !important;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .user-details-overlay {
@@ -473,3 +481,77 @@ form div, .auth-form div {
     flex: 0 1 auto !important;
 }
 
+
+/* --- HEADER & ADMIN FIX --- */
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+.header-actions .button.secondary.link-button {
+  color: white !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+
+.role-badge {
+  background: transparent !important;
+  border: 4px solid var(--duo-green) !important;
+  color: var(--duo-green) !important;
+  padding: 8px 16px !important;
+  border-radius: 16px !important;
+  font-weight: 900 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase !important;
+  cursor: default !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 0 var(--duo-green-shadow) !important;
+  outline: none !important;
+}
+
+.role-badge.admin {
+  cursor: pointer !important;
+}
+
+.role-badge.admin:hover {
+  background: var(--duo-green) !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 0 var(--duo-green-shadow) !important;
+}
+
+.role-badge.admin:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 2px 0 var(--duo-green-shadow) !important;
+}
+
+.admin-badge-button {
+  background: transparent !important;
+  border: 2px solid #58a700 !important;
+  color: #58a700 !important;
+  padding: 6px 14px !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.admin-badge-button:hover {
+  background: rgba(88,167,0, 0.1) !important;
+}
+
+/* Card Text Visibility Fix */
+.achievement-card h3, .achievement-card p, 
+.friend-card h3, .friend-card p, 
+.task-card h3, .task-card p {
+  color: white !important;
+}
+/* --- END FIX --- */
