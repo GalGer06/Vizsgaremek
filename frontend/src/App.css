@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --bg-main: #1a2a44;
     --surface-main: #243b55;
     --input-bg: #2c4a6b;
@@ -530,76 +530,207 @@ form div, .auth-form div {
 }
 
 
-/* --- HEADER & ADMIN FIX --- */
 .header-actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 20px !important;
-}
-
-.header-actions .button.secondary.link-button {
-  color: white !important;
-  font-weight: 700 !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .role-badge {
-  background: transparent !important;
-  border: 4px solid var(--duo-green) !important;
-  color: var(--duo-green) !important;
-  padding: 8px 16px !important;
-  border-radius: 16px !important;
-  font-weight: 900 !important;
-  font-size: 0.85rem !important;
-  text-transform: uppercase !important;
-  cursor: default !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 4px 0 var(--duo-green-shadow) !important;
-  outline: none !important;
+    background: transparent;
+    border: 4px solid var(--duo-green);
+    color: var(--duo-green);
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-weight: 900;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    cursor: default;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 var(--duo-green-shadow);
+    outline: none;
 }
 
 .role-badge.admin {
-  cursor: pointer !important;
+    cursor: pointer;
 }
 
 .role-badge.admin:hover {
-  background: var(--duo-green) !important;
-  color: white !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 0 var(--duo-green-shadow) !important;
+    background: var(--duo-green);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 var(--duo-green-shadow);
 }
 
 .role-badge.admin:active {
-  transform: translateY(2px) !important;
-  box-shadow: 0 2px 0 var(--duo-green-shadow) !important;
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--duo-green-shadow);
 }
 
-.admin-badge-button {
-  background: transparent !important;
-  border: 2px solid #58a700 !important;
-  color: #58a700 !important;
-  padding: 6px 14px !important;
-  border-radius: 12px !important;
-  font-weight: 900 !important;
-  font-size: 0.85rem !important;
-  text-transform: uppercase !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+.message.info {
+    background: rgba(145, 193, 248, 0.1);
+    border-color: var(--text-header);
+    color: var(--text-header);
 }
 
-.admin-badge-button:hover {
-  background: rgba(88,167,0, 0.1) !important;
+.message.error {
+    background-color: var(--error-bg);
+    border: 2px solid var(--error-light);
+    color: var(--error-light) !important;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* Card Text Visibility Fix */
-.achievement-card h3, .achievement-card p, 
-.friend-card h3, .friend-card p, 
-.task-card h3, .task-card p {
-  color: white !important;
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
 }
-/* --- END FIX --- */
+
+.achievement-card {
+    background: var(--surface-main);
+    border: 2px solid var(--border-blue);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--duo-green);
+    box-shadow: 0 12px 0 rgba(0,0,0,0.25);
+}
+
+.achievement-card h3 {
+    margin: 0 0 12px 0;
+    color: var(--text-bright);
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--border-blue);
+    padding-bottom: 10px;
+}
+
+.achievement-card p {
+    color: var(--text-muted);
+    line-height: 1.5;
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+.achievement-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(58, 92, 131, 0.3);
+}
+
+.achievement-status {
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--text-header);
+    letter-spacing: 0.5px;
+}
+
+.achievement-card.completed {
+    border-color: var(--duo-green);
+}
+
+.achievement-card.completed .achievement-status {
+    color: var(--duo-green);
+}
+
+.friends-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.friends-panel {
+    background: var(--surface-main);
+    border: 2px solid var(--border-blue);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+}
+
+.friends-panel h3 {
+    margin: 0 0 20px 0;
+    color: var(--text-bright);
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.friends-search-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.friends-search-row input {
+    margin-bottom: 0 !important;
+}
+
+.friends-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.friends-list li {
+    background: rgba(255,255,255,0.05);
+    padding: 18px;
+    border-radius: 18px;
+    border: 2px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.friends-list li:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: var(--border-blue);
+}
+
+.friends-list li strong {
+    display: block;
+    color: var(--text-bright);
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.friends-list li p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.friends-empty {
+    text-align: center;
+    color: var(--text-header) !important;
+    padding: 30px;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.1rem;
+    width: 100%;
+    grid-column: 1 / -1;
+}
