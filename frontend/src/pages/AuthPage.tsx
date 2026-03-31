@@ -58,7 +58,7 @@ export function AuthPage({ onAuthSuccess }: AuthPageProps) {
     <section className="auth-wrapper">
       <div className="section-header">
         <h2>{mode === 'login' ? 'Belépés' : 'Regisztráció'}</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button type="button" onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       <form className="auth-form" onSubmit={submit}>

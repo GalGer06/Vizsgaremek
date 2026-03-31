@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../constants';
 import type { AuthUser, ProfileResponse } from '../types';
 
@@ -10,6 +10,7 @@ type ProfilePageProps = {
 };
 
 export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -100,7 +101,7 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
     <section className="auth-wrapper">
       <div className="section-header">
         <h2>Profil beállítások</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       {loading && <p className="message">Profil betöltése...</p>}

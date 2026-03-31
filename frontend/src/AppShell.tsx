@@ -44,20 +44,44 @@ export function AppShell() {
   };
 
   return (
-    <div className="app-container">
-      <AppHeader user={user} onLogout={handleLogout} />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/topics" element={<TopicsPage />} />
-        <Route path="/topics/:topicSlug" element={<TopicQuestionsPage />} />
-        <Route path="/achievements" element={user ? <AchievementsPage user={user} /> : <Navigate to="/auth" replace />} />
-        <Route path="/daily-tasks" element={<DailyTasksPage />} />
-        <Route path="/friends" element={user ? <FriendsPage user={user} /> : <Navigate to="/auth" replace />} />
-        <Route path="/auth" element={<AuthPage onAuthSuccess={handleAuthSuccess} />} />
-        <Route path="/admin" element={user?.access ? <AdminPage user={user} /> : <Navigate to="/auth" replace />} />
-        <Route path="/profile" element={user ? <ProfilePage user={user} onUserUpdate={handleUserUpdate} /> : <Navigate to="/auth" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </div>
+    <>
+      <div className="app-container">
+        <AppHeader user={user} onLogout={handleLogout} />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/topics" element={<TopicsPage />} />
+          <Route path="/topics/:topicSlug" element={<TopicQuestionsPage />} />
+          <Route path="/achievements" element={user ? <AchievementsPage user={user} /> : <Navigate to="/auth" replace />} />
+          <Route path="/daily-tasks" element={<DailyTasksPage />} />
+          <Route path="/friends" element={user ? <FriendsPage user={user} /> : <Navigate to="/auth" replace />} />
+          <Route path="/auth" element={<AuthPage onAuthSuccess={handleAuthSuccess} />} />
+          <Route path="/admin" element={user?.access ? <AdminPage user={user} /> : <Navigate to="/auth" replace />} />
+          <Route path="/profile" element={user ? <ProfilePage user={user} onUserUpdate={handleUserUpdate} /> : <Navigate to="/auth" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+
+      <footer className="app-footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <h4>Környezetvédelem</h4>
+            <p>Tanulj játékosan a Föld védelméről.</p>
+          </div>
+          <div className="footer-section">
+            <h4>Kapcsolat</h4>
+            <p>Email: info@vizsgaremek.hu</p>
+            <p>Tel: +36 1 234 5678</p>
+          </div>
+          <div className="footer-section">
+            <h4>Linkek</h4>
+            <p><a href="/">Főoldal</a></p>
+            <p><a href="/topics">Témakörök</a></p>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>&copy; 2026 Vizsgaremek - Minden jog fenntartva</p>
+        </div>
+      </footer>
+    </>
   );
 }

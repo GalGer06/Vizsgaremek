@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { API_BASE_URL, TOPICS } from '../constants';
 import type { Question } from '../types';
 import { normalizeText } from '../utils/text';
 
 export function TopicQuestionsPage() {
+  const navigate = useNavigate();
   const { topicSlug } = useParams<{ topicSlug: string }>();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,7 @@ export function TopicQuestionsPage() {
     <section>
       <div className="section-header">
         <h2>{topic.icon} {topic.title} kérdései</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       {loading && <p className="message">Kérdések betöltése...</p>}

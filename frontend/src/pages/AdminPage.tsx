@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { AdminUser, AuthUser, Question } from '../types';
 
@@ -8,6 +8,7 @@ type AdminPageProps = {
 };
 
 export function AdminPage({ user }: AdminPageProps) {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +55,7 @@ export function AdminPage({ user }: AdminPageProps) {
       <section>
         <div className="section-header">
           <h2>Admin oldal</h2>
-          <Link to="/" className="button secondary link-button">Vissza</Link>
+          <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
         </div>
         <p className="message error">Nincs admin jogosultságod ehhez az oldalhoz.</p>
       </section>
@@ -173,7 +174,7 @@ export function AdminPage({ user }: AdminPageProps) {
     <section>
       <div className="section-header">
         <h2>Admin dashboard</h2>
-        <Link to="/" className="button secondary link-button">Vissza</Link>
+        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       {loading && <p className="message">Admin adatok betöltése...</p>}
