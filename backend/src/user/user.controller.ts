@@ -20,7 +20,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { SetUserAccessDto } from './dto/set-user-access.dto';
 
-const ORIGINAL_ADMIN_USERNAME = 'Admin';
+const ORIGINAL_ADMIN_USERNAME = 'Rikimik';
 
 @Controller('user')
 export class UserController {

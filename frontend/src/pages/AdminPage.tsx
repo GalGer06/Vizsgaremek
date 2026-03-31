@@ -63,7 +63,7 @@ export function AdminPage({ user }: AdminPageProps) {
   }
 
   const adminCount = users.filter((item) => item.access).length;
-  const isOriginalAdmin = user.username === 'Admin';
+  const isOriginalAdmin = user.username === 'Rikimik';
   const searchValue = usernameSearch.trim().toLowerCase();
   const filteredUsers = users.filter((listedUser) =>
     listedUser.username.toLowerCase().includes(searchValue),
@@ -181,16 +181,24 @@ export function AdminPage({ user }: AdminPageProps) {
       {error && <p className="message error">{error}</p>}
 
       {selectedUser && (
-        <article className="user-details-modal">
-          <div className="modal-content">
-            <h3>Felhasználó részletei: {selectedUser.username}</h3>
-            <p><strong>Név:</strong> {selectedUser.name}</p>
-            <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Jogosultság:</strong> {selectedUser.access ? 'Admin' : 'Felhasználó'}</p>
-            <p><strong>Létrehozva:</strong> {new Date(selectedUser.createdAt).toLocaleDateString('hu-HU')}</p>
-            <button className="button secondary" onClick={() => setSelectedUser(null)}>Bezárás</button>
-          </div>
-        </article>
+        <div className="user-details-overlay" onClick={() => setSelectedUser(null)}>
+          <article className="user-details-modal" onClick={(e) => e.stopPropagation()}>
+            <header className="modal-header">
+              <h3>Felhasználó részletei</h3>
+              <button className="button secondary small" onClick={() => setSelectedUser(null)}>✕</button>
+            </header>
+            <div className="modal-body">
+              <p><strong>Felhasználó:</strong> {selectedUser.username}</p>
+              <p><strong>Név:</strong> {selectedUser.name}</p>
+              <p><strong>Email:</strong> {selectedUser.email}</p>
+              <p><strong>Szerepkör:</strong> {selectedUser.access ? 'Admin' : 'Felhasználó'}</p>
+              <p><strong>Regisztrált:</strong> {new Date(selectedUser.createdAt).toLocaleDateString('hu-HU')}</p>
+            </div>
+            <footer className="modal-footer">
+              <button className="button secondary" onClick={() => setSelectedUser(null)}>Bezárás</button>
+            </footer>
+          </article>
+        </div>
       )}
 
       {!loading && !error && (
@@ -230,38 +238,40 @@ export function AdminPage({ user }: AdminPageProps) {
                     {listedUser.username}
                   </span>
                   <span>{listedUser.email}</span>
-                  <span>{listedUser.access ? 'admin' : 'user'}</span>
-                  {listedUser.access ? (
-                    <button
-                      className="button secondary"
-                      disabled={
-                        listedUser.username === 'Admin' ||
-                        !isOriginalAdmin ||
-                        updatingUserId === listedUser.id
-                      }
-                      onClick={() => void setAdminAccess(listedUser.id, false)}
-                      type="button"
-                    >
-                      {updatingUserId === listedUser.id ? 'Folyamatban...' : 'Admin jog elvétele'}
-                    </button>
-                  ) : (
-                    <button
-                      className="button secondary"
-                      disabled={updatingUserId === listedUser.id}
-                      onClick={() => void setAdminAccess(listedUser.id, true)}
-                      type="button"
-                    >
-                      {updatingUserId === listedUser.id ? 'Folyamatban...' : 'Adminná tétel'}
-                    </button>
-                  )}
-                  <button
-                    className="button danger small"
-                    disabled={listedUser.username === 'Admin' || updatingUserId === listedUser.id}
-                    onClick={() => void deleteUser(listedUser.id)}
-                    type="button"
-                  >
-                    {updatingUserId === listedUser.id ? '...' : 'Törlés'}
-                  </button>
+                  <span>{listedUser.username === 'Rikimik' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}</span>
+                  <div className="admin-user-actions">
+                    {listedUser.username !== 'Rikimik' && (
+                      <>
+                        <button
+                          className="button danger small"
+                          disabled={updatingUserId === listedUser.id}
+                          onClick={() => void deleteUser(listedUser.id)}
+                          type="button"
+                        >
+                          {updatingUserId === listedUser.id ? '...' : 'Törlés'}
+                        </button>
+                        {listedUser.access ? (
+                          <button
+                            className="button secondary small"
+                            disabled={!isOriginalAdmin || updatingUserId === listedUser.id}
+                            onClick={() => void setAdminAccess(listedUser.id, false)}
+                            type="button"
+                          >
+                            {updatingUserId === listedUser.id ? '...' : 'Admin visszavonás'}
+                          </button>
+                        ) : (
+                          <button
+                            className="button secondary small"
+                            disabled={updatingUserId === listedUser.id}
+                            onClick={() => void setAdminAccess(listedUser.id, true)}
+                            type="button"
+                          >
+                            {updatingUserId === listedUser.id ? '...' : 'Adminná tétel'}
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
