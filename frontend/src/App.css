@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg-main: #1a2a44;
     --surface-main: #243b55;
     --input-bg: #2c4a6b;
@@ -68,6 +68,46 @@ html, body {
 
 .app-header h1 { font-size: 1.8rem; font-weight: 800; color: var(--text-bright); margin: 0; }
 .app-header p { color: var(--text-header); font-weight: 700; font-size: 0.95rem; margin: 0; }
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.role-badge {
+    background: transparent;
+    border: 4px solid var(--duo-green);
+    color: var(--duo-green);
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-weight: 900;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    cursor: default;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 var(--duo-green-shadow);
+    outline: none;
+}
+
+.role-badge.admin {
+    cursor: pointer;
+}
+
+.role-badge.admin:hover {
+    background: var(--duo-green);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 var(--duo-green-shadow);
+}
+
+.role-badge.admin:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--duo-green-shadow);
+}
 
 .button, button, .mode-toggle, .link-button {
     background-color: var(--wood-primary);
@@ -293,11 +333,19 @@ form div, .auth-form div {
 }
 
 .message {
-	border: 1px solid var(--border);
-	border-radius: 8px;
-	background: #f8fafc;
-	padding: 10px;
-	color: var(--muted);
+    background: var(--surface-main);
+    padding: 20px;
+    border-radius: 16px;
+    border: 2px solid var(--border-blue);
+    color: var(--text-main);
+    text-align: center;
+    font-weight: 600;
+}
+
+.message.info {
+    background: rgba(145, 193, 248, 0.1);
+    border-color: var(--text-header);
+    color: var(--text-header);
 }
 
 .message.error {

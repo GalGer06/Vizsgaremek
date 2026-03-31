@@ -24,6 +24,12 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
     navigate('/admin');
   };
 
+  const handleAdminClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate('/admin');
+  };
+
   return (
     <header className="app-header">
       <div 
