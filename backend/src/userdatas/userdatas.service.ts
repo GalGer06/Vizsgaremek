@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { CreateUserdataDto } from './dto/create-userdata.dto';
 import { UpdateUserdataDto } from './dto/update-userdata.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -111,7 +110,7 @@ export class UserdatasService {
       id,
       completed,
     }));
-    const achievementsValue = overridesArray as Prisma.InputJsonValue;
+    const achievementsValue = overridesArray;
 
     if (!existing) {
       const created = await this.prisma.userDatas.create({
@@ -191,7 +190,7 @@ export class UserdatasService {
     }
   }
 
-  private extractAdminOverrides(achievements: Prisma.JsonValue | unknown): Map<number, boolean> {
+  private extractAdminOverrides(achievements: unknown): Map<number, boolean> {
     if (!Array.isArray(achievements)) {
       return new Map();
     }

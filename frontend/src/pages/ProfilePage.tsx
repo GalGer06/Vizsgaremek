@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../constants';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { AuthUser, ProfileResponse } from '../types';
 
 type ProfilePageProps = {
@@ -25,10 +25,21 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
         return;
       }
 
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        setError('Hiányzó token. Jelentkezz be újra.');
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError('');
       try {
-        const response = await fetch(`${API_BASE_URL}/user/${user.id}`);
+        const response = await fetch(`${API_BASE_URL}/user/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error('Nem sikerült betölteni a profilt.');
         }
@@ -55,6 +66,12 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
       return;
     }
 
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      setError('Hiányzó token. Jelentkezz be újra.');
+      return;
+    }
+
     setSaving(true);
     setError('');
     setSuccess('');
@@ -64,6 +81,7 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name,

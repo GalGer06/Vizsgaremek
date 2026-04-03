@@ -267,8 +267,21 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @UseGuards(JwtAuthGuard)
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: { user?: { userId?: number; access?: boolean } },
+  ) {
+    const targetUserId = +id;
+    const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
+
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
+    return this.userService.update(targetUserId, updateUserDto);
   }
 
   @Patch(':id/access')
