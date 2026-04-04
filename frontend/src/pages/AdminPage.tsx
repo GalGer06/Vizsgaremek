@@ -391,7 +391,7 @@ export function AdminPage({ user }: AdminPageProps) {
             <div className="admin-question-list">
               {questions.map(q => (
                 <div key={q.id} className="admin-question-item">
-                  <div className="admin-q-text">
+                  <div className="admin-q-text" style={{ color: 'white' }}>
                     <strong>#{q.id}</strong> {q.question}
                   </div>
                   <button 
