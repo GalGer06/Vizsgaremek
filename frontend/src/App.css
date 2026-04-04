@@ -370,12 +370,13 @@ form div, .auth-form div {
 }
 
 .user-details-modal {
-	background: var(--surface);
-	border-radius: 16px;
-	padding: 24px;
+	background: var(--surface-main);
+	border-radius: 20px;
+	padding: 30px;
 	width: 100%;
-	max-width: 480px;
-	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+	max-width: 500px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+	border: 2px solid var(--border-blue);
 }
 
 .modal-header {
@@ -383,8 +384,9 @@ form div, .auth-form div {
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 20px;
-	border-bottom: 1px solid var(--border);
+	border-bottom: 1px solid var(--border-blue);
 	padding-bottom: 12px;
+	color: var(--text-bright);
 }
 
 .modal-header h3 {
@@ -393,20 +395,19 @@ form div, .auth-form div {
 }
 
 .modal-body {
-	display: grid;
+	display: flex;
+	flex-direction: column;
 	gap: 12px;
 	margin-bottom: 24px;
+	color: var(--text-main);
 }
 
 .modal-body p {
 	margin: 0;
-	display: grid;
-	grid-template-columns: 100px 1fr;
-	gap: 10px;
 }
 
 .modal-body strong {
-	color: var(--muted);
+	color: var(--text-header);
 }
 
 .modal-footer {

@@ -62,20 +62,28 @@ export class UserdatasService {
     });
 
     if (!userData) {
+      const initialPoints = points;
+      const initialLevel = Math.floor(initialPoints / 500) + 1;
       return this.prisma.userDatas.create({
         data: {
           userId,
-          totalPoints: points,
+          totalPoints: initialPoints,
+          level: initialLevel,
         },
       });
     }
 
+    const currentPoints = userData.totalPoints;
+    // Handle both positive (increment) and negative (decrement) points
+    // Ensure points don't drop below 0
+    const newTotalPoints = Math.max(0, currentPoints + points);
+    const newLevel = Math.floor(newTotalPoints / 500) + 1;
+
     return this.prisma.userDatas.update({
       where: { id: userData.id },
       data: {
-        totalPoints: {
-          increment: points,
-        },
+        totalPoints: newTotalPoints,
+        level: newLevel,
       },
     });
   }

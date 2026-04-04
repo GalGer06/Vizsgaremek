@@ -87,13 +87,14 @@ export class UserdatasController {
   incrementPoints(
     @Param('userId') userId: string,
     @Body('points') points: number,
-    @Req() req: { user?: { userId?: number } },
+    @Req() req: { user?: { userId?: number; access?: boolean } },
   ) {
     const targetUserId = +userId;
     const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
 
-    if (requesterId !== targetUserId) {
-      throw new ForbiddenException('Csak a saját pontjaidat növelheted.');
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('Csak a saját vagy mások pontjait adminisztrátorként növelheted.');
     }
 
     return this.userdatasService.incrementPoints(targetUserId, points);

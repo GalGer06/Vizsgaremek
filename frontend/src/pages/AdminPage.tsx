@@ -19,6 +19,10 @@ export function AdminPage({ user }: AdminPageProps) {
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [editFormData, setEditFormData] = useState<Partial<Question>>({});
+  const [userPoints, setUserPoints] = useState<number>(0);
+  const [userLevel, setUserLevel] = useState<number>(1);
+  const [savingPoints, setSavingPoints] = useState(false);
+  const [pointAdjust, setPointAdjust] = useState<number>(30);
 
   useEffect(() => {
     const loadAdminData = async () => {
@@ -172,9 +176,49 @@ export function AdminPage({ user }: AdminPageProps) {
 
       const userData = (await response.json()) as AdminUser;
       setSelectedUser(userData);
+
+      const pointsResponse = await fetch(`${API_BASE_URL}/userdatas/user/${targetUserId}/achievements`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (pointsResponse.ok) {
+        const pointsData = await pointsResponse.json();
+        setUserPoints(pointsData.totalPoints || 0);
+        setUserLevel(pointsData.level || 1);
+      }
     } catch (viewError) {
       const message = viewError instanceof Error ? viewError.message : 'Ismeretlen hiba történt.';
       setError(message);
+    }
+  };
+
+  const handleUpdatePoints = async (amount: number) => {
+    if (!selectedUser) return;
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    setSavingPoints(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/userdatas/user/${selectedUser.id}/points`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ points: amount }),
+      });
+
+      if (!response.ok) throw new Error('Nem sikerült a pontok frissítése.');
+
+      const updated = await response.json();
+      setUserPoints(updated.totalPoints);
+      setUserLevel(updated.level);
+      alert('Pontok sikeresen frissítve!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Hiba történt.');
+    } finally {
+      setSavingPoints(false);
     }
   };
 
@@ -240,6 +284,39 @@ export function AdminPage({ user }: AdminPageProps) {
               <p><strong>Email:</strong> {selectedUser.email}</p>
               <p><strong>Szerepkör:</strong> {selectedUser.access ? 'Admin' : 'Felhasználó'}</p>
               <p><strong>Regisztrált:</strong> {new Date(selectedUser.createdAt).toLocaleDateString('hu-HU')}</p>
+              <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+              <div className="point-editor" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <p><strong>Aktuális szint:</strong> {userLevel}</p>
+                <p><strong>Aktuális pont:</strong> {userPoints}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <label htmlFor="points-input"><strong>Módosítás:</strong></label>
+                  <input
+                    id="points-input"
+                    type="number"
+                    value={pointAdjust}
+                    onChange={(e) => setPointAdjust(Number(e.target.value))}
+                    className="input"
+                    style={{ width: '80px', marginBottom: 0 }}
+                  />
+                  <button 
+                    onClick={() => handleUpdatePoints(pointAdjust)} 
+                    className="button accent small"
+                    disabled={savingPoints}
+                    style={{ backgroundColor: 'var(--duo-green)', borderBottomColor: 'var(--duo-green-shadow)' }}
+                  >
+                    Hozzáad (+)
+                  </button>
+                  <button 
+                    onClick={() => handleUpdatePoints(-pointAdjust)} 
+                    className="button accent small"
+                    disabled={savingPoints}
+                    style={{ backgroundColor: 'var(--error-light)', borderBottomColor: '#d32f2f' }}
+                  >
+                    Levon (-)
+                  </button>
+                </div>
+                <small style={{ color: '#666' }}>Minden 500 pont után egy szintlépés jár (automatikusan számolva). A pontszám nem mehet 0 alá.</small>
+              </div>
             </div>
             <footer className="modal-footer">
               <button className="button secondary" onClick={() => setSelectedUser(null)}>Bezárás</button>
