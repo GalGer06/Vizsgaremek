@@ -44,21 +44,34 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
   const toggleLanguage = (e: React.MouseEvent) => {
     e.preventDefault();
     
-    // Google injects the combo into the DOM, often outside our container
     const googleCombo = document.querySelector('.goog-te-combo') as HTMLSelectElement;
     
     if (googleCombo) {
-      const nextLang = isEnglish ? 'hu' : 'en';
-      console.log('Switching language to:', nextLang);
-      
-      googleCombo.value = nextLang;
-      googleCombo.dispatchEvent(new Event('change'));
-      
-      // Update local state and cookie to ensure it persists
-      setIsEnglish(!isEnglish);
-      document.cookie = `googtrans=/hu/${nextLang}; path=/`;
+      if (isEnglish) {
+        console.log('Resetting to original Hungarian...');
+        
+        // 1. Set to Hungarian
+        googleCombo.value = 'hu';
+        googleCombo.dispatchEvent(new Event('change'));
+
+        // 2. Kill the translation cookie across all possible paths/subdomains
+        const domains = [window.location.hostname, "." + window.location.hostname, ""];
+        domains.forEach(domain => {
+          document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;${domain ? ' domain=' + domain + ';' : ''}`;
+        });
+
+        // 3. Force a reload to completely clear the Google Translate engine state
+        // This is the only 100% reliable way to stop "Hungarian -> Hungarian" translation
+        window.location.reload();
+      } else {
+        console.log('Switching to English...');
+        googleCombo.value = 'en';
+        googleCombo.dispatchEvent(new Event('change'));
+        setIsEnglish(true);
+        document.cookie = `googtrans=/hu/en; path=/`;
+      }
     } else {
-      console.log('Combo not found, attempting to re-init hidden widget...');
+      console.log('Combo not found, attempting to re-init...');
       // @ts-ignore
       if (window.google?.translate?.TranslateElement) {
         // @ts-ignore
