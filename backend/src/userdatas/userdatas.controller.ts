@@ -73,7 +73,11 @@ export class UserdatasController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserdataDto: UpdateUserdataDto) {
+  @UseGuards(JwtAuthGuard)
+  update(@Param('id') id: string, @Body() updateUserdataDto: UpdateUserdataDto, @Req() req: { user?: { access?: boolean } }) {
+    if (!req.user?.access) {
+      throw new ForbiddenException('Only admin can update UserDatas directly.');
+    }
     return this.userdatasService.update(+id, updateUserdataDto);
   }
 
@@ -98,5 +102,22 @@ export class UserdatasController {
     }
 
     return this.userdatasService.incrementPoints(targetUserId, points);
+  }
+
+  @Post('user/:userId/recalculate')
+  @UseGuards(JwtAuthGuard)
+  recalculatePoints(
+    @Param('userId') userId: string,
+    @Req() req: { user?: { userId?: number; access?: boolean } },
+  ) {
+    const targetUserId = +userId;
+    const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
+
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('You can only recalculate your own points.');
+    }
+
+    return this.userdatasService.recalculatePoints(targetUserId);
   }
 }

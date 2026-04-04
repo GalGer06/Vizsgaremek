@@ -27,6 +27,7 @@ model User {
   friendsReceived Friend[] @relation("FriendReceiver")
   friendRequestsSent FriendRequest[] @relation("FriendRequestSender")
   friendRequestsReceived FriendRequest[] @relation("FriendRequestReceiver")
+  tickets   Ticket[]
 }
 
 model Friend {
@@ -68,6 +69,7 @@ model UserDatas {
   userId      Int
   streak      Int      @default(0)
   totalPoints Int      @default(0)
+  adminBonusPoints Int @default(0)
   level       Int      @default(1)
   achievements Json?
 
@@ -83,4 +85,26 @@ model UserAnswer {
   createdAt   DateTime @default(now())
 
   @@unique([userId, questionId])
+}
+
+enum TicketType {
+  BUG
+  SUGGEST_QUESTION
+}
+
+enum TicketStatus {
+  OPEN
+  CLOSED
+}
+
+model Ticket {
+  id          Int          @id @default(autoincrement())
+  userId      Int
+  type        TicketType
+  description String       @db.Text
+  attachment  Json?        // To store suggested question data
+  status      TicketStatus @default(OPEN)
+  createdAt   DateTime     @default(now())
+
+  user        User         @relation(fields: [userId], references: [id])
 }

@@ -56,32 +56,79 @@ export class UserdatasService {
     });
   }
 
+  async recalculatePoints(userId: number) {
+    // 1. Get all correct answers from UserAnswer table
+    const correctAnswersCount = await this.prisma.userAnswer.count({
+      where: {
+        userId,
+        isCorrect: true,
+      },
+    });
+
+    // 2. Calculate points: 30 points per correct answer
+    // Note: This matches the frontend logic in TopicQuestionsPage.tsx
+    // 3. Update the UserDatas record
+    const userData = await this.prisma.userDatas.findFirst({
+      where: { userId },
+    });
+
+    const adminBonusPoints = userData?.adminBonusPoints || 0;
+    const calculatedPoints = (correctAnswersCount * 30) + adminBonusPoints;
+    const calculatedLevel = Math.floor(calculatedPoints / 500) + 1;
+
+    if (userData) {
+      return this.prisma.userDatas.update({
+        where: { id: userData.id },
+        data: {
+          totalPoints: calculatedPoints,
+          level: calculatedLevel,
+        },
+      });
+    } else {
+      return this.prisma.userDatas.create({
+        data: {
+          userId,
+          totalPoints: calculatedPoints,
+          level: calculatedLevel,
+          adminBonusPoints: 0,
+        },
+      });
+    }
+  }
+
   async incrementPoints(userId: number, points: number) {
     const userData = await this.prisma.userDatas.findFirst({
       where: { userId },
     });
 
     if (!userData) {
-      const initialPoints = points;
+      const initialPoints = Math.max(0, points);
       const initialLevel = Math.floor(initialPoints / 500) + 1;
       return this.prisma.userDatas.create({
         data: {
           userId,
           totalPoints: initialPoints,
+          adminBonusPoints: points,
           level: initialLevel,
         },
       });
     }
 
-    const currentPoints = userData.totalPoints;
-    // Handle both positive (increment) and negative (decrement) points
-    // Ensure points don't drop below 0
-    const newTotalPoints = Math.max(0, currentPoints + points);
+    const newAdminBonusPoints = userData.adminBonusPoints + points;
+    const correctAnswersCount = await this.prisma.userAnswer.count({
+      where: {
+        userId,
+        isCorrect: true,
+      },
+    });
+
+    const newTotalPoints = Math.max(0, (correctAnswersCount * 30) + newAdminBonusPoints);
     const newLevel = Math.floor(newTotalPoints / 500) + 1;
 
     return this.prisma.userDatas.update({
       where: { id: userData.id },
       data: {
+        adminBonusPoints: newAdminBonusPoints,
         totalPoints: newTotalPoints,
         level: newLevel,
       },
