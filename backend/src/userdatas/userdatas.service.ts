@@ -100,11 +100,17 @@ export class UserdatasService {
       },
     });
 
+    const userAnswers = await this.prisma.userAnswer.findMany({
+      where: { userId },
+      include: { question: true },
+    });
+
     const autoAchievements = this.buildAutomaticAchievements(
       userData.streak,
       userData.totalPoints,
       userData.level,
       friendsCount,
+      userAnswers,
     );
 
     const adminOverrides = this.extractAdminOverrides(userData.achievements);
@@ -168,6 +174,7 @@ export class UserdatasService {
     totalPoints: number,
     level: number,
     friendsCount: number,
+    userAnswers: any[],
   ): AchievementTemplate[] {
     return DEFAULT_ACHIEVEMENTS.map((achievement) => ({
       ...achievement,
@@ -177,6 +184,7 @@ export class UserdatasService {
         totalPoints,
         level,
         friendsCount,
+        userAnswers,
       ),
     }));
   }
@@ -187,22 +195,25 @@ export class UserdatasService {
     totalPoints: number,
     level: number,
     friendsCount: number,
+    userAnswers: any[],
   ): boolean {
     switch (achievementId) {
       case 1:
         return true;
       case 2:
-        return totalPoints > 0 || level > 1;
+        return userAnswers.length > 0;
       case 3:
-        return totalPoints >= 150;
+        return userAnswers.filter((ua) => ua.question?.title === 'Újrahasznosítás').length >= 5;
       case 4:
-        return totalPoints >= 250;
+        return userAnswers.filter((ua) => ua.question?.title === 'Vízvédelem').length >= 3;
       case 5:
-        return totalPoints >= 350;
+        return userAnswers.filter((ua) => ua.question?.title === 'Erdők').length >= 10;
       case 6:
         return streak >= 7;
-      case 7:
-        return streak >= 3;
+      case 7: {
+        const today = new Date().toISOString().split('T')[0];
+        return userAnswers.filter((ua) => ua.createdAt.toISOString().startsWith(today)).length >= 3;
+      }
       case 8:
         return friendsCount >= 1;
       case 9:
