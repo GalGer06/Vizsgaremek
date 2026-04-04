@@ -76,6 +76,30 @@ export class FeladatokService {
     return questions.map((question) => this.mapQuestion(question));
   }
 
+  async findDaily() {
+    const allQuestions = await this.prisma.feladatok.findMany();
+    if (allQuestions.length === 0) return [];
+
+    // Use current date as seed for daily stability
+    const today = new Date();
+    const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    
+    // Simple deterministic shuffle based on date string
+    let seed = 0;
+    for (let i = 0; i < dateString.length; i++) {
+      seed += dateString.charCodeAt(i);
+    }
+
+    const shuffled = [...allQuestions].sort((a, b) => {
+      const valA = (a.id * seed) % 101;
+      const valB = (b.id * seed) % 101;
+      return valA - valB;
+    });
+
+    // Return first 3 questions for the day
+    return shuffled.slice(0, 3).map((q) => this.mapQuestion(q));
+  }
+
   async findOne(id: number) {
     const question = await this.prisma.feladatok.findUnique({
       where: { id },

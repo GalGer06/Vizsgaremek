@@ -17,6 +17,11 @@ export class FeladatokController {
     return this.feladatokService.findAll();
   }
 
+  @Get('daily')
+  findDaily() {
+    return this.feladatokService.findDaily();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.feladatokService.findOne(+id);
