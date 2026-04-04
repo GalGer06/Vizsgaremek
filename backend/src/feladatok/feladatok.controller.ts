@@ -59,7 +59,15 @@ export class FeladatokController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFeladatokDto: UpdateFeladatokDto) {
+  @UseGuards(JwtAuthGuard)
+  update(
+    @Param('id') id: string,
+    @Body() updateFeladatokDto: UpdateFeladatokDto,
+    @Req() req: { user?: { access?: boolean } }
+  ) {
+    if (!req.user?.access) {
+      throw new ForbiddenException('Csak adminok módosíthatják a kérdéseket.');
+    }
     return this.feladatokService.update(+id, updateFeladatokDto);
   }
 

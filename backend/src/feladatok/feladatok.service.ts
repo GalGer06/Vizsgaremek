@@ -173,7 +173,23 @@ export class FeladatokService {
       throw new BadRequestException('Question not found.');
     }
 
-    const answers = updateFeladatokDto.answers
+    const answers = updateFeladatokDto.answers;
+    if (answers) {
+      this.parseAnswers(answers);
+    }
+
+    if (updateFeladatokDto.correct && answers) {
+      this.ensureCorrectAnswer(updateFeladatokDto.correct, this.parseAnswers(answers));
+    }
+
+    return this.prisma.feladatok.update({
+      where: { id },
+      data: {
+        ...updateFeladatokDto,
+        answers: answers ? this.parseAnswers(answers) : undefined,
+      },
+    });
+  }
       ? this.parseAnswers(updateFeladatokDto.answers)
       : this.parseAnswers(existing.answers);
 
