@@ -15,6 +15,7 @@ export function AdminPage({ user }: AdminPageProps) {
   const [error, setError] = useState('');
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
   const [usernameSearch, setUsernameSearch] = useState('');
+  const [questionSearch, setQuestionSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [editFormData, setEditFormData] = useState<Partial<Question>>({});
@@ -69,6 +70,11 @@ export function AdminPage({ user }: AdminPageProps) {
   const searchValue = usernameSearch.trim().toLowerCase();
   const filteredUsers = users.filter((listedUser) =>
     listedUser.username.toLowerCase().includes(searchValue),
+  );
+
+  const filteredQuestions = questions.filter((q) =>
+    q.question.toLowerCase().includes(questionSearch.toLowerCase()) ||
+    q.id.toString() === questionSearch.trim()
   );
 
   const setAdminAccess = async (targetUserId: number, nextAccess: boolean) => {
@@ -320,9 +326,10 @@ export function AdminPage({ user }: AdminPageProps) {
               <h3>Adminok</h3>
               <p>{adminCount}</p>
             </article>
-            <article className="admin-card">
+            <article className="admin-card clickable" onClick={() => document.getElementById('admin-questions-section')?.scrollIntoView({ behavior: 'smooth' })}>
               <h3>Kérdések</h3>
               <p>{questions.length}</p>
+              <span className="card-hint">Kattints az ugráshoz ↓</span>
             </article>
           </div>
 
@@ -386,10 +393,29 @@ export function AdminPage({ user }: AdminPageProps) {
             {!filteredUsers.length && <p className="message">Nincs találat erre a felhasználónévre.</p>}
           </div>
 
-          <div className="admin-questions">
-            <h3>Kérdések kezelése</h3>
+          <div className="admin-questions" id="admin-questions-section">
+            <div className="admin-questions-header">
+              <h3>Kérdések kezelése</h3>
+              <button 
+                className="button secondary small scroll-top-btn" 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                Vissza fel ↑
+              </button>
+            </div>
+            
+            <div className="admin-search-wrapper">
+              <input
+                className="admin-search"
+                onChange={(event) => setQuestionSearch(event.target.value)}
+                placeholder="Keresés kérdés szövege vagy #ID alapján"
+                type="search"
+                value={questionSearch}
+              />
+            </div>
+
             <div className="admin-question-list">
-              {questions.map(q => (
+              {filteredQuestions.map(q => (
                 <div key={q.id} className="admin-question-item">
                   <div className="admin-q-text" style={{ color: 'white' }}>
                     <strong>#{q.id}</strong> {q.question}

@@ -907,3 +907,42 @@ form div, .auth-form div {
     margin-right: 20px;
     font-size: 0.95rem;
 }
+
+.admin-card.clickable {
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-card.clickable:hover {
+    transform: translateY(-5px);
+    background-color: var(--input-bg);
+    border-color: var(--text-header);
+}
+
+.card-hint {
+    font-size: 0.75rem;
+    color: var(--text-header);
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.admin-questions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.scroll-top-btn {
+    opacity: 0.8;
+}
+
+.scroll-top-btn:hover {
+    opacity: 1;
+}
+
+.admin-search-wrapper {
+    margin-bottom: 20px;
+}
