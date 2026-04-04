@@ -9,6 +9,7 @@ export function DailyTasksPage() {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [checkedAnswers, setCheckedAnswers] = useState<Record<number, boolean>>({});
   const [showPointPopup, setShowPointPopup] = useState(false);
+  const [showBonusModal, setShowBonusModal] = useState(false);
   const [popupValue, setPopupValue] = useState(30);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -115,14 +116,15 @@ export function DailyTasksPage() {
         if (isCorrect) {
           const pointsUpdate = { points: 30 };
           
-          // Check if this is the last question to be completed
+          // Check if this is the 12th correct answer
           const newChecked = { ...checkedAnswers, [questionId]: true };
-          const allCompleted = questions.every(q => q.id === questionId || newChecked[q.id]);
-          const previouslyFullyCompleted = questions.every(q => q.isAnswered);
+          const newlyCorrectCount = questions.filter(q => (q.id === questionId || newChecked[q.id]) && (q.id === questionId ? isCorrect : selectedAnswers[q.id] === q.correct)).length;
+          const previouslyCorrectCount = questions.filter(q => q.isAnswered && q.userSelectedAnswer === q.correct).length;
 
-          if (allCompleted && !previouslyFullyCompleted) {
+          if (newlyCorrectCount >= 12 && previouslyCorrectCount < 12) {
             pointsUpdate.points = 530; // 30 for the question + 500 bonus
             setPopupValue(530);
+            setShowBonusModal(true);
           } else {
             setPopupValue(30);
           }
@@ -147,6 +149,38 @@ export function DailyTasksPage() {
   return (
     <section>
       {showPointPopup && <div className="points-popup">+{popupValue}</div>}
+      
+      {showBonusModal && (
+        <div className="user-details-overlay" onClick={() => setShowBonusModal(false)}>
+          <article className="user-details-modal" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+            <header className="modal-header">
+              <h3 style={{ width: '100%', textAlign: 'center' }}>🎉 Gratulálunk!</h3>
+            </header>
+            <div className="modal-body">
+              <div style={{ fontSize: '4rem', marginBottom: '10px' }}>🏆</div>
+              <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-bright)' }}>
+                Teljesítettél 12 napi kérdést helyesen!
+              </p>
+              <p style={{ color: 'var(--duo-green)', fontSize: '1.5rem', fontWeight: '900' }}>
+                +500 EXTRA PONT
+              </p>
+              <p style={{ color: 'var(--text-muted)' }}>
+                Ezzel a teljesítménnyel szintet is léptél! Folytasd tovább a tanulást!
+              </p>
+            </div>
+            <footer className="modal-footer" style={{ justifyContent: 'center' }}>
+              <button 
+                className="button primary-green" 
+                onClick={() => setShowBonusModal(false)}
+                style={{ minWidth: '150px' }}
+              >
+                Szuper!
+              </button>
+            </footer>
+          </article>
+        </div>
+      )}
+
       <div className="section-header">
         <h2>🌱 Napi Feladatok</h2>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
