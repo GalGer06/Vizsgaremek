@@ -17,11 +17,57 @@ export function DailyTasksPage() {
       setLoading(true);
       setError('');
       try {
-        const response = await fetch(`${API_BASE_URL}/feladatok/daily`);
-        if (!response.ok) {
-          throw new Error('Nem sikerült lekérdezni a napi kérdéseket.');
+        const savedUser = localStorage.getItem('user');
+        const user = savedUser ? JSON.parse(savedUser) : null;
+        
+        let url = `${API_BASE_URL}/feladatok/daily`;
+        const token = localStorage.getItem(TOKEN_KEY);
+        const headers: Record<string, string> = {};
+        
+        if (user && token) {
+          url = `${API_BASE_URL}/feladatok/user/${user.id}`;
+          headers['Authorization'] = `Bearer ${token}`;
         }
-        const data = (await response.json()) as Question[];
+
+        const response = await fetch(url, { headers });
+        if (!response.ok) {
+          throw new Error('Nem sikerült lekérdezni a kérdéseket.');
+        }
+        
+        let data = (await response.json()) as (Question & { isAnswered?: boolean; userSelectedAnswer?: string })[];
+        
+        // If we fetched the full list, we need to pick the daily 3
+        if (url.includes('/user/')) {
+            const today = new Date();
+            const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            let seed = 0;
+            for (let i = 0; i < dateString.length; i++) seed += dateString.charCodeAt(i);
+            
+            const shuffled = [...data].sort((a, b) => {
+                const valA = (a.id * seed) % 101;
+                const valB = (b.id * seed) % 101;
+                return valA - valB;
+            });
+            data = shuffled.slice(0, 3);
+        }
+
+        const alreadyChecked: Record<number, boolean> = {};
+        const restoredSelections: Record<number, string> = {};
+        
+        data.forEach(q => {
+          if (q.isAnswered) {
+            alreadyChecked[q.id] = true;
+            if (q.userSelectedAnswer) {
+              restoredSelections[q.id] = q.userSelectedAnswer;
+            }
+          }
+        });
+        
+        setCheckedAnswers(alreadyChecked);
+        if (Object.keys(restoredSelections).length > 0) {
+          setSelectedAnswers(restoredSelections);
+        }
+        
         setQuestions(data);
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
@@ -46,12 +92,26 @@ export function DailyTasksPage() {
     const isCorrect = selectedAnswers[questionId] === question.correct;
     setCheckedAnswers((curr) => ({ ...curr, [questionId]: true }));
 
-    if (isCorrect) {
-      try {
-        const savedUser = localStorage.getItem('user');
-        const user = savedUser ? JSON.parse(savedUser) : null;
-        if (user) {
-          const token = localStorage.getItem(TOKEN_KEY);
+    try {
+      const savedUser = localStorage.getItem('user');
+      const user = savedUser ? JSON.parse(savedUser) : null;
+      if (user) {
+        const token = localStorage.getItem(TOKEN_KEY);
+        
+        // Save history including selected answer
+        await fetch(`${API_BASE_URL}/feladatok/${questionId}/answer`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token ?? ''}`,
+          },
+          body: JSON.stringify({ 
+            isCorrect,
+            selectedAnswer: selectedAnswers[questionId]
+          }),
+        });
+
+        if (isCorrect) {
           await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
             method: 'PATCH',
             headers: {
@@ -63,9 +123,9 @@ export function DailyTasksPage() {
           setShowPointPopup(true);
           setTimeout(() => setShowPointPopup(false), 2000);
         }
-      } catch (err) {
-        console.error('Points error:', err);
       }
+    } catch (err) {
+      console.error('Points error:', err);
     }
   };
 

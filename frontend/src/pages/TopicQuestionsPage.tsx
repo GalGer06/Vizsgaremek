@@ -25,11 +25,37 @@ export function TopicQuestionsPage({ user }: Props) {
       setLoading(true);
       setError('');
       try {
-        const response = await fetch(`${API_BASE_URL}/feladatok`);
+        const url = user 
+          ? `${API_BASE_URL}/feladatok/user/${user.id}`
+          : `${API_BASE_URL}/feladatok`;
+        
+        const token = localStorage.getItem(TOKEN_KEY);
+        const headers: Record<string, string> = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch(url, { headers });
         if (!response.ok) {
           throw new Error('Nem sikerült lekérdezni a kérdéseket.');
         }
-        const data = (await response.json()) as Question[];
+        const data = (await response.json()) as (Question & { isAnswered?: boolean; userSelectedAnswer?: string })[];
+        
+        // Mark answered questions as checked immediately and restore selected answer
+        const alreadyChecked: Record<number, boolean> = {};
+        const restoredSelections: Record<number, string> = {};
+        
+        data.forEach(q => {
+          if (q.isAnswered) {
+            alreadyChecked[q.id] = true;
+            if (q.userSelectedAnswer) {
+              restoredSelections[q.id] = q.userSelectedAnswer;
+            }
+          }
+        });
+        setCheckedAnswers(alreadyChecked);
+        if (Object.keys(restoredSelections).length > 0) {
+          setSelectedAnswers(restoredSelections);
+        }
+        
         setQuestions(data);
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
@@ -40,7 +66,7 @@ export function TopicQuestionsPage({ user }: Props) {
     };
 
     void loadQuestions();
-  }, []);
+  }, [user]);
 
   const filteredQuestions = useMemo(() => {
     if (!topic) {
@@ -81,23 +107,38 @@ export function TopicQuestionsPage({ user }: Props) {
       [questionId]: true,
     }));
 
-    if (isCorrect && user) {
+    if (user) {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
-        await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
-          method: 'PATCH',
+        // Save history including selected answer
+        await fetch(`${API_BASE_URL}/feladatok/${questionId}/answer`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token ?? ''}`,
           },
-          body: JSON.stringify({ points: 30 }),
+          body: JSON.stringify({ 
+            isCorrect, 
+            selectedAnswer: selectedAnswers[questionId] 
+          }),
         });
-        
-        // Show point popup animation
-        setShowPointPopup(true);
-        setTimeout(() => setShowPointPopup(false), 2000);
+
+        if (isCorrect) {
+          await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token ?? ''}`,
+            },
+            body: JSON.stringify({ points: 30 }),
+          });
+          
+          // Show point popup animation
+          setShowPointPopup(true);
+          setTimeout(() => setShowPointPopup(false), 2000);
+        }
       } catch (err) {
-        console.error('Nem sikerült a pontokat jóváírni:', err);
+        console.error('Hiba törént a mentés során:', err);
       }
     }
   };
