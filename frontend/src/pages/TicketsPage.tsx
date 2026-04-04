@@ -17,7 +17,7 @@ export function TicketsPage({ user }: TicketsPageProps) {
   // Suggested question state
   const [question, setQuestion] = useState('');
   const [answers, setAnswers] = useState(['', '', '', '']);
-  const [correct, setCorrect] = useState('');
+  const [correctIndex, setCorrectIndex] = useState<number>(0);
   const [funfact, setFunfact] = useState('');
 
   if (!user) {
@@ -33,7 +33,7 @@ export function TicketsPage({ user }: TicketsPageProps) {
     const attachment = ticketType === 'SUGGEST_QUESTION' ? {
       question,
       answers,
-      correct,
+      correct: answers[correctIndex],
       funfact
     } : null;
 
@@ -56,7 +56,7 @@ export function TicketsPage({ user }: TicketsPageProps) {
         setDescription('');
         setQuestion('');
         setAnswers(['', '', '', '']);
-        setCorrect('');
+        setCorrectIndex(0);
         setFunfact('');
       } else {
         setMessage({ type: 'error', text: 'Hiba történt a küldés során. Kérjük próbáld újra később.' });
@@ -141,14 +141,19 @@ export function TicketsPage({ user }: TicketsPageProps) {
             </div>
 
             <div className="form-group">
-              <label htmlFor="correct">Helyes válasz (pontosan egyezzen valamelyik fenti választással)</label>
-              <input
+              <label htmlFor="correct">Helyes válasz sorszáma</label>
+              <select
                 id="correct"
-                type="text"
-                value={correct}
-                onChange={(e) => setCorrect(e.target.value)}
+                value={correctIndex}
+                onChange={(e) => setCorrectIndex(Number(e.target.value))}
                 required
-              />
+              >
+                {answers.map((_, idx) => (
+                  <option key={idx} value={idx}>
+                    {idx + 1}. válasz
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
