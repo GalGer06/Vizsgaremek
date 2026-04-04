@@ -1,14 +1,133 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL, TOKEN_KEY } from '../constants';
+import type { Question } from '../types';
 
 export function DailyTasksPage() {
   const navigate = useNavigate();
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+  const [checkedAnswers, setCheckedAnswers] = useState<Record<number, boolean>>({});
+  const [showPointPopup, setShowPointPopup] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadDailyQuestions = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await fetch(`${API_BASE_URL}/feladatok/daily`);
+        if (!response.ok) {
+          throw new Error('Nem sikerült lekérdezni a napi kérdéseket.');
+        }
+        const data = (await response.json()) as Question[];
+        setQuestions(data);
+      } catch (loadError) {
+        const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadDailyQuestions();
+  }, []);
+
+  const handleSelectAnswer = (questionId: number, answer: string) => {
+    if (checkedAnswers[questionId]) return;
+    setSelectedAnswers((curr) => ({ ...curr, [questionId]: answer }));
+  };
+
+  const handleCheckAnswer = async (questionId: number) => {
+    const question = questions.find((q) => q.id === questionId);
+    if (!selectedAnswers[questionId] || !question) return;
+
+    const isCorrect = selectedAnswers[questionId] === question.correct;
+    setCheckedAnswers((curr) => ({ ...curr, [questionId]: true }));
+
+    if (isCorrect) {
+      try {
+        const savedUser = localStorage.getItem('user');
+        const user = savedUser ? JSON.parse(savedUser) : null;
+        if (user) {
+          const token = localStorage.getItem(TOKEN_KEY);
+          await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token ?? ''}`,
+            },
+            body: JSON.stringify({ points: 30 }),
+          });
+          setShowPointPopup(true);
+          setTimeout(() => setShowPointPopup(false), 2000);
+        }
+      } catch (err) {
+        console.error('Points error:', err);
+      }
+    }
+  };
+
   return (
     <section>
+      {showPointPopup && <div className="points-popup">+30</div>}
       <div className="section-header">
-        <h2>Napi Feladatok</h2>
+        <h2>🌱 Napi Feladatok</h2>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
-      <p className="message info">Itt jelennek majd meg a napi feladataid.</p>
+
+      {loading && <p className="message">Kérdések összeállítása mára...</p>}
+      {error && <p className="message error">{error}</p>}
+
+      {!loading && !error && questions.length === 0 && (
+        <p className="message">Nincsenek elérhető feladatok mára.</p>
+      )}
+
+      <div className="question-list">
+        {questions.map((question, index) => {
+          const previousQuestion = questions[index - 1];
+          const isUnlocked = index === 0 || (previousQuestion ? checkedAnswers[previousQuestion.id] : false);
+
+          if (!isUnlocked) return null;
+
+          return (
+            <article key={question.id} className="question-card">
+              <div className="daily-badge">Napi feladat #{index + 1}</div>
+              <h3>{question.question}</h3>
+              <div className="answers-grid">
+                {(question.answers ?? []).map((answer, i) => {
+                  const label = String.fromCharCode(65 + i);
+                  const selected = selectedAnswers[question.id] === answer;
+                  const checked = checkedAnswers[question.id];
+                  return (
+                    <button
+                      key={i}
+                      className={`answer-option ${selected ? 'selected' : ''} ${checked && answer === question.correct ? 'correct' : ''} ${checked && selected && answer !== question.correct ? 'wrong' : ''}`}
+                      onClick={() => handleSelectAnswer(question.id, answer)}
+                      disabled={checked}
+                    >
+                      <strong>{label}.</strong> {answer}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                className="button primary-green"
+                onClick={() => handleCheckAnswer(question.id)}
+                disabled={!selectedAnswers[question.id] || checkedAnswers[question.id]}
+              >
+                Válasz beküldése
+              </button>
+              {checkedAnswers[question.id] && (
+                <p className={`message ${selectedAnswers[question.id] === question.correct ? 'correct' : 'wrong'}`}>
+                  {selectedAnswers[question.id] === question.correct ? 'Helyes válasz!' : `Sajnos nem. A helyes: ${question.correct}`}
+                </p>
+              )}
+            </article>
+          );
+        })}
+      </div>
     </section>
   );
 }
