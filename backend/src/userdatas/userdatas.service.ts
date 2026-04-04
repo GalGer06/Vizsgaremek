@@ -56,6 +56,30 @@ export class UserdatasService {
     });
   }
 
+  async incrementPoints(userId: number, points: number) {
+    const userData = await this.prisma.userDatas.findFirst({
+      where: { userId },
+    });
+
+    if (!userData) {
+      return this.prisma.userDatas.create({
+        data: {
+          userId,
+          totalPoints: points,
+        },
+      });
+    }
+
+    return this.prisma.userDatas.update({
+      where: { id: userData.id },
+      data: {
+        totalPoints: {
+          increment: points,
+        },
+      },
+    });
+  }
+
   async getAchievementsByUserId(userId: number) {
     let userData = await this.prisma.userDatas.findFirst({
       where: { userId },

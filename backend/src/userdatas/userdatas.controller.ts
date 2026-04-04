@@ -81,4 +81,21 @@ export class UserdatasController {
   remove(@Param('id') id: string) {
     return this.userdatasService.remove(+id);
   }
+
+  @Patch('user/:userId/points')
+  @UseGuards(JwtAuthGuard)
+  incrementPoints(
+    @Param('userId') userId: string,
+    @Body('points') points: number,
+    @Req() req: { user?: { userId?: number } },
+  ) {
+    const targetUserId = +userId;
+    const requesterId = req.user?.userId;
+
+    if (requesterId !== targetUserId) {
+      throw new ForbiddenException('Csak a saját pontjaidat növelheted.');
+    }
+
+    return this.userdatasService.incrementPoints(targetUserId, points);
+  }
 }
