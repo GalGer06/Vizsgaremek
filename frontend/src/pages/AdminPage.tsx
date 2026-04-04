@@ -473,7 +473,7 @@ export function AdminPage({ user }: AdminPageProps) {
           border: 2px solid var(--border-blue);
           border-radius: 8px;
         }
-      `}</style>,oldString:
+      `}</style>
 
       {loading && <p className="message">Admin adatok betöltése...</p>}
       {error && <p className="message error">{error}</p>}
