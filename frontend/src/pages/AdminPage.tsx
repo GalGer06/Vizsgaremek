@@ -3,6 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { AdminUser, AuthUser, Question } from '../types';
 
+type Ticket = {
+  id: number;
+  type: 'BUG' | 'SUGGEST_QUESTION';
+  description: string;
+  status: 'OPEN' | 'CLOSED';
+  createdAt: string;
+  user: {
+    username: string;
+    email: string;
+  };
+  attachment?: any;
+};
+
 type AdminPageProps = {
   user: AuthUser | null;
 };
@@ -11,11 +24,16 @@ export function AdminPage({ user }: AdminPageProps) {
   const navigate = useNavigate();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState<'users' | 'questions' | 'tickets'>('users');
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
+  const [addingQuestionFromTicket, setAddingQuestionFromTicket] = useState<Ticket | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<string>('Környezetvédelem');
   const [usernameSearch, setUsernameSearch] = useState('');
   const [questionSearch, setQuestionSearch] = useState('');
+  const [ticketSearch, setTicketSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [editFormData, setEditFormData] = useState<Partial<Question>>({});
@@ -30,20 +48,26 @@ export function AdminPage({ user }: AdminPageProps) {
       setError('');
 
       try {
-        const [usersResponse, questionsResponse] = await Promise.all([
+        const token = localStorage.getItem(TOKEN_KEY);
+        const [usersResponse, questionsResponse, ticketsResponse] = await Promise.all([
           fetch(`${API_BASE_URL}/user`),
           fetch(`${API_BASE_URL}/feladatok`),
+          fetch(`${API_BASE_URL}/tickets`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
         ]);
 
-        if (!usersResponse.ok || !questionsResponse.ok) {
+        if (!usersResponse.ok || !questionsResponse.ok || !ticketsResponse.ok) {
           throw new Error('Nem sikerült betölteni az admin adatokat.');
         }
 
         const usersData = (await usersResponse.json()) as AdminUser[];
         const questionsData = (await questionsResponse.json()) as Question[];
+        const ticketsData = (await ticketsResponse.json()) as Ticket[];
 
         setUsers(usersData);
         setQuestions(questionsData);
+        setTickets(ticketsData);
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
         setError(message);
@@ -79,6 +103,13 @@ export function AdminPage({ user }: AdminPageProps) {
   const filteredQuestions = questions.filter((q) =>
     q.question.toLowerCase().includes(questionSearch.toLowerCase()) ||
     q.id.toString() === questionSearch.trim()
+  );
+
+  const filteredTickets = tickets.filter((t) =>
+    t.description.toLowerCase().includes(ticketSearch.toLowerCase()) ||
+    t.user.username.toLowerCase().includes(ticketSearch.toLowerCase()) ||
+    t.user.email.toLowerCase().includes(ticketSearch.toLowerCase()) ||
+    t.id.toString() === ticketSearch.trim()
   );
 
   const setAdminAccess = async (targetUserId: number, nextAccess: boolean) => {
@@ -261,12 +292,188 @@ export function AdminPage({ user }: AdminPageProps) {
     setEditFormData({ ...editFormData, answers: newAnswers });
   };
 
+  const updateTicketStatus = async (id: number, status: 'OPEN' | 'CLOSED') => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    try {
+      const response = await fetch(`${API_BASE_URL}/tickets/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) throw new Error('Hiba a státusz frissítésekor');
+      setTickets(prev => prev.map(t => t.id === id ? { ...t, status } : t));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Hiba történt');
+    }
+  };
+
+  const deleteTicket = async (id: number) => {
+    if (!window.confirm('Biztosan törölni szeretnéd ezt a ticketet?')) return;
+    const token = localStorage.getItem(TOKEN_KEY);
+    try {
+      const response = await fetch(`${API_BASE_URL}/tickets/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error('Hiba a törléskor');
+      setTickets(prev => prev.filter(t => t.id !== id));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Hiba történt');
+    }
+  };
+
+  const addSuggestedQuestion = async (ticket: Ticket) => {
+    if (!ticket.attachment) return;
+    const token = localStorage.getItem(TOKEN_KEY);
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/feladatok`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: selectedTopic,
+          question: ticket.attachment.question,
+          answers: ticket.attachment.answers,
+          correct: ticket.attachment.correct,
+          funfact: ticket.attachment.funfact || '',
+          history: '' // Optional, empty by default
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || 'Hiba a kérdés hozzáadásakor');
+      }
+
+      // Close the ticket automatically after successful addition
+      await updateTicketStatus(ticket.id, 'CLOSED');
+      
+      setAddingQuestionFromTicket(null);
+      alert('Kérdés sikeresen hozzáadva a(z) ' + selectedTopic + ' témakörhöz!');
+      
+      // Refresh questions list
+      const qRes = await fetch(`${API_BASE_URL}/feladatok`);
+      if (qRes.ok) setQuestions(await qRes.json());
+      
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Hiba történt');
+    }
+  };
+
   return (
     <section>
       <div className="section-header">
         <h2>Admin dashboard</h2>
+        <div className="admin-tabs">
+          <button 
+            className={`button ${activeTab === 'users' ? 'primary' : 'secondary'}`}
+            onClick={() => setActiveTab('users')}
+          >
+            Felhasználók
+          </button>
+          <button 
+            className={`button ${activeTab === 'questions' ? 'primary' : 'secondary'}`}
+            onClick={() => setActiveTab('questions')}
+          >
+            Kérdések
+          </button>
+          <button 
+            className={`button ${activeTab === 'tickets' ? 'primary' : 'secondary'}`}
+            onClick={() => setActiveTab('tickets')}
+          >
+            Ticketek ({tickets.filter(t => t.status === 'OPEN').length})
+          </button>
+        </div>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
+
+      <style>{`
+        .admin-tabs {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+        .ticket-item {
+          background: var(--surface-main);
+          border: 2px solid var(--border-blue);
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 15px;
+          color: var(--text-main);
+        }
+        .ticket-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 10px;
+          border-bottom: 1px solid var(--border-blue);
+          padding-bottom: 10px;
+          color: var(--text-bright);
+        }
+        .ticket-header small {
+          color: var(--text-muted);
+        }
+        .ticket-badge {
+          padding: 4px 8px;
+          border-radius: 6px;
+          font-size: 0.8rem;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        .badge-bug { background: #ff4444; color: white; }
+        .badge-suggest { background: #00C851; color: white; }
+        .badge-open { border: 1px solid #ffbb33; color: #ffbb33; }
+        .badge-closed { border: 1px solid #00C851; color: #00C851; }
+        .ticket-body p {
+          color: var(--text-main);
+          font-size: 1.05rem;
+          line-height: 1.5;
+        }
+        .ticket-attachment {
+          background: rgba(0,0,0,0.3);
+          padding: 15px;
+          border-radius: 8px;
+          margin-top: 10px;
+          font-size: 0.95rem;
+          color: var(--text-muted);
+          border: 1px solid var(--border-blue);
+        }
+        .ticket-attachment strong {
+          color: var(--text-header);
+        }
+        .ticket-actions {
+          display: flex;
+          gap: 10px;
+          margin-top: 15px;
+        }
+        .topic-selector-modal {
+          background: var(--surface-main);
+          padding: 20px;
+          border-radius: 12px;
+          border: 2px solid var(--duo-green);
+          max-width: 400px;
+          width: 90%;
+        }
+        .topic-selector-modal h4 {
+          margin-top: 0;
+          color: var(--text-bright);
+        }
+        .topic-select {
+          width: 100%;
+          padding: 10px;
+          margin: 15px 0;
+          background: var(--input-bg);
+          color: white;
+          border: 2px solid var(--border-blue);
+          border-radius: 8px;
+        }
+      `}</style>,oldString:
 
       {loading && <p className="message">Admin adatok betöltése...</p>}
       {error && <p className="message error">{error}</p>}
@@ -392,121 +599,257 @@ export function AdminPage({ user }: AdminPageProps) {
         </div>
       )}
 
+      {addingQuestionFromTicket && (
+        <div className="user-details-overlay" onClick={() => setAddingQuestionFromTicket(null)}>
+          <article className="topic-selector-modal" onClick={(e) => e.stopPropagation()}>
+            <header className="modal-header">
+              <h3>Kérdés hozzáadása</h3>
+              <button className="button secondary small" onClick={() => setAddingQuestionFromTicket(null)}>✕</button>
+            </header>
+            <div className="modal-body">
+              <p>Melyik témakörhöz szeretnéd hozzáadni ezt a kérdést?</p>
+              <select 
+                className="topic-select"
+                value={selectedTopic}
+                onChange={(e) => setSelectedTopic(e.target.value)}
+              >
+                <option value="Környezetvédelem">Környezetvédelem</option>
+                <option value="Történelem">Történelem</option>
+                <option value="Biológia">Biológia</option>
+                <option value="Földrajz">Földrajz</option>
+                <option value="Technológia">Technológia</option>
+              </select>
+            </div>
+            <footer className="modal-footer" style={{ display: 'flex', gap: '10px' }}>
+              <button 
+                className="button primary" 
+                onClick={() => addSuggestedQuestion(addingQuestionFromTicket)}
+              >
+                Hozzáadás
+              </button>
+              <button 
+                className="button secondary" 
+                onClick={() => setAddingQuestionFromTicket(null)}
+              >
+                Mégse
+              </button>
+            </footer>
+          </article>
+        </div>
+      )}
+
       {!loading && !error && (
         <>
-          <div className="admin-grid">
-            <article className="admin-card">
-              <h3>Felhasználók</h3>
-              <p>{users.length}</p>
-            </article>
-            <article className="admin-card">
-              <h3>Adminok</h3>
-              <p>{adminCount}</p>
-            </article>
-            <article className="admin-card clickable" onClick={() => document.getElementById('admin-questions-section')?.scrollIntoView({ behavior: 'smooth' })}>
-              <h3>Kérdések</h3>
-              <p>{questions.length}</p>
-              <span className="card-hint">Kattints az ugráshoz ↓</span>
-            </article>
-          </div>
+          {activeTab === 'users' && (
+            <>
+              <div className="admin-grid">
+                <article className="admin-card">
+                  <h3>Felhasználók</h3>
+                  <p>{users.length}</p>
+                </article>
+                <article className="admin-card">
+                  <h3>Adminok</h3>
+                  <p>{adminCount}</p>
+                </article>
+                <article className="admin-card clickable" onClick={() => setActiveTab('questions')}>
+                  <h3>Kérdések</h3>
+                  <p>{questions.length}</p>
+                  <span className="card-hint">Váltás a kérdésekre →</span>
+                </article>
+              </div>
 
-          <div className="admin-users">
-            <h3>Felhasználók</h3>
-            <input
-              className="admin-search"
-              onChange={(event) => setUsernameSearch(event.target.value)}
-              placeholder="Keresés felhasználónév alapján"
-              type="search"
-              value={usernameSearch}
-            />
-            <ul>
-              {filteredUsers.map((listedUser) => (
-                <li key={listedUser.id}>
-                  <span
-                    className="user-name-clickable"
-                    onClick={() => void viewUserDetails(listedUser.id)}
-                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                  >
-                    {listedUser.username}
-                  </span>
-                  <span>{listedUser.email}</span>
-                  <span>{listedUser.username === 'Rikimik' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}</span>
-                  <div className="admin-user-actions">
-                    {listedUser.username !== 'Rikimik' && (
-                      <>
-                        <button
-                          className="button danger small"
-                          disabled={updatingUserId === listedUser.id}
-                          onClick={() => void deleteUser(listedUser.id)}
-                          type="button"
-                        >
-                          {updatingUserId === listedUser.id ? '...' : 'Törlés'}
-                        </button>
-                        {listedUser.access ? (
-                          <button
-                            className="button secondary small"
-                            disabled={!isOriginalAdmin || updatingUserId === listedUser.id}
-                            onClick={() => void setAdminAccess(listedUser.id, false)}
-                            type="button"
+              <div className="admin-users">
+                <h3>Felhasználók kezelése</h3>
+                <input
+                  className="admin-search"
+                  onChange={(event) => setUsernameSearch(event.target.value)}
+                  placeholder="Keresés felhasználónév alapján"
+                  type="search"
+                  value={usernameSearch}
+                />
+                <ul>
+                  {filteredUsers.map((listedUser) => (
+                    <li key={listedUser.id}>
+                      <span
+                        className="user-name-clickable"
+                        onClick={() => void viewUserDetails(listedUser.id)}
+                        style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                      >
+                        {listedUser.username}
+                      </span>
+                      <span>{listedUser.email}</span>
+                      <span>{listedUser.username === 'Rikimik' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}</span>
+                      <div className="admin-user-actions">
+                        {listedUser.username !== 'Rikimik' && (
+                          <>
+                            <button
+                              className="button danger small"
+                              disabled={updatingUserId === listedUser.id}
+                              onClick={() => void deleteUser(listedUser.id)}
+                              type="button"
+                            >
+                              {updatingUserId === listedUser.id ? '...' : 'Törlés'}
+                            </button>
+                            {listedUser.access ? (
+                              <button
+                                className="button secondary small"
+                                disabled={!isOriginalAdmin || updatingUserId === listedUser.id}
+                                onClick={() => void setAdminAccess(listedUser.id, false)}
+                                type="button"
+                              >
+                                {updatingUserId === listedUser.id ? '...' : 'Admin visszavonás'}
+                              </button>
+                            ) : (
+                              <button
+                                className="button secondary small"
+                                disabled={updatingUserId === listedUser.id}
+                                onClick={() => void setAdminAccess(listedUser.id, true)}
+                                type="button"
+                              >
+                                {updatingUserId === listedUser.id ? '...' : 'Adminná tétel'}
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                {!filteredUsers.length && <p className="message">Nincs találat erre a felhasználónévre.</p>}
+              </div>
+            </>
+          )}
+
+          {activeTab === 'questions' && (
+            <div className="admin-questions" id="admin-questions-section">
+              <div className="admin-questions-header">
+                <h3>Kérdések kezelése</h3>
+              </div>
+              
+              <div className="admin-search-wrapper">
+                <input
+                  className="admin-search"
+                  onChange={(event) => setQuestionSearch(event.target.value)}
+                  placeholder="Keresés kérdés szövege vagy #ID alapján"
+                  type="search"
+                  value={questionSearch}
+                />
+              </div>
+
+              <div className="admin-question-list">
+                {filteredQuestions.map(q => (
+                  <div key={q.id} className="admin-question-item">
+                    <div className="admin-q-text" style={{ color: 'white' }}>
+                      <strong>#{q.id}</strong> {q.question}
+                    </div>
+                    <button 
+                      className="button secondary small" 
+                      onClick={() => handleEditQuestion(q)}
+                    >
+                      Szerkesztés
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'tickets' && (
+            <div className="admin-tickets">
+              <h3>Ticketek kezelése</h3>
+              
+              <div className="admin-search-wrapper">
+                <input
+                  className="admin-search"
+                  onChange={(event) => setTicketSearch(event.target.value)}
+                  placeholder="Keresés leírás, felhasználónév vagy #ID alapján"
+                  type="search"
+                  value={ticketSearch}
+                />
+              </div>
+
+              <div className="tickets-list">
+                {filteredTickets.length === 0 ? (
+                  <p className="message">Nincs beérkezett ticket{ticketSearch ? ' a megadott feltételekkel' : ''}.</p>
+                ) : (
+                  filteredTickets.map(ticket => (
+                    <div key={ticket.id} className="ticket-item">
+                      <div className="ticket-header">
+                        <div>
+                          <strong>#{ticket.id}</strong> - {ticket.user.username} ({ticket.user.email})
+                          <br />
+                          <small>{new Date(ticket.createdAt).toLocaleString('hu-HU')}</small>
+                        </div>
+                        <div style={{ display: 'flex', gap: '5px' }}>
+                          <span className={`ticket-badge badge-${ticket.type.toLowerCase().replace('_', '-')}`}>
+                            {ticket.type === 'BUG' ? 'HIBA' : 'KÉRDÉS JAVASLAT'}
+                          </span>
+                          <span className={`ticket-badge badge-${ticket.status.toLowerCase()}`}>
+                            {ticket.status === 'OPEN' ? 'NYITOTT' : 'LEZÁRT'}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="ticket-body">
+                        <p style={{ margin: '10px 0', whiteSpace: 'pre-wrap' }}>{ticket.description}</p>
+                        
+                        {ticket.type === 'SUGGEST_QUESTION' && ticket.attachment && (
+                          <div className="ticket-attachment">
+                            <strong>Javasolt kérdés:</strong> {ticket.attachment.question}
+                            <div style={{ paddingLeft: '10px', marginTop: '5px' }}>
+                              {ticket.attachment.answers.map((ans: string, i: number) => (
+                                <div key={i} style={{ color: ans === ticket.attachment.correct ? 'var(--duo-green)' : 'inherit' }}>
+                                  {String.fromCharCode(65+i)}: {ans} {ans === ticket.attachment.correct ? '(HELYES)' : ''}
+                                </div>
+                              ))}
+                            </div>
+                            {ticket.attachment.funfact && (
+                              <div style={{ marginTop: '5px' }}>
+                                <strong>Érdekesség:</strong> {ticket.attachment.funfact}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="ticket-actions">
+                        {ticket.type === 'SUGGEST_QUESTION' && ticket.attachment && ticket.status === 'OPEN' && (
+                          <button 
+                            className="button accent small" 
+                            style={{ backgroundColor: 'var(--duo-green)', borderBottomColor: 'var(--duo-green-shadow)', color: 'white' }}
+                            onClick={() => setAddingQuestionFromTicket(ticket)}
                           >
-                            {updatingUserId === listedUser.id ? '...' : 'Admin visszavonás'}
-                          </button>
-                        ) : (
-                          <button
-                            className="button secondary small"
-                            disabled={updatingUserId === listedUser.id}
-                            onClick={() => void setAdminAccess(listedUser.id, true)}
-                            type="button"
-                          >
-                            {updatingUserId === listedUser.id ? '...' : 'Adminná tétel'}
+                            Hozzáadás adatbázishoz
                           </button>
                         )}
-                      </>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-            {!filteredUsers.length && <p className="message">Nincs találat erre a felhasználónévre.</p>}
-          </div>
-
-          <div className="admin-questions" id="admin-questions-section">
-            <div className="admin-questions-header">
-              <h3>Kérdések kezelése</h3>
-              <button 
-                className="button secondary small scroll-top-btn" 
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                Vissza fel ↑
-              </button>
+                        {ticket.status === 'OPEN' ? (
+                          <button 
+                            className="button primary small" 
+                            onClick={() => updateTicketStatus(ticket.id, 'CLOSED')}
+                          >
+                            Lezárás
+                          </button>
+                        ) : (
+                          <button 
+                            className="button secondary small" 
+                            onClick={() => updateTicketStatus(ticket.id, 'OPEN')}
+                          >
+                            Újranyitás
+                          </button>
+                        )}
+                        <button 
+                          className="button danger small" 
+                          onClick={() => deleteTicket(ticket.id)}
+                        >
+                          Törlés
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-            
-            <div className="admin-search-wrapper">
-              <input
-                className="admin-search"
-                onChange={(event) => setQuestionSearch(event.target.value)}
-                placeholder="Keresés kérdés szövege vagy #ID alapján"
-                type="search"
-                value={questionSearch}
-              />
-            </div>
-
-            <div className="admin-question-list">
-              {filteredQuestions.map(q => (
-                <div key={q.id} className="admin-question-item">
-                  <div className="admin-q-text" style={{ color: 'white' }}>
-                    <strong>#{q.id}</strong> {q.question}
-                  </div>
-                  <button 
-                    className="button secondary small" 
-                    onClick={() => handleEditQuestion(q)}
-                  >
-                    Szerkesztés
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </>
       )}
     </section>

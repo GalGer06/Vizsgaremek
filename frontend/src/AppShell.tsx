@@ -11,6 +11,7 @@ import { HomePage } from './pages/HomePage';
 import { ProfilePage } from './pages/ProfilePage';
 import { TopicQuestionsPage } from './pages/TopicQuestionsPage';
 import { TopicsPage } from './pages/TopicsPage';
+import { TicketsPage } from './pages/TicketsPage';
 import type { AuthResponse, AuthUser } from './types';
 
 export function AppShell() {
@@ -54,6 +55,7 @@ export function AppShell() {
           <Route path="/achievements" element={user ? <AchievementsPage user={user} /> : <Navigate to="/auth" replace />} />
           <Route path="/daily-tasks" element={<DailyTasksPage />} />
           <Route path="/friends" element={user ? <FriendsPage user={user} /> : <Navigate to="/auth" replace />} />
+          <Route path="/tickets" element={user ? <TicketsPage user={user} /> : <Navigate to="/auth" replace />} />
           <Route path="/auth" element={<AuthPage onAuthSuccess={handleAuthSuccess} />} />
           <Route path="/admin" element={user?.access ? <AdminPage user={user} /> : <Navigate to="/auth" replace />} />
           <Route path="/profile" element={user ? <ProfilePage user={user} onUserUpdate={handleUserUpdate} /> : <Navigate to="/auth" replace />} />

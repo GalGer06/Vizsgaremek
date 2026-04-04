@@ -18,6 +18,7 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [recalculating, setRecalculating] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -111,6 +112,33 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
     }
   };
 
+  const syncPoints = async () => {
+    if (!user) return;
+    const token = localStorage.getItem(TOKEN_KEY);
+    
+    setRecalculating(true);
+    setSuccess('');
+    setError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/recalculate`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Nem sikerült a pontok újraszámolása.');
+
+      const result = await response.json();
+      setSuccess(`Pontszám sikeresen szinkronizálva! Új pontszám: ${result.totalPoints}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Hiba történt.');
+    } finally {
+      setRecalculating(false);
+    }
+  };
+
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
@@ -152,7 +180,20 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
           <button className="button" disabled={saving} type="submit">
             {saving ? 'Mentés...' : 'Változtatások mentése'}
           </button>
-        </form>
+          <div style={{ marginTop: '20px', borderTop: '1px solid var(--border-blue)', paddingTop: '20px' }}>
+            <p className="message" style={{ backgroundColor: 'transparent', padding: 0, marginBottom: '10px' }}>
+              Úgy érzed, nem jó a pontszámod? Kérheted a pontjaid újraszámolását az eddigi helyes válaszaid alapján.
+            </p>
+            <button 
+              type="button" 
+              className="button secondary" 
+              onClick={syncPoints} 
+              disabled={recalculating}
+              style={{ width: '100%', borderColor: 'var(--duo-green)' }}
+            >
+              {recalculating ? 'Szinkronizálás...' : 'Pontok szinkronizálása'}
+            </button>
+          </div>        </form>
       )}
     </section>
   );

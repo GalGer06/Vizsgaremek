@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import type { AuthUser } from '../types';
 
 type AppHeaderProps = {
@@ -9,6 +10,7 @@ type AppHeaderProps = {
 export function AppHeader({ user, onLogout }: AppHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogoClick = () => {
     if (location.pathname.startsWith('/topics/') && location.pathname.split('/').length > 2) {
@@ -22,6 +24,11 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
     e.preventDefault();
     e.stopPropagation();
     navigate('/admin');
+  };
+
+  const handleLogout = () => {
+    onLogout();
+    setShowLogoutModal(false);
   };
 
   return (
@@ -50,6 +57,14 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               Főoldal
             </button>
 
+            <button 
+              type="button" 
+              onClick={() => navigate('/tickets')} 
+              className={`button secondary link-button ${location.pathname === '/tickets' ? 'active' : ''}`}
+            >
+              Ticket
+            </button>
+
             {user.access ? (
               <button 
                 type="button"
@@ -75,7 +90,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
 
             <button 
               type="button" 
-              onClick={onLogout} 
+              onClick={() => setShowLogoutModal(true)} 
               className="button secondary link-button"
             >
               Kijelentkezés
@@ -91,6 +106,24 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           </button>
         )}
       </div>
+
+      {showLogoutModal && (
+        <div className="user-details-overlay" onClick={() => setShowLogoutModal(false)}>
+          <div className="user-details-modal" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Kijelentkezés</h3>
+              <button className="button secondary small" onClick={() => setShowLogoutModal(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p>Biztosan ki szeretnél jelentkezni a fiókodból?</p>
+            </div>
+            <div className="modal-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button className="button secondary" onClick={() => setShowLogoutModal(false)}>Mégse</button>
+              <button className="button danger" style={{ backgroundColor: '#ff4444' }} onClick={handleLogout}>Kijelentkezés</button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
