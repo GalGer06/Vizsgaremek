@@ -42,6 +42,14 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
       <div className="header-actions">
         {user ? (
           <>
+            <button 
+              type="button" 
+              onClick={handleLogoClick} 
+              className="button secondary link-button"
+            >
+              Főoldal
+            </button>
+
             {user.access ? (
               <button 
                 type="button"
