@@ -73,3 +73,13 @@ model UserDatas {
 
   user        User     @relation(fields: [userId], references: [id])
 }
+
+model UserAnswer {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  questionId  Int
+  isCorrect   Boolean
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, questionId])
+}

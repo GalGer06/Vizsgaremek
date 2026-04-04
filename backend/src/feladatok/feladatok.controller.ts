@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ForbiddenException } from '@nestjs/common';
 import { FeladatokService } from './feladatok.service';
 import { CreateFeladatokDto } from './dto/create-feladatok.dto';
 import { UpdateFeladatokDto } from './dto/update-feladatok.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('feladatok')
 export class FeladatokController {
@@ -15,6 +16,31 @@ export class FeladatokController {
   @Get()
   findAll() {
     return this.feladatokService.findAll();
+  }
+
+  @Get('user/:userId')
+  @UseGuards(JwtAuthGuard)
+  findAllForUser(
+    @Param('userId') userId: string,
+    @Req() req: { user?: { userId?: number } }
+  ) {
+    const targetUserId = +userId;
+    if (req.user?.userId !== targetUserId) {
+      throw new ForbiddenException('Csak a saját válaszaidat láthatod.');
+    }
+    return this.feladatokService.findAllForUser(targetUserId);
+  }
+
+  @Post(':id/answer')
+  @UseGuards(JwtAuthGuard)
+  recordAnswer(
+    @Param('id') id: string,
+    @Body('isCorrect') isCorrect: boolean,
+    @Req() req: { user?: { userId?: number } }
+  ) {
+    const userId = req.user?.userId;
+    if (!userId) throw new ForbiddenException();
+    return this.feladatokService.recordAnswer(userId, +id, isCorrect);
   }
 
   @Get('daily')

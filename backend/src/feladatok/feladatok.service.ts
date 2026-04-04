@@ -76,10 +76,26 @@ export class FeladatokService {
     return questions.map((question) => this.mapQuestion(question));
   }
 
+  async findAllForUser(userId: number) {
+    const questions = await this.prisma.feladatok.findMany();
+    const answered = await this.prisma.userAnswer.findMany({
+      where: { userId },
+    });
+
+    const answeredIds = new Set(answered.map((a) => a.questionId));
+
+    return questions
+      .map((q) => this.mapQuestion(q))
+      .map((q) => ({
+        ...q,
+        isAnswered: answeredIds.has(q.id),
+      }));
+  }
+
   async findDaily() {
     const allQuestions = await this.prisma.feladatok.findMany();
     if (allQuestions.length === 0) return [];
-
+    
     // Use current date as seed for daily stability
     const today = new Date();
     const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
@@ -87,17 +103,33 @@ export class FeladatokService {
     // Simple deterministic shuffle based on date string
     let seed = 0;
     for (let i = 0; i < dateString.length; i++) {
-      seed += dateString.charCodeAt(i);
+        seed += dateString.charCodeAt(i);
     }
 
     const shuffled = [...allQuestions].sort((a, b) => {
-      const valA = (a.id * seed) % 101;
-      const valB = (b.id * seed) % 101;
-      return valA - valB;
+        const valA = (a.id * seed) % 101;
+        const valB = (b.id * seed) % 101;
+        return valA - valB;
     });
 
     // Return first 3 questions for the day
     return shuffled.slice(0, 3).map((q) => this.mapQuestion(q));
+  }
+
+  async recordAnswer(userId: number, questionId: number, isCorrect: boolean) {
+    return this.prisma.userAnswer.upsert({
+      where: {
+        userId_questionId: { userId, questionId },
+      },
+      update: {
+        isCorrect,
+      },
+      create: {
+        userId,
+        questionId,
+        isCorrect,
+      },
+    });
   }
 
   async findOne(id: number) {
