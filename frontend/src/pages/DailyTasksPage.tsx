@@ -9,6 +9,7 @@ export function DailyTasksPage() {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [checkedAnswers, setCheckedAnswers] = useState<Record<number, boolean>>({});
   const [showPointPopup, setShowPointPopup] = useState(false);
+  const [popupValue, setPopupValue] = useState(30);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -112,13 +113,27 @@ export function DailyTasksPage() {
         });
 
         if (isCorrect) {
+          const pointsUpdate = { points: 30 };
+          
+          // Check if this is the last question to be completed
+          const newChecked = { ...checkedAnswers, [questionId]: true };
+          const allCompleted = questions.every(q => q.id === questionId || newChecked[q.id]);
+          const previouslyFullyCompleted = questions.every(q => q.isAnswered);
+
+          if (allCompleted && !previouslyFullyCompleted) {
+            pointsUpdate.points = 530; // 30 for the question + 500 bonus
+            setPopupValue(530);
+          } else {
+            setPopupValue(30);
+          }
+
           await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token ?? ''}`,
             },
-            body: JSON.stringify({ points: 30 }),
+            body: JSON.stringify(pointsUpdate),
           });
           setShowPointPopup(true);
           setTimeout(() => setShowPointPopup(false), 2000);
@@ -131,7 +146,7 @@ export function DailyTasksPage() {
 
   return (
     <section>
-      {showPointPopup && <div className="points-popup">+30</div>}
+      {showPointPopup && <div className="points-popup">+{popupValue}</div>}
       <div className="section-header">
         <h2>🌱 Napi Feladatok</h2>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
