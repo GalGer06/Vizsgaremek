@@ -16,6 +16,8 @@ export function AdminPage({ user }: AdminPageProps) {
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
   const [usernameSearch, setUsernameSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [editFormData, setEditFormData] = useState<Partial<Question>>({});
 
   useEffect(() => {
     const loadAdminData = async () => {
@@ -170,6 +172,45 @@ export function AdminPage({ user }: AdminPageProps) {
     }
   };
 
+  const handleEditQuestion = (q: Question) => {
+    setEditingQuestion(q);
+    setEditFormData({ ...q });
+  };
+
+  const handleUpdateQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingQuestion) return;
+
+    const token = localStorage.getItem(TOKEN_KEY);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/feladatok/${editingQuestion.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editFormData),
+      });
+
+      if (!response.ok) throw new Error('Nem sikerült a módosítás.');
+
+      const updated = (await response.json()) as Question;
+      setQuestions((prev) => prev.map((q) => (q.id === updated.id ? updated : q)));
+      setEditingQuestion(null);
+      alert('Kérdés sikeresen frissítve!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Hiba történt.');
+    }
+  };
+
+  const handleAnswerChange = (index: number, value: string) => {
+    const newAnswers = [...(editFormData.answers || [])];
+    newAnswers[index] = value;
+    setEditFormData({ ...editFormData, answers: newAnswers });
+  };
+
   return (
     <section>
       <div className="section-header">
@@ -197,6 +238,73 @@ export function AdminPage({ user }: AdminPageProps) {
             <footer className="modal-footer">
               <button className="button secondary" onClick={() => setSelectedUser(null)}>Bezárás</button>
             </footer>
+          </article>
+        </div>
+      )}
+
+      {editingQuestion && (
+        <div className="user-details-overlay" onClick={() => setEditingQuestion(null)}>
+          <article className="user-details-modal admin-modal-wide" onClick={(e) => e.stopPropagation()}>
+            <header className="modal-header">
+              <h3>Kérdés szerkesztése</h3>
+              <button className="button secondary small" onClick={() => setEditingQuestion(null)}>✕</button>
+            </header>
+            <form onSubmit={handleUpdateQuestion} className="modal-body admin-edit-form">
+              <label>
+                Kérdés:
+                <textarea 
+                  value={editFormData.question} 
+                  onChange={e => setEditFormData({...editFormData, question: e.target.value})}
+                  required
+                />
+              </label>
+              
+              <div className="admin-edit-answers">
+                <p>Válaszlehetőségek:</p>
+                {(editFormData.answers || []).map((ans, idx) => (
+                  <label key={idx}>
+                    {String.fromCharCode(65 + idx)}:
+                    <input 
+                      type="text" 
+                      value={ans} 
+                      onChange={e => handleAnswerChange(idx, e.target.value)} 
+                      required 
+                    />
+                  </label>
+                ))}
+              </div>
+
+              <label>
+                Helyes válasz (a fenti szövegek egyike kell legyen):
+                <input 
+                  type="text" 
+                  value={editFormData.correct} 
+                  onChange={e => setEditFormData({...editFormData, correct: e.target.value})}
+                  required 
+                />
+              </label>
+
+              <label>
+                Érdekesség:
+                <textarea 
+                  value={editFormData.funfact} 
+                  onChange={e => setEditFormData({...editFormData, funfact: e.target.value})}
+                />
+              </label>
+
+              <label>
+                Történelmi háttér:
+                <textarea 
+                  value={editFormData.history} 
+                  onChange={e => setEditFormData({...editFormData, history: e.target.value})}
+                />
+              </label>
+
+              <footer className="modal-footer">
+                <button type="submit" className="button primary-green">Mentés</button>
+                <button type="button" className="button secondary" onClick={() => setEditingQuestion(null)}>Mégse</button>
+              </footer>
+            </form>
           </article>
         </div>
       )}
@@ -276,6 +384,25 @@ export function AdminPage({ user }: AdminPageProps) {
               ))}
             </ul>
             {!filteredUsers.length && <p className="message">Nincs találat erre a felhasználónévre.</p>}
+          </div>
+
+          <div className="admin-questions">
+            <h3>Kérdések kezelése</h3>
+            <div className="admin-question-list">
+              {questions.map(q => (
+                <div key={q.id} className="admin-question-item">
+                  <div className="admin-q-text">
+                    <strong>#{q.id}</strong> {q.question}
+                  </div>
+                  <button 
+                    className="button secondary small" 
+                    onClick={() => handleEditQuestion(q)}
+                  >
+                    Szerkesztés
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       )}

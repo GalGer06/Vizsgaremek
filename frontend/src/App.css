@@ -845,3 +845,65 @@ form div, .auth-form div {
         opacity: 0;
     }
 }
+
+/* Admin modal wide used for question editing */
+.admin-modal-wide {
+    width: 650px !important;
+    max-width: 95% !important;
+}
+
+.admin-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.admin-edit-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-weight: 700;
+}
+
+.admin-edit-form input, .admin-edit-form textarea {
+    background: var(--input-bg);
+    border: 2px solid var(--border-blue);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.admin-edit-answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    border: 1px dashed var(--border-blue);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.admin-questions {
+    margin-top: 40px;
+}
+
+.admin-question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-question-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface-main);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-blue);
+}
+
+.admin-q-text {
+    flex: 1;
+    margin-right: 20px;
+    font-size: 0.95rem;
+}
