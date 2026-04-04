@@ -652,8 +652,13 @@ export async function seedQuestions(prisma: PrismaClient) {
   ];
 
   for (const q of questions) {
+    const normalizedAnswers = typeof q.answers === 'string' ? JSON.parse(q.answers) : q.answers;
+
     await prisma.feladatok.create({
-      data: q,
+      data: {
+        ...q,
+        answers: normalizedAnswers,
+      },
     });
   }
 

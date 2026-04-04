@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsObject } from "class-validator";
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateFeladatokDto {
   @IsString()
@@ -9,9 +9,12 @@ export class CreateFeladatokDto {
   @IsNotEmpty()
   question: string;
 
-  @IsObject()
-  @IsNotEmpty()
-  answers: object;
+  @IsArray()
+  @ArrayMinSize(4)
+  @ArrayMaxSize(4)
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  answers: string[];
 
   @IsString()
   @IsNotEmpty()
