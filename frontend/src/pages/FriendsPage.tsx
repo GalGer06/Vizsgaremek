@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { AuthUser, FriendUser, IncomingFriendRequest, SentFriendRequest } from '../types';
 
@@ -95,10 +95,12 @@ export function FriendsPage({ user }: FriendsPageProps) {
   const friendIds = new Set(friends.map((item) => item.id));
   const sentRequestReceiverIds = new Set(sentRequests.map((item) => item.receiver.id));
 
-  const runSearch = async () => {
-    const trimmed = searchTerm.trim();
+  const runSearch = async (term: string) => {
+    const trimmed = term.trim();
     if (!trimmed) {
       setResults([]);
+      setSearching(false);
+      setError('');
       return;
     }
 
@@ -135,6 +137,15 @@ export function FriendsPage({ user }: FriendsPageProps) {
       setSearching(false);
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void runSearch(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm]);
 
   const addFriend = async (friendId: number) => {
     const token = localStorage.getItem(TOKEN_KEY);
@@ -323,18 +334,9 @@ export function FriendsPage({ user }: FriendsPageProps) {
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  void runSearch();
-                }
-              }}
               placeholder="Keresés felhasználónév alapján"
               type="search"
             />
-            <button className="button" type="button" onClick={() => void runSearch()} disabled={searching}>
-              {searching ? 'Keresés...' : 'Keresés'}
-            </button>
           </div>
 
           <ul className="friends-list">

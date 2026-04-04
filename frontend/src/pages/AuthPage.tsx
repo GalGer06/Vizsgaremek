@@ -10,7 +10,7 @@ type AuthPageProps = {
 
 export function AuthPage({ onAuthSuccess }: AuthPageProps) {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register'>('register');
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -57,25 +57,25 @@ export function AuthPage({ onAuthSuccess }: AuthPageProps) {
   return (
     <section className="auth-wrapper">
       <div className="section-header">
-        <h2>{mode === 'login' ? 'Belépés' : 'Regisztráció'}</h2>
+        <h2>{mode === 'register' ? 'Regisztráció' : 'Belépés'}</h2>
         <button type="button" onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
       <form className="auth-form" onSubmit={submit}>
         <div className="mode-row">
           <button
-            className={`mode-toggle ${mode === 'login' ? 'active' : ''}`}
-            onClick={() => setMode('login')}
-            type="button"
-          >
-            Belépés
-          </button>
-          <button
             className={`mode-toggle ${mode === 'register' ? 'active' : ''}`}
             onClick={() => setMode('register')}
             type="button"
           >
             Regisztráció
+          </button>
+          <button
+            className={`mode-toggle ${mode === 'login' ? 'active' : ''}`}
+            onClick={() => setMode('login')}
+            type="button"
+          >
+            Belépés
           </button>
         </div>
 

@@ -9,7 +9,7 @@ export type Question = {
   id: number;
   title: string;
   question: string;
-  answers: Record<string, string>;
+  answers: string[];
   correct: string;
   funfact: string;
   history: string;

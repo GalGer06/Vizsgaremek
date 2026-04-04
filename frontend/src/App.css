@@ -734,3 +734,114 @@ form div, .auth-form div {
     width: 100%;
     grid-column: 1 / -1;
 }
+
+.question-card {
+    background: var(--surface-main);
+    border: 2px solid var(--border-blue);
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+
+.question-card h3 {
+    margin-top: 0;
+    color: var(--text-bright);
+}
+
+.question-card.locked {
+    opacity: 0.75;
+}
+
+.answers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.answer-option {
+    text-align: left;
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 2px solid var(--border-blue);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border-blue);
+    cursor: pointer;
+}
+
+.answer-option:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.answer-option.selected {
+    border-color: var(--text-header);
+    background: rgba(145, 193, 248, 0.15);
+}
+
+.answer-option.correct {
+    border-color: var(--duo-green);
+    background: rgba(88, 204, 2, 0.2);
+}
+
+.answer-option.wrong {
+    border-color: var(--error-light);
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.check-answer-button {
+    margin-top: 6px;
+}
+
+.answer-result.correct {
+    border-color: var(--duo-green);
+    color: var(--duo-green);
+}
+
+.answer-result.wrong {
+    border-color: var(--error-light);
+    color: var(--error-light);
+}
+/* Points Popup Animation */
+.points-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--duo-green);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 50px;
+    font-size: 3rem;
+    font-weight: 900;
+    box-shadow: 0 10px 0 var(--duo-green-shadow), 0 20px 40px rgba(0,0,0,0.4);
+    z-index: 9999;
+    animation: popup-float 2s ease-out forwards;
+    pointer-events: none;
+    border: 5px solid white;
+}
+
+@keyframes popup-float {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+    15% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    70% {
+        transform: translate(-50%, -80%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -120%) scale(0.8);
+        opacity: 0;
+    }
+}

@@ -50,7 +50,7 @@ export function AppShell() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/topics" element={<TopicsPage />} />
-          <Route path="/topics/:topicSlug" element={<TopicQuestionsPage />} />
+          <Route path="/topics/:topicSlug" element={<TopicQuestionsPage user={user} />} />
           <Route path="/achievements" element={user ? <AchievementsPage user={user} /> : <Navigate to="/auth" replace />} />
           <Route path="/daily-tasks" element={<DailyTasksPage />} />
           <Route path="/friends" element={user ? <FriendsPage user={user} /> : <Navigate to="/auth" replace />} />
