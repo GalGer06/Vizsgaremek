@@ -36,11 +36,12 @@ export class FeladatokController {
   recordAnswer(
     @Param('id') id: string,
     @Body('isCorrect') isCorrect: boolean,
+    @Body('selectedAnswer') selectedAnswer: string,
     @Req() req: { user?: { userId?: number } }
   ) {
     const userId = req.user?.userId;
     if (!userId) throw new ForbiddenException();
-    return this.feladatokService.recordAnswer(userId, +id, isCorrect);
+    return this.feladatokService.recordAnswer(userId, +id, isCorrect, selectedAnswer);
   }
 
   @Get('daily')

@@ -51,11 +51,15 @@ export class FeladatokService {
     }
   }
 
-  private mapQuestion(question: { answers: unknown; correct: string }) {
+  private mapQuestion(question: { id: number; answers: unknown; correct: string; [key: string]: any }) {
     const answers = this.parseAnswers(question.answers);
+    
+    // Shuffle answers so the correct one isn't always in the same spot
+    const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
+
     return {
       ...question,
-      answers,
+      answers: shuffledAnswers,
     };
   }
 
@@ -82,14 +86,18 @@ export class FeladatokService {
       where: { userId },
     });
 
-    const answeredIds = new Set(answered.map((a) => a.questionId));
+    const answeredMap = new Map(answered.map((a) => [a.questionId, a]));
 
     return questions
       .map((q) => this.mapQuestion(q))
-      .map((q) => ({
-        ...q,
-        isAnswered: answeredIds.has(q.id),
-      }));
+      .map((q) => {
+        const userAns = answeredMap.get(q.id);
+        return {
+          ...q,
+          isAnswered: !!userAns,
+          userSelectedAnswer: userAns?.selectedAnswer || null,
+        };
+      });
   }
 
   async findDaily() {
@@ -116,18 +124,20 @@ export class FeladatokService {
     return shuffled.slice(0, 3).map((q) => this.mapQuestion(q));
   }
 
-  async recordAnswer(userId: number, questionId: number, isCorrect: boolean) {
+  async recordAnswer(userId: number, questionId: number, isCorrect: boolean, selectedAnswer: string) {
     return this.prisma.userAnswer.upsert({
       where: {
         userId_questionId: { userId, questionId },
       },
       update: {
         isCorrect,
+        selectedAnswer,
       },
       create: {
         userId,
         questionId,
         isCorrect,
+        selectedAnswer,
       },
     });
   }

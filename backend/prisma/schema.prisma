@@ -79,6 +79,7 @@ model UserAnswer {
   userId      Int
   questionId  Int
   isCorrect   Boolean
+  selectedAnswer String?
   createdAt   DateTime @default(now())
 
   @@unique([userId, questionId])
