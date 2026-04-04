@@ -28,7 +28,11 @@ export class FeladatokController {
     if (req.user?.userId !== targetUserId) {
       throw new ForbiddenException('Csak a saját válaszaidat láthatod.');
     }
-    return this.feladatokService.findAllForUser(targetUserId);
+    
+    // Pass date string as seed suffix for daily question stability if needed
+    const today = new Date();
+    const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    return this.feladatokService.findAllForUser(targetUserId, dateString);
   }
 
   @Post(':id/answer')

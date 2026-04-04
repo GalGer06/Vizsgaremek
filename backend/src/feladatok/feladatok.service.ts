@@ -51,11 +51,19 @@ export class FeladatokService {
     }
   }
 
-  private mapQuestion(question: { id: number; answers: unknown; correct: string; [key: string]: any }) {
+  private mapQuestion(question: { id: number; answers: unknown; correct: string; [key: string]: any }, seedSuffix?: string) {
     const answers = this.parseAnswers(question.answers);
     
-    // Shuffle answers so the correct one isn't always in the same spot
-    const shuffledAnswers = [...answers].sort(() => Math.random() - 0.5);
+    // Use a deterministic seed to keep answer positions stable for the same user/question
+    const seedBase = seedSuffix ? `${seedSuffix}-${question.id}` : `${question.id}`;
+    let seed = 0;
+    for (let i = 0; i < seedBase.length; i++) seed += seedBase.charCodeAt(i);
+
+    const shuffledAnswers = [...answers].sort((a, b) => {
+        const valA = (a.length * seed + a.charCodeAt(0)) % 101;
+        const valB = (b.length * seed + b.charCodeAt(0)) % 101;
+        return valA - valB;
+    });
 
     return {
       ...question,
@@ -80,7 +88,7 @@ export class FeladatokService {
     return questions.map((question) => this.mapQuestion(question));
   }
 
-  async findAllForUser(userId: number) {
+  async findAllForUser(userId: number, seedSuffix?: string) {
     const questions = await this.prisma.feladatok.findMany();
     const answered = await this.prisma.userAnswer.findMany({
       where: { userId },
@@ -89,7 +97,13 @@ export class FeladatokService {
     const answeredMap = new Map(answered.map((a) => [a.questionId, a]));
 
     return questions
-      .map((q) => this.mapQuestion(q))
+      .map((q) => {
+        const userAns = answeredMap.get(q.id);
+        // If answered, don't shuffle (or shuffle with a fixed seed if we want consistency)
+        // Actually, to keep it simple and correct, we'll use a deterministic shuffle
+        // base on question ID so the positions stay the same for the user.
+        return this.mapQuestion(q, seedSuffix);
+      })
       .map((q) => {
         const userAns = answeredMap.get(q.id);
         return {
@@ -104,15 +118,11 @@ export class FeladatokService {
     const allQuestions = await this.prisma.feladatok.findMany();
     if (allQuestions.length === 0) return [];
     
-    // Use current date as seed for daily stability
     const today = new Date();
     const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     
-    // Simple deterministic shuffle based on date string
     let seed = 0;
-    for (let i = 0; i < dateString.length; i++) {
-        seed += dateString.charCodeAt(i);
-    }
+    for (let i = 0; i < dateString.length; i++) seed += dateString.charCodeAt(i);
 
     const shuffled = [...allQuestions].sort((a, b) => {
         const valA = (a.id * seed) % 101;
@@ -120,8 +130,8 @@ export class FeladatokService {
         return valA - valB;
     });
 
-    // Return first 3 questions for the day
-    return shuffled.slice(0, 3).map((q) => this.mapQuestion(q));
+    // Use dateString as suffix to keep answer options stable for the day
+    return shuffled.slice(0, 3).map((q) => this.mapQuestion(q, dateString));
   }
 
   async recordAnswer(userId: number, questionId: number, isCorrect: boolean, selectedAnswer: string) {
