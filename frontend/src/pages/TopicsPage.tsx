@@ -11,15 +11,15 @@ export function TopicsPage() {
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
-      <div className="topics-grid">
+      <div className="home-menu">
         {TOPICS.map((topic) => (
           <button
             key={topic.slug}
-            className="topics-item"
+            className="home-menu-button link-button"
             onClick={() => navigate(`/topics/${topic.slug}`)}
             type="button"
           >
-            <span>{topic.icon}</span>
+            <span style={{ fontSize: '3rem' }}>{topic.icon}</span>
             <span>{topic.title}</span>
           </button>
         ))}

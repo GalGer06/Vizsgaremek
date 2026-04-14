@@ -1463,6 +1463,28 @@ form div, .auth-form div {
     filter: brightness(1.1) !important;
 }
 
+@media screen and (max-width: 600px) {
+    .new-answers-layout {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    
+    .new-answer-option {
+        padding: 12px 15px !important;
+        font-size: 0.95rem !important;
+        border-radius: 12px !important;
+    }
+
+    .btn-new-check {
+        padding: 14px !important;
+        font-size: 1.1rem !important;
+    }
+
+    .question-card {
+        padding: 20px !important;
+    }
+}
+
 .btn-new-check:active:not(:disabled) {
     transform: translateY(4px) !important;
     box-shadow: 0 2px 0 #16a34a, 0 4px 10px rgba(0,0,0,0.3) !important;

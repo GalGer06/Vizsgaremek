@@ -243,8 +243,8 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             <button 
               type="button" 
               onClick={() => setShowLogoutModal(true)} 
-              className="button secondary link-button logout-btn"
-              style={mobileMenuOpen ? { width: '100%', margin: 0, backgroundColor: '#ff4444' } : {}}
+              className="button danger logout-btn"
+              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
             >
               Kijelentkezés
             </button>
