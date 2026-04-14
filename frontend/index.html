@@ -11,6 +11,11 @@
 />
     <script type="text/javascript">
       function googleTranslateElementInit() {
+        if (!window.google?.translate?.TranslateElement) {
+          console.log('Google Translate not loaded yet, waiting...');
+          setTimeout(googleTranslateElementInit, 100);
+          return;
+        }
         new google.translate.TranslateElement({
           pageLanguage: 'hu',
           includedLanguages: 'en,hu',
@@ -18,7 +23,7 @@
         }, 'google_translate_element_hidden');
       }
     </script>
-    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
     <style>
       /* Hide the original Google components and set z-index to 0 */
       #google_translate_element_hidden, 
