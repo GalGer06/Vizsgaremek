@@ -12,7 +12,7 @@ export type Question = {
   answers: string[];
   correct: string;
   funfact: string;
-  history: string;
+  createdAt: string;
 };
 
 export type AuthUser = {

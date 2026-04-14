@@ -625,10 +625,17 @@ form div, .auth-form div {
     }
 
     /* Standard Layouts for mobile pages */
-    .friends-layout, .achievements-grid, .admin-grid, .question-list, .admin-users, .admin-questions, .admin-tickets, .tickets-list, .profile-container {
+    .friends-layout, .achievements-grid, .admin-grid, .admin-users, .admin-questions, .admin-tickets, .tickets-list, .profile-container {
         display: flex;
         flex-direction: column;
         gap: 20px;
+        width: 100%;
+    }
+
+    .question-list {
+        display: flex;
+        flex-direction: column;
+        gap: 60px !important;
         width: 100%;
     }
 
@@ -1112,21 +1119,29 @@ form div, .auth-form div {
     margin-bottom: 20px;
 }
 
+.question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 60px !important;
+    width: 100%;
+}
+
 .question-card {
     background: var(--surface-main);
     border: 2px solid var(--border-blue);
     border-radius: 20px;
     padding: 30px;
-    margin-bottom: 25px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
 .question-card h3 {
     margin-top: 0;
     color: var(--text-bright);
-    font-size: 1.5rem;
+    font-size: 1.1rem !important; /* Match answers */
     margin-bottom: 25px;
     line-height: 1.4;
+    text-transform: uppercase;
+    font-weight: 800;
 }
 
 .question-card.locked {

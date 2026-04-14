@@ -61,7 +61,7 @@ model Feladatok {
   answers     Json
   correct     String
   funfact     String
-  history     String
+  createdAt   DateTime @default(now())
 }
 
 model UserDatas {

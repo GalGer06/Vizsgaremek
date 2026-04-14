@@ -114,28 +114,15 @@ export function DailyTasksPage() {
         });
 
         if (isCorrect) {
-          const pointsUpdate = { points: 30 };
+          setPopupValue(30);
           
-          // Check if this is the 12th correct answer
-          const newChecked = { ...checkedAnswers, [questionId]: true };
-          const newlyCorrectCount = questions.filter(q => (q.id === questionId || newChecked[q.id]) && (q.id === questionId ? isCorrect : selectedAnswers[q.id] === q.correct)).length;
-          const previouslyCorrectCount = questions.filter(q => q.isAnswered && q.userSelectedAnswer === q.correct).length;
-
-          if (newlyCorrectCount >= 12 && previouslyCorrectCount < 12) {
-            pointsUpdate.points = 530; // 30 for the question + 500 bonus
-            setPopupValue(530);
-            setShowBonusModal(true);
-          } else {
-            setPopupValue(30);
-          }
-
           await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token ?? ''}`,
             },
-            body: JSON.stringify(pointsUpdate),
+            body: JSON.stringify({ points: 30 }),
           });
           setShowPointPopup(true);
           setTimeout(() => setShowPointPopup(false), 2000);
@@ -193,7 +180,15 @@ export function DailyTasksPage() {
         <p className="message">Nincsenek elérhető feladatok mára.</p>
       )}
 
-      <div className="question-list">
+      <div 
+        className="question-list" 
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '40px', 
+          paddingBottom: '60px'
+        }}
+      >
         {questions.map((question, index) => {
           const previousQuestion = questions[index - 1];
           const isUnlocked = index === 0 || (previousQuestion ? checkedAnswers[previousQuestion.id] : false);
@@ -201,9 +196,18 @@ export function DailyTasksPage() {
           if (!isUnlocked) return null;
 
           return (
-            <article key={question.id} className="question-card">
+            <article 
+              key={question.id} 
+              className="question-card" 
+              style={{ 
+                marginBottom: '0',
+                border: '1px solid var(--border-blue)',
+                padding: '30px',
+                borderRadius: '20px'
+              }}
+            >
               <div className="daily-badge">Napi feladat #{index + 1}</div>
-              <h3>{question.question}</h3>
+              <h3 style={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 800 }}>{question.question}</h3>
               <div className="new-answers-layout">
                 {(question.answers ?? []).map((answer, i) => {
                   const label = String.fromCharCode(65 + i);

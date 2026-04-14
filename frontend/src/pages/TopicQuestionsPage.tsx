@@ -162,7 +162,7 @@ export function TopicQuestionsPage({ user }: Props) {
         <p className="message">Ehhez a témához még nincs kérdés az adatbázisban.</p>
       )}
 
-      <div className="question-list">
+      <div className="question-list" style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
         {filteredQuestions.map((question, index) => {
           const previousQuestion = filteredQuestions[index - 1];
           const isUnlocked = index === 0 || (previousQuestion ? checkedAnswers[previousQuestion.id] : false);
@@ -172,8 +172,17 @@ export function TopicQuestionsPage({ user }: Props) {
           }
 
           return (
-          <article key={question.id} className="question-card">
-            <h3>{question.question}</h3>
+          <article 
+            key={question.id} 
+            className="question-card" 
+            style={{ 
+              marginBottom: '0',
+              border: '1px solid var(--border-blue)',
+              padding: '30px',
+              borderRadius: '20px'
+            }}
+          >
+            <h3 style={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 800 }}>{question.question}</h3>
             <div className="new-answers-layout">
               {(question.answers ?? []).map((answer, index) => {
                 const optionLabel = String.fromCharCode(65 + index);
@@ -213,10 +222,10 @@ export function TopicQuestionsPage({ user }: Props) {
             )}
 
             {checkedAnswers[question.id] && (
-              <>
+              <div style={{ marginTop: '20px' }}>
                 <p><strong>Érdekesség:</strong> {question.funfact}</p>
-                <p><strong>Történelmi háttér:</strong> {question.history}</p>
-              </>
+                <p><strong>Mikor lett a kérdés hozzáadva:</strong> {new Date(question.createdAt).toLocaleDateString()}</p>
+              </div>
             )}
           </article>
         );})}
