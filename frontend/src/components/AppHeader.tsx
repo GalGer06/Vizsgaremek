@@ -177,7 +177,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           onClick={toggleLanguage}
         >
           <span style={{ filter: isEnglish ? 'none' : 'grayscale(0.3)', color: '#000000' }}>🌐</span>
-          <span style={{ color: '#000000' }}>{isEnglish ? 'HUN' : 'ENG'}</span>
+          <span style={{ color: '#000000' }}>{isEnglish ? 'ENGLISH' : 'MAGYAR'}</span>
           <span style={{ 
             fontSize: '10px', 
             opacity: 0.8,
