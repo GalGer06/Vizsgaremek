@@ -147,23 +147,23 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             borderRadius: '20px',
             border: `2px solid ${isEnglish ? '#2e7d32' : '#ccc'}`,
             backgroundColor: isEnglish ? '#e8f5e9' : '#fff',
-            color: isEnglish ? '#2e7d32' : '#333',
-            transition: 'all 0.2s ease',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-          }}
-          onClick={toggleLanguage}
-        >
-          <span style={{ filter: isEnglish ? 'none' : 'grayscale(0.3)' }}>🌐</span>
-          <span style={{ color: 'inherit' }}>{isEnglish ? 'English' : 'Magyar'}</span>
-          <span style={{ 
-            fontSize: '10px', 
-            opacity: 0.8,
-            marginLeft: '4px',
-            color: 'inherit'
-          }}>
-            {isEnglish ? '(Switch back)' : '(Fordítás)'}
-          </span>
-        </button>
+          color: '#000000',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}
+        onClick={toggleLanguage}
+      >
+        <span style={{ filter: isEnglish ? 'none' : 'grayscale(0.3)', color: '#000000' }}>🌐</span>
+        <span style={{ color: '#000000' }}>{isEnglish ? 'HUN' : 'ENG'}</span>
+        <span style={{ 
+          fontSize: '10px', 
+          opacity: 0.8,
+          marginLeft: '4px',
+          color: '#000000'
+        }}>
+          {isEnglish ? '(Vissza)' : '(Translate)'}
+        </span>
+      </button>
         
         {user ? (
           <>
@@ -181,14 +181,6 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               className={`button secondary link-button ${location.pathname === '/tickets' ? 'active' : ''}`}
             >
               Ticket
-            </button>
-
-            <button 
-              type="button" 
-              onClick={() => navigate('/friends')} 
-              className={`button secondary link-button ${location.pathname === '/friends' ? 'active' : ''}`}
-            >
-              Barátok
             </button>
 
             {user.access ? (

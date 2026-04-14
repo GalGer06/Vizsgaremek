@@ -367,9 +367,9 @@ export function AdminPage({ user }: AdminPageProps) {
   };
 
   return (
-    <section>
+    <section style={{ color: 'white' }}>
       <div className="section-header">
-        <h2>Admin dashboard</h2>
+        <h2 style={{ color: 'white' }}>Admin dashboard</h2>
         <div className="admin-tabs">
           <button 
             className={`button ${activeTab === 'users' ? 'primary' : 'secondary'}`}
@@ -399,12 +399,47 @@ export function AdminPage({ user }: AdminPageProps) {
           gap: 10px;
           margin-bottom: 20px;
         }
-        .ticket-item {
+        .admin-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
+          margin-bottom: 30px;
+        }
+        .admin-card {
           background: var(--surface-main);
           border: 2px solid var(--border-blue);
           border-radius: 12px;
           padding: 20px;
-          margin-bottom: 15px;
+          text-align: center;
+          color: white;
+        }
+        .admin-users ul li,
+        .admin-question-item,
+        .ticket-item {
+          background: var(--surface-main) !important;
+          border: 2px solid var(--border-blue) !important;
+          border-radius: 12px !important;
+          padding: 20px !important;
+          margin-bottom: 15px !important;
+          color: white !important;
+          list-style: none !important;
+        }
+        .admin-users ul {
+          padding: 0;
+          margin: 0;
+        }
+        .admin-users ul li {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 15px;
+        }
+        .admin-question-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .ticket-item {
           color: var(--text-main);
         }
         .ticket-header {
@@ -701,7 +736,8 @@ export function AdminPage({ user }: AdminPageProps) {
                               </button>
                             ) : (
                               <button
-                                className="button secondary small"
+                                className="button small"
+                                style={{ backgroundColor: 'var(--duo-green)', borderBottomColor: 'var(--duo-green-shadow)', color: 'white' }}
                                 disabled={updatingUserId === listedUser.id}
                                 onClick={() => void setAdminAccess(listedUser.id, true)}
                                 type="button"

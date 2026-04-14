@@ -319,9 +319,9 @@ export function FriendsPage({ user }: FriendsPageProps) {
   };
 
   return (
-    <section className="friends-page">
+    <section className="friends-page" style={{ color: 'white' }}>
       <div className="section-header">
-        <h2>Barátok</h2>
+        <h2 style={{ color: 'white' }}>Barátok</h2>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
       </div>
 
@@ -329,22 +329,23 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
       <div className="friends-layout">
         <div className="friends-panel search-panel">
-          <h3>Felhasználó keresése</h3>
+          <h3 style={{ color: 'white' }}>Felhasználó keresése</h3>
           <div className="friends-search-row">
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Keresés felhasználónév alapján"
               type="search"
+              style={{ color: 'white' }}
             />
           </div>
 
-          <ul className="friends-list">
+          <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
             {results.map((result) => (
-              <li key={result.id}>
+              <li key={result.id} style={{ listStyle: 'none' }}>
                 <div>
-                  <strong>{result.username}</strong>
-                  <p>{result.email}</p>
+                  <strong style={{ color: 'white' }}>{result.username}</strong>
+                  <p style={{ color: 'white' }}>{result.email}</p>
                 </div>
                 <button
                   className="button secondary"
@@ -367,21 +368,21 @@ export function FriendsPage({ user }: FriendsPageProps) {
               </li>
             ))}
             {!results.length && searchTerm.trim() && !searching && (
-              <li className="friends-empty">Nincs találat.</li>
+              <li className="friends-empty" style={{ color: 'white' }}>Nincs találat.</li>
             )}
           </ul>
         </div>
 
         <div className="friends-panel">
-          <h3>Beérkező kérelmek</h3>
-          {loadingRequests && <p className="message">Kérelmek betöltése...</p>}
+          <h3 style={{ color: 'white' }}>Beérkező kérelmek</h3>
+          {loadingRequests && <p className="message" style={{ color: 'white' }}>Kérelmek betöltése...</p>}
           {!loadingRequests && (
-            <ul className="friends-list">
+            <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
               {requests.map((request) => (
-                <li key={request.id}>
+                <li key={request.id} style={{ listStyle: 'none' }}>
                   <div>
-                    <strong>{request.requester.username}</strong>
-                    <p>{request.requester.email}</p>
+                    <strong style={{ color: 'white' }}>{request.requester.username}</strong>
+                    <p style={{ color: 'white' }}>{request.requester.email}</p>
                   </div>
                   <div className="friends-actions">
                     <button
@@ -403,21 +404,21 @@ export function FriendsPage({ user }: FriendsPageProps) {
                   </div>
                 </li>
               ))}
-              {!requests.length && <li className="friends-empty">Nincs beérkező barátkérelem.</li>}
+              {!requests.length && <li className="friends-empty" style={{ color: 'white' }}>Nincs beérkező barátkérelem.</li>}
             </ul>
           )}
         </div>
 
         <div className="friends-panel">
-          <h3>Elküldött kérelmek</h3>
-          {loadingSentRequests && <p className="message">Elküldött kérelmek betöltése...</p>}
+          <h3 style={{ color: 'white' }}>Elküldött kérelmek</h3>
+          {loadingSentRequests && <p className="message" style={{ color: 'white' }}>Elküldött kérelmek betöltése...</p>}
           {!loadingSentRequests && (
-            <ul className="friends-list">
+            <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
               {sentRequests.map((request) => (
-                <li key={request.id}>
+                <li key={request.id} style={{ listStyle: 'none' }}>
                   <div>
-                    <strong>{request.receiver.username}</strong>
-                    <p>{request.receiver.email}</p>
+                    <strong style={{ color: 'white' }}>{request.receiver.username}</strong>
+                    <p style={{ color: 'white' }}>{request.receiver.email}</p>
                   </div>
                   <button
                     className="button secondary"
@@ -429,21 +430,21 @@ export function FriendsPage({ user }: FriendsPageProps) {
                   </button>
                 </li>
               ))}
-              {!sentRequests.length && <li className="friends-empty">Nincs elküldött barátkérelem.</li>}
+              {!sentRequests.length && <li className="friends-empty" style={{ color: 'white' }}>Nincs elküldött barátkérelem.</li>}
             </ul>
           )}
         </div>
 
         <div className="friends-panel">
-          <h3>Barátlistám</h3>
-          {loadingFriends && <p className="message">Barátok betöltése...</p>}
+          <h3 style={{ color: 'white' }}>Barátlistám</h3>
+          {loadingFriends && <p className="message" style={{ color: 'white' }}>Barátok betöltése...</p>}
           {!loadingFriends && (
-            <ul className="friends-list">
+            <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
               {friends.map((friend) => (
-                <li key={friend.id}>
+                <li key={friend.id} style={{ listStyle: 'none' }}>
                   <div>
-                    <strong>{friend.username}</strong>
-                    <p>{friend.email}</p>
+                    <strong style={{ color: 'white' }}>{friend.username}</strong>
+                    <p style={{ color: 'white' }}>{friend.email}</p>
                   </div>
                   <button
                     className="button secondary"
@@ -455,7 +456,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
                   </button>
                 </li>
               ))}
-              {!friends.length && <li className="friends-empty">Még nincs felvett barátod.</li>}
+              {!friends.length && <li className="friends-empty" style={{ color: 'white' }}>Még nincs felvett barátod.</li>}
             </ul>
           )}
         </div>
