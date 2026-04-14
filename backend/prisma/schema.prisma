@@ -83,16 +83,53 @@ model useranswer {
 
 model userdatas {
   id               Int     @id @default(autoincrement())
-  userId           Int
+  userId           Int     @unique
   streak           Int     @default(0)
   totalPoints      Int     @default(0)
   level            Int     @default(1)
-  achievements     String? @db.LongText
   adminBonusPoints Int     @default(0)
   dailyBonusPoints Int     @default(0)
   user             user    @relation(fields: [userId], references: [id], map: "UserDatas_userId_fkey")
+  achievements     user_achievement[]
 
   @@index([userId], map: "UserDatas_userId_fkey")
+}
+
+model achievement {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  users       user_achievement[]
+}
+
+model home_button {
+  id        Int      @id @default(autoincrement())
+  label     String
+  link      String
+  image     String
+  order     Int      @default(0)
+}
+
+model topic {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  title     String
+  icon      String
+  image     String?
+}
+
+model user_achievement {
+  id            Int         @id @default(autoincrement())
+  userDataId    Int
+  achievementId Int
+  completed     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+
+  userData      userdatas   @relation(fields: [userDataId], references: [id])
+  achievement   achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userDataId, achievementId])
 }
 
 enum ticket_type {

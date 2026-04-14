@@ -43,7 +43,11 @@ export function AchievementsPage({ user }: AchievementsPageProps) {
         }
 
         const data = (await response.json()) as AchievementsResponse;
-        setAchievements(data.achievements?.length ? data.achievements : ACHIEVEMENT_TEMPLATES);
+        const mergedAchievements = (data.achievements?.length ? data.achievements : ACHIEVEMENT_TEMPLATES).map(a => {
+            const template = ACHIEVEMENT_TEMPLATES.find(t => t.id === a.id);
+            return { ...a, image: template?.image };
+        });
+        setAchievements(mergedAchievements);
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
         setError(message);
@@ -117,6 +121,20 @@ export function AchievementsPage({ user }: AchievementsPageProps) {
         <div className="achievements-grid">
           {achievements.map((achievement) => (
             <article key={achievement.id} className={`achievement-card ${achievement.completed ? 'completed' : ''}`}>
+              {achievement.image && (
+                <div 
+                  className="achievement-image" 
+                  style={{ 
+                    backgroundImage: `url(${achievement.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    height: '140px',
+                    borderRadius: '16px',
+                    marginBottom: '16px',
+                    border: '2px solid rgba(255, 255, 255, 0.1)'
+                  }} 
+                />
+              )}
               <h3>{achievement.title}</h3>
               <p>{achievement.description}</p>
               <div className="achievement-row">

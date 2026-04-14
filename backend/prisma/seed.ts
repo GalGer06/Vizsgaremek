@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import { seedAdmin } from "./seeders/admin.seeder";
 import { seedUsers } from "./seeders/user.seeder";
 import { seedQuestions } from "./seeders/questions.seeder";
+import { seedHomeButtons } from "./seeders/home.seeder";
+import { seedTopics } from "./seeders/topic.seeder";
 
 config();
 
@@ -11,8 +13,11 @@ const prisma = new PrismaClient();
 async function main() {
     console.log(`🌱 Start seeding ...`);
 
-    // Clean up or handle relations might be needed depending on DB state if not reset.
-    // However, the original script didn't delete everything, just upserted/added.
+    // Seed Home Buttons
+    await seedHomeButtons(prisma);
+
+    // Seed Topics
+    await seedTopics(prisma);
 
     // Seed Default Admin
     await seedAdmin(prisma);

@@ -14,6 +14,19 @@ function calculateLevel(totalPoints: number) {
     return Math.min(level, MAX_LEVEL);
 }
 
+const ACHIEVEMENT_TEMPLATES = [
+    { id: 1, title: 'Első lépések', description: 'Lépj be először az alkalmazásba.', completed: true, image: 'https://images.pexels.com/photos/4065876/pexels-photo-4065876.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 2, title: 'Kíváncsi felfedező', description: 'Nyiss meg legalább 1 témát.', completed: true, image: 'https://images.pexels.com/photos/3769138/pexels-photo-3769138.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 3, title: 'Hulladékharcos', description: 'Olvass el 5 újrahasznosításhoz kapcsolódó kérdést.', completed: false, image: 'https://images.pexels.com/photos/761297/pexels-photo-761297.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 4, title: 'Vízőr', description: 'Nyisd meg a Vízvédelem témát 3 alkalommal.', completed: false, image: 'https://images.pexels.com/photos/1001633/pexels-photo-1001633.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 5, title: 'Erdőbarát', description: 'Olvass el 10 erdőkkel kapcsolatos kérdést.', completed: false, image: 'https://images.pexels.com/photos/2400594/pexels-photo-2400594.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 6, title: 'Kitartó tanuló', description: 'Lépj be 7 egymást követő napon.', completed: false, image: 'https://images.pexels.com/photos/4458554/pexels-photo-4458554.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 7, title: 'Napi hős', description: 'Teljesíts 3 napi feladatot.', completed: false, image: 'https://images.pexels.com/photos/1109541/pexels-photo-1109541.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 8, title: 'Közösségi tag', description: 'Adj hozzá legalább 1 barátot.', completed: false, image: 'https://images.pexels.com/photos/461049/pexels-photo-461049.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 9, title: 'Pontgyűjtő', description: 'Gyűjts össze 500 pontot.', completed: false, image: 'https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 10, title: 'Öko mester', description: 'Nyisd meg az összes témát legalább egyszer.', completed: false, image: 'https://images.pexels.com/photos/1173777/pexels-photo-1173777.jpeg?auto=compress&cs=tinysrgb&w=300' },
+];
+
 export async function seedUsers(prisma: PrismaClient, count: number = 15) {
     console.log(`👥 Seeding ${count} fake users...`);
 
@@ -24,8 +37,14 @@ export async function seedUsers(prisma: PrismaClient, count: number = 15) {
         const streak = faker.number.int({ min: 0, max: Math.min(daysRegistered, 300) });
         const totalPoints = faker.number.int({ min: 0, max: 3000 });
         const level = calculateLevel(totalPoints);
+        
+        // Randomly complete some achievements for fake users
+        const achievementsData = ACHIEVEMENT_TEMPLATES.map(a => ({
+            ...a,
+            completed: Math.random() > 0.7 // 30% chance to be completed
+        }));
 
-        await prisma.user.create({
+        const user = await prisma.user.create({
             data: {
                 name: faker.person.fullName(),
                 username: faker.internet.username().toLowerCase() + faker.number.int({ min: 1, max: 9999 }),
@@ -42,6 +61,22 @@ export async function seedUsers(prisma: PrismaClient, count: number = 15) {
                     }
                 },
             },
+            include: {
+                userdatas: true
+            }
         });
+
+        // Seed random achievements for fake users
+        if (user.userdatas[0]) {
+            for (const template of ACHIEVEMENT_TEMPLATES) {
+                await prisma.user_achievement.create({
+                    data: {
+                        userDataId: user.userdatas[0].id,
+                        achievementId: template.id,
+                        completed: Math.random() > 0.7
+                    }
+                });
+            }
+        }
     }
 }

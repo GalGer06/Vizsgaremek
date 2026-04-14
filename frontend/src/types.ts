@@ -3,6 +3,7 @@ export type Topic = {
   title: string;
   icon: string;
   keywords: string[];
+  image?: string;
 };
 
 export type Question = {
@@ -49,6 +50,7 @@ export type Achievement = {
   title: string;
   description: string;
   completed: boolean;
+  image?: string;
 };
 
 export type AchievementsResponse = {
@@ -60,6 +62,14 @@ export type FriendUser = {
   id: number;
   username: string;
   email: string;
+};
+
+export type HomeButton = {
+  id: number;
+  label: string;
+  link: string;
+  image: string;
+  order: number;
 };
 
 export type IncomingFriendRequest = {

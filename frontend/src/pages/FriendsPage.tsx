@@ -26,7 +26,10 @@ export function FriendsPage({ user }: FriendsPageProps) {
   const [error, setError] = useState('');
 
   const loadSocialData = async () => {
-    if (!user) {
+    // Check user first
+    const u = user || JSON.parse(localStorage.getItem('wdad_user') || 'null');
+    if (!u) {
+      console.log('No user found');
       return;
     }
 
@@ -46,17 +49,17 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
     try {
       const [friendsResponse, requestsResponse, sentRequestsResponse] = await Promise.all([
-        fetch(`${API_BASE_URL}/user/${user.id}/friends`, {
+        fetch(`${API_BASE_URL}/user/${u.id}/friends`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }),
-        fetch(`${API_BASE_URL}/user/${user.id}/friend-requests`, {
+        fetch(`${API_BASE_URL}/user/${u.id}/friend-requests`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }),
-        fetch(`${API_BASE_URL}/user/${user.id}/friend-requests/sent`, {
+        fetch(`${API_BASE_URL}/user/${u.id}/friend-requests/sent`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -88,12 +91,8 @@ export function FriendsPage({ user }: FriendsPageProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  const friendIds = new Set(friends.map((item) => item.id));
-  const sentRequestReceiverIds = new Set(sentRequests.map((item) => item.receiver.id));
+  const friendIds = new Set(friends?.map((item) => item.id) || []);
+  const sentRequestReceiverIds = new Set(sentRequests?.map((item) => item?.receiver?.id).filter(id => id !== undefined) || []);
 
   const runSearch = async (term: string) => {
     const trimmed = term.trim();
@@ -149,8 +148,9 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
   const addFriend = async (friendId: number) => {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      setError('Hiányzó token. Jelentkezz be újra.');
+    const u = user || JSON.parse(localStorage.getItem('wdad_user') || 'null');
+    if (!token || !u) {
+      setError('Hiányzó token vagy felhasználó. Jelentkezz be újra.');
       return;
     }
 
@@ -158,7 +158,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
     setError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${user.id}/friends/${friendId}`, {
+      const response = await fetch(`${API_BASE_URL}/user/${u.id}/friends/${friendId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -182,8 +182,9 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
   const removeFriend = async (friendId: number) => {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      setError('Hiányzó token. Jelentkezz be újra.');
+    const u = user || JSON.parse(localStorage.getItem('wdad_user') || 'null');
+    if (!token || !u) {
+      setError('Hiányzó token vagy felhasználó. Jelentkezz be újra.');
       return;
     }
 
@@ -191,7 +192,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
     setError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${user.id}/friends/${friendId}`, {
+      const response = await fetch(`${API_BASE_URL}/user/${u.id}/friends/${friendId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -215,8 +216,9 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
   const acceptRequest = async (requestId: number) => {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      setError('Hiányzó token. Jelentkezz be újra.');
+    const u = user || JSON.parse(localStorage.getItem('wdad_user') || 'null');
+    if (!token || !u) {
+      setError('Hiányzó token vagy felhasználó. Jelentkezz be újra.');
       return;
     }
 
@@ -224,7 +226,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
     setError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${user.id}/friend-requests/accept/${requestId}`, {
+      const response = await fetch(`${API_BASE_URL}/user/${u.id}/friend-requests/accept/${requestId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -254,8 +256,9 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
   const declineRequest = async (requestId: number) => {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      setError('Hiányzó token. Jelentkezz be újra.');
+    const u = user || JSON.parse(localStorage.getItem('wdad_user') || 'null');
+    if (!token || !u) {
+      setError('Hiányzó token vagy felhasználó. Jelentkezz be újra.');
       return;
     }
 
@@ -263,7 +266,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
     setError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${user.id}/friend-requests/${requestId}`, {
+      const response = await fetch(`${API_BASE_URL}/user/${u.id}/friend-requests/${requestId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -287,8 +290,9 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
   const cancelSentRequest = async (receiverId: number) => {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      setError('Hiányzó token. Jelentkezz be újra.');
+    const u = user || JSON.parse(localStorage.getItem('wdad_user') || 'null');
+    if (!token || !u) {
+      setError('Hiányzó token vagy felhasználó. Jelentkezz be újra.');
       return;
     }
 
@@ -296,7 +300,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
     setError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${user.id}/friend-requests/sent/${receiverId}`, {
+      const response = await fetch(`${API_BASE_URL}/user/${u.id}/friend-requests/sent/${receiverId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -319,36 +323,37 @@ export function FriendsPage({ user }: FriendsPageProps) {
   };
 
   return (
-    <section className="friends-page" style={{ color: 'white' }}>
-      <div className="section-header">
-        <h2 style={{ color: 'white' }}>Barátok</h2>
-        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
+    <section className="friends-page" style={{ padding: '0px' }}>
+      <div className="section-header" style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: 'white', margin: 0 }}>Barátok</h2>
+        <button onClick={() => navigate('/')} className="button secondary">Vissza a főoldalra</button>
       </div>
 
-      {error && <p className="message error">{error}</p>}
+      {error && <p className="message error" style={{ background: '#ff4d4d22', padding: '15px', borderRadius: '12px', border: '2px solid #ff4d4d', color: '#ff4d4d', marginBottom: '30px' }}>{error}</p>}
 
       <div className="friends-layout">
         <div className="friends-panel search-panel">
-          <h3 style={{ color: 'white' }}>Felhasználó keresése</h3>
+          <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--text-header)' }}>Felhasználó keresése</h3>
           <div className="friends-search-row">
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Keresés felhasználónév alapján"
+              placeholder="Írj be egy nevet..."
               type="search"
-              style={{ color: 'white' }}
+              style={{ padding: '15px', borderRadius: '12px', border: '2px solid var(--border-blue)', background: 'var(--input-bg)', color: 'white', fontSize: '1rem' }}
             />
           </div>
 
-          <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
+          <ul className="friends-list">
             {results.map((result) => (
-              <li key={result.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <li key={result.id}>
                 <div>
-                  <strong style={{ color: 'white' }}>{result.username}</strong>
-                  <p style={{ color: 'white' }}>{result.email}</p>
+                  <strong>{result.username}</strong>
+                  <p>{result.email}</p>
                 </div>
                 <button
-                  className="button secondary"
+                  className="button"
+                  style={{ fontSize: '0.85rem', padding: '10px 18px' }}
                   type="button"
                   disabled={
                     friendIds.has(result.id) ||
@@ -362,101 +367,105 @@ export function FriendsPage({ user }: FriendsPageProps) {
                     : sentRequestReceiverIds.has(result.id)
                       ? 'Kérés elküldve'
                       : addingId === result.id
-                        ? 'Hozzáadás...'
-                        : 'Hozzáadás'}
+                        ? '...'
+                        : 'Felvétel'}
                 </button>
               </li>
             ))}
             {!results.length && searchTerm.trim() && !searching && (
-              <li className="friends-empty" style={{ color: 'white' }}>Nincs találat.</li>
+              <li className="friends-empty" style={{ opacity: 0.7, fontStyle: 'italic', background: 'transparent', border: 'none' }}>Nincs találat.</li>
             )}
           </ul>
         </div>
 
         <div className="friends-panel">
-          <h3 style={{ color: 'white' }}>Beérkező kérelmek</h3>
-          {loadingRequests && <p className="message" style={{ color: 'white' }}>Kérelmek betöltése...</p>}
+          <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--text-header)' }}>Beérkező kérelmek</h3>
+          {loadingRequests && <p className="message">Kérelmek betöltése...</p>}
           {!loadingRequests && (
-            <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
+            <ul className="friends-list">
               {requests.map((request) => (
-                <li key={request.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <li key={request.id}>
                   <div>
-                    <strong style={{ color: 'white' }}>{request.requester.username}</strong>
-                    <p style={{ color: 'white' }}>{request.requester.email}</p>
+                    <strong>{request.requester.username}</strong>
+                    <p>{request.requester.email}</p>
                   </div>
                   <div className="friends-actions">
                     <button
-                      className="button secondary"
+                      className="button"
+                      style={{ fontSize: '0.85rem', padding: '8px 14px', background: 'var(--duo-green)', borderBottomColor: 'var(--duo-green-shadow)' }}
                       type="button"
                       disabled={acceptingRequestId === request.id || decliningRequestId === request.id}
                       onClick={() => void acceptRequest(request.id)}
                     >
-                      {acceptingRequestId === request.id ? 'Elfogadás...' : 'Elfogadás'}
+                      ✔
                     </button>
                     <button
-                      className="button secondary"
+                      className="button danger"
+                      style={{ fontSize: '0.85rem', padding: '8px 14px' }}
                       type="button"
                       disabled={acceptingRequestId === request.id || decliningRequestId === request.id}
                       onClick={() => void declineRequest(request.id)}
                     >
-                      {decliningRequestId === request.id ? 'Elutasítás...' : 'Elutasítás'}
+                      ✖
                     </button>
                   </div>
                 </li>
               ))}
-              {!requests.length && <li className="friends-empty" style={{ color: 'white' }}>Nincs beérkező barátkérelem.</li>}
+              {!requests.length && <li className="friends-empty" style={{ opacity: 0.7, fontStyle: 'italic', background: 'transparent', border: 'none' }}>Nincs beérkező kérelem.</li>}
             </ul>
           )}
         </div>
 
         <div className="friends-panel">
-          <h3 style={{ color: 'white' }}>Elküldött kérelmek</h3>
-          {loadingSentRequests && <p className="message" style={{ color: 'white' }}>Elküldött kérelmek betöltése...</p>}
-          {!loadingSentRequests && (
-            <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
-              {sentRequests.map((request) => (
-                <li key={request.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <strong style={{ color: 'white' }}>{request.receiver.username}</strong>
-                    <p style={{ color: 'white' }}>{request.receiver.email}</p>
-                  </div>
-                  <button
-                    className="button secondary"
-                    type="button"
-                    disabled={cancelingReceiverId === request.receiver.id}
-                    onClick={() => void cancelSentRequest(request.receiver.id)}
-                  >
-                    {cancelingReceiverId === request.receiver.id ? 'Visszavonás...' : 'Visszavonás'}
-                  </button>
-                </li>
-              ))}
-              {!sentRequests.length && <li className="friends-empty" style={{ color: 'white' }}>Nincs elküldött barátkérelem.</li>}
-            </ul>
-          )}
-        </div>
-
-        <div className="friends-panel">
-          <h3 style={{ color: 'white' }}>Barátlistám</h3>
-          {loadingFriends && <p className="message" style={{ color: 'white' }}>Barátok betöltése...</p>}
+          <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--text-header)' }}>Barátlistám</h3>
+          {loadingFriends && <p className="message">Barátok betöltése...</p>}
           {!loadingFriends && (
-            <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
+            <ul className="friends-list">
               {friends.map((friend) => (
-                <li key={friend.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <li key={friend.id}>
                   <div>
-                    <strong style={{ color: 'white' }}>{friend.username}</strong>
-                    <p style={{ color: 'white' }}>{friend.email}</p>
+                    <strong>{friend.username}</strong>
+                    <p>{friend.level}. szint</p>
                   </div>
                   <button
-                    className="button secondary"
+                    className="button danger"
+                    style={{ fontSize: '0.85rem', padding: '8px 14px' }}
                     type="button"
                     disabled={removingId === friend.id}
                     onClick={() => void removeFriend(friend.id)}
                   >
-                    {removingId === friend.id ? 'Eltávolítás...' : 'Eltávolítás'}
+                    Törlés
                   </button>
                 </li>
               ))}
-              {!friends.length && <li className="friends-empty" style={{ color: 'white' }}>Még nincs felvett barátod.</li>}
+              {!friends.length && <li className="friends-empty" style={{ opacity: 0.7, fontStyle: 'italic', background: 'transparent', border: 'none' }}>Még nincsenek barátaid.</li>}
+            </ul>
+          )}
+        </div>
+
+        <div className="friends-panel">
+          <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--text-header)' }}>Elküldött várólistán</h3>
+          {loadingSentRequests && <p className="message">Betöltés...</p>}
+          {!loadingSentRequests && (
+            <ul className="friends-list">
+              {sentRequests.map((request) => (
+                <li key={request.id}>
+                  <div>
+                    <strong>{request.receiver?.username || 'Ismeretlen felhasználó'}</strong>
+                    <p>Függőben...</p>
+                  </div>
+                  <button
+                    className="button secondary"
+                    style={{ fontSize: '0.85rem', padding: '8px 14px', background: '#666' }}
+                    type="button"
+                    disabled={cancelingReceiverId === request.receiver?.id}
+                    onClick={() => request.receiver?.id && void cancelSentRequest(request.receiver.id)}
+                  >
+                    Mégse
+                  </button>
+                </li>
+              ))}
+              {!sentRequests.length && <li className="friends-empty" style={{ opacity: 0.7, fontStyle: 'italic', background: 'transparent', border: 'none' }}>Nincs elküldött kérelem.</li>}
             </ul>
           )}
         </div>
