@@ -11,8 +11,14 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [isEnglish, setIsEnglish] = useState(false);
+
+  // Close mobile menu on navigation
+  React.useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   React.useEffect(() => {
     const checkGoogleTranslate = () => {
@@ -110,7 +116,15 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
         </div>
       </div>
 
-      <div className="header-actions">
+      <button 
+        className="mobile-menu-toggle" 
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Menü megnyitása"
+      >
+        {mobileMenuOpen ? '✕' : '☰'}
+      </button>
+
+      <div className={`header-actions ${mobileMenuOpen ? 'open' : ''}`}>
         <div id="google_translate_element_hidden" style={{ 
           position: 'absolute', 
           top: '-1000px', 
@@ -118,9 +132,10 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           pointerEvents: 'none' 
         }}></div>
         
+        {/* Language selector - always first */}
         <button 
           type="button" 
-          className="button secondary"
+          className="button secondary language-toggle"
           style={{ 
             marginRight: '15px',
             padding: '6px 16px', 
@@ -132,18 +147,19 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             borderRadius: '20px',
             border: `2px solid ${isEnglish ? '#2e7d32' : '#ccc'}`,
             backgroundColor: isEnglish ? '#e8f5e9' : '#fff',
-            color: '#000000 !important',
-            transition: 'all 0.2s ease'
+            color: isEnglish ? '#2e7d32' : '#333',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
           }}
           onClick={toggleLanguage}
         >
-          <span style={{ color: '#000000' }}>🌐</span>
-          <span style={{ color: '#000000' }}>{isEnglish ? 'English' : 'Magyar'}</span>
+          <span style={{ filter: isEnglish ? 'none' : 'grayscale(0.3)' }}>🌐</span>
+          <span style={{ color: 'inherit' }}>{isEnglish ? 'English' : 'Magyar'}</span>
           <span style={{ 
             fontSize: '10px', 
             opacity: 0.8,
             marginLeft: '4px',
-            color: '#000000'
+            color: 'inherit'
           }}>
             {isEnglish ? '(Switch back)' : '(Fordítás)'}
           </span>
@@ -154,7 +170,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             <button 
               type="button" 
               onClick={handleLogoClick} 
-              className="button secondary link-button"
+              className={`button secondary link-button ${location.pathname === '/' ? 'active' : ''}`}
             >
               Főoldal
             </button>
@@ -165,6 +181,14 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               className={`button secondary link-button ${location.pathname === '/tickets' ? 'active' : ''}`}
             >
               Ticket
+            </button>
+
+            <button 
+              type="button" 
+              onClick={() => navigate('/friends')} 
+              className={`button secondary link-button ${location.pathname === '/friends' ? 'active' : ''}`}
+            >
+              Barátok
             </button>
 
             {user.access ? (
@@ -185,7 +209,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             <button 
               type="button" 
               onClick={() => navigate('/profile')} 
-              className="button secondary link-button"
+              className={`button secondary link-button ${location.pathname === '/profile' ? 'active' : ''}`}
             >
               Profil
             </button>
@@ -193,7 +217,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             <button 
               type="button" 
               onClick={() => setShowLogoutModal(true)} 
-              className="button secondary link-button"
+              className="button secondary link-button logout-btn"
             >
               Kijelentkezés
             </button>

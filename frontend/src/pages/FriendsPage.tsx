@@ -319,7 +319,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
   };
 
   return (
-    <section>
+    <section className="friends-page">
       <div className="section-header">
         <h2>Barátok</h2>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
@@ -328,7 +328,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
       {error && <p className="message error">{error}</p>}
 
       <div className="friends-layout">
-        <div className="friends-panel">
+        <div className="friends-panel search-panel">
           <h3>Felhasználó keresése</h3>
           <div className="friends-search-row">
             <input

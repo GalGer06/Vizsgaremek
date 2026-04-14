@@ -75,6 +75,24 @@ html, body {
     gap: 15px;
 }
 
+.mobile-menu-toggle {
+    display: none;
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    color: var(--text-bright);
+    cursor: pointer;
+    box-shadow: none;
+    border-bottom: none !important;
+    padding: 10px;
+    margin: 0;
+}
+
+.mobile-menu-toggle:hover {
+    background: transparent !important;
+    transform: none !important;
+}
+
 .role-badge {
     background: transparent;
     border: 4px solid var(--duo-green);
@@ -130,9 +148,22 @@ html, body {
 .button:hover, button:hover:not(:disabled) { background-color: var(--wood-hover); transform: translateY(-1px); }
 .button:active, button:active:not(:disabled) { transform: translateY(var(--duo-shadow-depth)); border-bottom-width: 0; }
 
-.button.primary-green, button.primary-green {
-    background-color: var(--duo-green);
-    border-bottom-color: var(--duo-green-shadow);
+.button.danger, 
+button.danger,
+.button.danger.small {
+    background-color: #ff4d4d;
+    border-bottom: 4px solid #cc0000;
+}
+
+.button.danger:hover, 
+button.danger:hover {
+    background-color: #ff6666;
+}
+
+.button.danger:active, 
+button.danger:active {
+    background-color: #e60000;
+    border-bottom-width: 0;
 }
 
 .topics-grid {
@@ -442,37 +473,53 @@ form div, .auth-form div {
 }
 
 .admin-users {
-	border: 1px solid var(--border);
-	border-radius: 12px;
-	padding: 14px;
-	background: #ffffff;
+    border: 2px solid var(--border-blue);
+    border-radius: 24px;
+    padding: 30px;
+    background: var(--surface-main);
+    color: var(--text-main);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15);
 }
 
 .admin-users h3 {
-	margin-bottom: 8px;
-	font-size: 1rem;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    color: var(--text-bright);
 }
 
 .admin-search {
-	width: 100%;
-	margin-bottom: 10px;
+    width: 100%;
+    margin-bottom: 25px;
 }
 
 .admin-users ul {
-	list-style: none;
-	display: grid;
-	gap: 6px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0;
 }
 
 .admin-users li {
-	display: grid;
-	grid-template-columns: 1fr 1.3fr 100px auto;
-	gap: 8px;
-	padding: 8px;
-	border: 1px solid #e6ecf1;
-	border-radius: 8px;
-	font-size: 0.92rem;
-	align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 100px auto;
+    gap: 15px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--border-blue);
+    border-radius: 18px;
+    font-size: 1rem;
+    align-items: center;
+    color: var(--text-main);
+}
+
+.admin-users li span {
+    color: var(--text-main);
+}
+
+.admin-users li:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--duo-green);
 }
 
 .admin-user-actions {
@@ -491,19 +538,163 @@ form div, .auth-form div {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: -30px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 2.2rem;
+    color: var(--text-bright);
 }
 
 .section-header .button.secondary.link-button {
-    align-self: flex-start;
-    margin-top: -20px;
+    margin-top: 0;
+    align-self: center;
 }
 
+.friends-actions {
+    display: flex;
+    gap: 10px;
+}
 
-.section-header {
-    margin-top: 20px !important;
-    margin-bottom: 30px;
+.header-actions .button.secondary.link-button.active {
+    background-color: var(--duo-green);
+    border-color: var(--duo-green-shadow);
+    color: white !important;
+}
+
+@media screen and (max-width: 900px) {
+    .app-header .header-actions:not(.open) {
+        display: none;
+    }
+
+    .app-header {
+        position: fixed;
+        padding: 15px 20px;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-actions {
+        display: none;
+        position: fixed;
+        top: 74px; /* Adjust based on header height */
+        left: 0;
+        right: 0;
+        background-color: var(--surface-main);
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+        border-bottom: 4px solid var(--wood-primary);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        z-index: 999;
+        max-height: calc(100vh - 74px);
+        overflow-y: auto;
+    }
+
+    .header-actions.open {
+        display: flex;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-actions .button, 
+    .header-actions .role-badge {
+        width: 100%;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        padding: 15px;
+        font-size: 1.1rem;
+    }
+
+    /* Target the language toggle specifically in mobile view */
+    .header-actions .language-toggle {
+        margin-right: 0 !important;
+        justify-content: center;
+        background-color: white !important;
+    }
+
+    .header-actions .logout-btn {
+        background-color: #ff4444 !important;
+        border-bottom-color: #cc0000 !important;
+        margin-top: 10px;
+    }
+
+    /* Footer responsiveness */
+    .app-footer {
+        padding: 40px 20px;
+        margin-top: 60px;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+
+    .footer-section h4 {
+        margin-bottom: 15px;
+    }
+
+    .footer-section a:hover {
+        transform: translateY(-2px);
+    }
+
+    .footer-section a::before {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .section-header .button.secondary.link-button {
+        align-self: flex-start;
+        width: 100%;
+    }
+    
+    .friends-list {
+        grid-template-columns: 1fr;
+    }
+
+    .friends-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .friends-list li button, 
+    .friends-list li .friends-actions {
+        width: 100%;
+    }
+
+    .friends-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    
+    .app-header {
+        padding: 15px 20px;
+    }
+    
+    .app-container {
+        padding-top: 120px;
+    }
 }
 
 .auth-mode-toggle {
@@ -685,7 +876,25 @@ form div, .auth-form div {
 
 .friends-search-row input {
     margin-bottom: 0 !important;
+    flex: 1;
 }
+
+.friends-search-row .button {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .friends-search-row {
+        flex-direction: column;
+    }
+    
+    .friends-search-row .button {
+        width: 100%;
+    }
+}
+
+.friends-search-row input {
 
 .friends-list {
     list-style: none;
@@ -697,43 +906,79 @@ form div, .auth-form div {
 }
 
 .friends-list li {
-    background: rgba(255,255,255,0.05);
-    padding: 18px;
+    background: #ffffff !important; /* White background for maximum contrast */
+    padding: 20px;
     border-radius: 18px;
-    border: 2px solid transparent;
+    border: 3px solid var(--border-blue);
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.2s ease;
+    width: 100%;
 }
 
 .friends-list li:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: var(--border-blue);
+    background: #f8faff !important;
+    border-color: var(--duo-green);
+}
+
+.friends-list li div {
+    flex: 1; /* Take up available space */
+    min-width: 0; /* Prevent overflow */
+    color: #1a2a44 !important; /* Ensure child text is visible */
+}
+
+.friends-list li button {
+    flex-shrink: 0;
+    margin-left: 15px;
+    min-width: 140px; /* Ensure button text is readable */
+}
+
+@media screen and (max-width: 600px) {
+    .friends-list li {
+        flex-direction: column;
+        align-items: stretch; /* Button full width */
+        gap: 15px;
+    }
+
+    .friends-list li button {
+        margin-left: 0;
+        width: 100%;
+    }
 }
 
 .friends-list li strong {
     display: block;
-    color: var(--text-bright);
-    font-size: 1.1rem;
+    color: #1a2a44 !important; /* Dark blue for visibility against white */
+    font-size: 1.15rem;
+    font-weight: 800;
     margin-bottom: 4px;
 }
 
 .friends-list li p {
     margin: 0;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    font-size: 0.95rem;
+    color: #4a5568 !important; /* Dark grey for visibility */
+    font-weight: 600;
+}
+
+.friends-list li span {
+    color: #1a2a44 !important; /* Ensure any spans (like 'is currently your friend' text if added) are visible */
 }
 
 .friends-empty {
     text-align: center;
-    color: var(--text-header) !important;
+    color: #ffffff !important; /* Clear white for empty state text */
+    background: rgba(88, 204, 2, 0.1);
+    border: 2px dashed var(--duo-green);
+    border-radius: 18px;
     padding: 30px;
-    font-style: italic;
-    font-weight: 700;
-    font-size: 1.1rem;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 1.2rem;
     width: 100%;
     grid-column: 1 / -1;
+    margin-bottom: 20px;
 }
 
 .question-card {
@@ -946,4 +1191,5 @@ form div, .auth-form div {
 
 .admin-search-wrapper {
     margin-bottom: 20px;
+}
 }

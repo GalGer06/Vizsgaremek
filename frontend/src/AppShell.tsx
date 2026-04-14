@@ -71,13 +71,22 @@ export function AppShell() {
           </div>
           <div className="footer-section">
             <h4>Kapcsolat</h4>
-            <p>Email: info@vizsgaremek.hu</p>
+            <p>Email: rikimik@vizsgaremek.local</p>
             <p>Tel: +36 1 234 5678</p>
           </div>
           <div className="footer-section">
             <h4>Linkek</h4>
             <p><a href="/">Főoldal</a></p>
             <p><a href="/topics">Témakörök</a></p>
+            <p><a href="/daily-tasks">Napi feladatok</a></p>
+            <p><a href="/gyik">Gyakran ismételt kérdések</a></p>
+            <p><a href="/about">Rólunk</a></p>
+          </div>
+          <div className="footer-section">
+            <h4>Közösségi média</h4>
+            <p><a href="https://facebook.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Facebook</a></p>
+            <p><a href="https://twitter.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Twitter</a></p>
+            <p><a href="https://instagram.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Instagram</a></p>
           </div>
         </div>
         <div className="footer-bottom">
