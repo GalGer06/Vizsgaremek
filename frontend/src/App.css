@@ -1530,3 +1530,41 @@ html, body {
 .app-container {
     background: transparent !important;
 }
+
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--duo-green);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 2.5rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--duo-green-shadow), 0 8px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: transform 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding-bottom: 20px;
+}
+
+.back-to-top:hover {
+    background-color: var(--duo-green-hover);
+    transform: translateY(-2px);
+}
+
+.back-to-top:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--duo-green-shadow);
+}
+
+.back-to-top:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--duo-green-shadow);
+}

@@ -259,13 +259,13 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           <div className="user-details-modal" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Kijelentkezés</h3>
-              <button className="button secondary small" onClick={() => setShowLogoutModal(false)}>✕</button>
+              <button className="button small" style={{ backgroundColor: '#2c4a6b', borderBottomColor: '#1a2a44', padding: '6px 12px' }} onClick={() => setShowLogoutModal(false)}>✕</button>
             </div>
             <div className="modal-body">
               <p>Biztosan ki szeretnél jelentkezni a fiókodból?</p>
             </div>
             <div className="modal-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button className="button secondary" onClick={() => setShowLogoutModal(false)}>Mégse</button>
+              <button className="button" style={{ backgroundColor: '#58cc02', borderBottomColor: '#3e8e02' }} onClick={() => setShowLogoutModal(false)}>Mégse</button>
               <button className="button danger" style={{ backgroundColor: '#ff4444' }} onClick={handleLogout}>Kijelentkezés</button>
             </div>
           </div>

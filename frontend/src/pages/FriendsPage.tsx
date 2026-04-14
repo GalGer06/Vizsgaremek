@@ -342,7 +342,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
           <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
             {results.map((result) => (
-              <li key={result.id} style={{ listStyle: 'none' }}>
+              <li key={result.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <strong style={{ color: 'white' }}>{result.username}</strong>
                   <p style={{ color: 'white' }}>{result.email}</p>
@@ -379,7 +379,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
           {!loadingRequests && (
             <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
               {requests.map((request) => (
-                <li key={request.id} style={{ listStyle: 'none' }}>
+                <li key={request.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <strong style={{ color: 'white' }}>{request.requester.username}</strong>
                     <p style={{ color: 'white' }}>{request.requester.email}</p>
@@ -415,7 +415,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
           {!loadingSentRequests && (
             <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
               {sentRequests.map((request) => (
-                <li key={request.id} style={{ listStyle: 'none' }}>
+                <li key={request.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <strong style={{ color: 'white' }}>{request.receiver.username}</strong>
                     <p style={{ color: 'white' }}>{request.receiver.email}</p>
@@ -441,7 +441,7 @@ export function FriendsPage({ user }: FriendsPageProps) {
           {!loadingFriends && (
             <ul className="friends-list" style={{ listStyle: 'none', padding: 0 }}>
               {friends.map((friend) => (
-                <li key={friend.id} style={{ listStyle: 'none' }}>
+                <li key={friend.id} style={{ listStyle: 'none', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <strong style={{ color: 'white' }}>{friend.username}</strong>
                     <p style={{ color: 'white' }}>{friend.email}</p>
