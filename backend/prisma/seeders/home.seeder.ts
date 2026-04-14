@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+﻿import { PrismaClient } from "@prisma/client";
 
 export async function seedHomeButtons(prisma: PrismaClient) {
     console.log("🔘 Seeding home menu buttons...");

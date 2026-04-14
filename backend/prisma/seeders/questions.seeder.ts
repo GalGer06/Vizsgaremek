@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+﻿import { PrismaClient } from '@prisma/client';
 
 export async function seedQuestions(prisma: PrismaClient) {
   // Clear existing questions before seeding to ensure fresh start

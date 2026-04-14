@@ -1,3 +1,4 @@
+﻿import { getBase64Image } from './image.utils';
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 
@@ -17,12 +18,13 @@ const ACHIEVEMENT_TEMPLATES = [
     { id: 6, title: 'Kitartó tanuló', description: 'Lépj be 7 egymást követő napon.', completed: false, image: 'https://images.pexels.com/photos/4458554/pexels-photo-4458554.jpeg?auto=compress&cs=tinysrgb&w=300' },
     { id: 7, title: 'Napi hős', description: 'Teljesíts 3 napi feladatot.', completed: false, image: 'https://images.pexels.com/photos/1109541/pexels-photo-1109541.jpeg?auto=compress&cs=tinysrgb&w=300' },
     { id: 8, title: 'Közösségi tag', description: 'Adj hozzá legalább 1 barátot.', completed: false, image: 'https://images.pexels.com/photos/461049/pexels-photo-461049.jpeg?auto=compress&cs=tinysrgb&w=300' },
-    { id: 9, title: 'Pontgyűjtő', description: 'Gyűjts össze 500 pontot.', completed: false, image: 'https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=300' },
     { id: 10, title: 'Öko mester', description: 'Nyisd meg az összes témát legalább egyszer.', completed: false, image: 'https://images.pexels.com/photos/1173777/pexels-photo-1173777.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 11, title: 'Titkos felfedező', description: 'Találd meg a titkos oldalt!', completed: false, image: 'https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=400' },
+    { id: 9, title: 'Pontgyűjtő', description: 'Gyűjts össze 500 pontot.', completed: false, image: 'https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=300' },
 ];
 
 export async function seedAdmin(prisma: PrismaClient) {
-    console.log("👤 Seeding admin user...");
+    console.log("đź‘¤ Seeding admin user...");
     const hashedAdminPassword = await hash(DEFAULT_ADMIN.password, 10);
 
     const admin = await prisma.user.upsert({
@@ -32,14 +34,14 @@ export async function seedAdmin(prisma: PrismaClient) {
             email: DEFAULT_ADMIN.email,
             password: hashedAdminPassword,
             access: true,
-        },
+            profilePicture: getBase64Image('rikimik_profile.jpg'),},
         create: {
             name: DEFAULT_ADMIN.name,
             username: DEFAULT_ADMIN.username,
             email: DEFAULT_ADMIN.email,
             password: hashedAdminPassword,
             access: true,
-        },
+            profilePicture: getBase64Image('rikimik_profile.jpg'),},
     });
 
     // Create achievements master data if they don't exist
@@ -69,9 +71,9 @@ export async function seedAdmin(prisma: PrismaClient) {
         userDatas = await prisma.userdatas.create({
             data: {
                 userId: admin.id,
-                totalPoints: 1000,
-                level: 50,
-                streak: 5
+                totalPoints: 0,
+                level: 1,
+                streak: 0
             }
         });
     }

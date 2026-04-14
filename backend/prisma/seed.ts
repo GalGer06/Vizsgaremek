@@ -1,4 +1,4 @@
-import { config } from "dotenv";
+﻿import { config } from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import { seedAdmin } from "./seeders/admin.seeder";
 import { seedUsers } from "./seeders/user.seeder";
@@ -11,7 +11,8 @@ config();
 const prisma = new PrismaClient();
 
 async function main() {
-    console.log(`🌱 Start seeding ...`);
+    ;
+    console.log(`đźŚ± Start seeding ...`);
 
     // Seed Home Buttons
     await seedHomeButtons(prisma);
@@ -20,7 +21,7 @@ async function main() {
     await seedTopics(prisma);
 
     // Seed Default Admin
-    await seedAdmin(prisma);
+     await seedAdmin(prisma);
 
     // Seed Random Users
     const randomUserCount = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
@@ -29,7 +30,7 @@ async function main() {
     // Seed Questions
     await seedQuestions(prisma);
 
-    console.log(`🌱 Seeding finished.`);
+    console.log(`đźŚ± Seeding finished.`);
 }
 
 main()
