@@ -148,7 +148,7 @@ export function DailyTasksPage() {
 
   return (
     <section>
-      {showPointPopup && <div className="points-popup">+{popupValue}</div>}
+      {showPointPopup && <div className="new-points-popup">+{popupValue}</div>}
       
       {showBonusModal && (
         <div className="user-details-overlay" onClick={() => setShowBonusModal(false)}>
@@ -204,7 +204,7 @@ export function DailyTasksPage() {
             <article key={question.id} className="question-card">
               <div className="daily-badge">Napi feladat #{index + 1}</div>
               <h3>{question.question}</h3>
-              <div className="answers-grid">
+              <div className="new-answers-layout">
                 {(question.answers ?? []).map((answer, i) => {
                   const label = String.fromCharCode(65 + i);
                   const selected = selectedAnswers[question.id] === answer;
@@ -212,7 +212,7 @@ export function DailyTasksPage() {
                   return (
                     <button
                       key={i}
-                      className={`answer-option ${selected ? 'selected' : ''} ${checked && answer === question.correct ? 'correct' : ''} ${checked && selected && answer !== question.correct ? 'wrong' : ''}`}
+                      className={`new-answer-option ${selected ? 'selected' : ''} ${checked && answer === question.correct ? 'correct' : ''} ${checked && selected && answer !== question.correct ? 'wrong' : ''}`}
                       onClick={() => handleSelectAnswer(question.id, answer)}
                       disabled={checked}
                     >
@@ -222,7 +222,7 @@ export function DailyTasksPage() {
                 })}
               </div>
               <button
-                className="button primary-green"
+                className="button btn-new-check"
                 onClick={() => handleCheckAnswer(question.id)}
                 disabled={!selectedAnswers[question.id] || checkedAnswers[question.id]}
               >

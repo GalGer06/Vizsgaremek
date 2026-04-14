@@ -146,7 +146,7 @@ export function TopicQuestionsPage({ user }: Props) {
   return (
     <section>
       {showPointPopup && (
-        <div className="points-popup">
+        <div className="new-points-popup">
           +30
         </div>
       )}
@@ -174,7 +174,7 @@ export function TopicQuestionsPage({ user }: Props) {
           return (
           <article key={question.id} className="question-card">
             <h3>{question.question}</h3>
-            <div className="answers-grid">
+            <div className="new-answers-layout">
               {(question.answers ?? []).map((answer, index) => {
                 const optionLabel = String.fromCharCode(65 + index);
                 const selected = selectedAnswers[question.id] === answer;
@@ -185,7 +185,7 @@ export function TopicQuestionsPage({ user }: Props) {
                 return (
                   <button
                     key={`${question.id}-${optionLabel}`}
-                    className={`answer-option ${selected ? 'selected' : ''} ${isCorrect ? 'correct' : ''} ${isWrongSelected ? 'wrong' : ''}`}
+                    className={`new-answer-option ${selected ? 'selected' : ''} ${isCorrect ? 'correct' : ''} ${isWrongSelected ? 'wrong' : ''}`}
                     type="button"
                     onClick={() => handleSelectAnswer(question.id, answer)}
                   >
@@ -197,7 +197,7 @@ export function TopicQuestionsPage({ user }: Props) {
 
             <button
               type="button"
-              className="button primary-green check-answer-button"
+              className="button btn-new-check check-answer-button"
               disabled={!selectedAnswers[question.id] || checkedAnswers[question.id]}
               onClick={() => handleCheckAnswer(question.id)}
             >
