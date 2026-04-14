@@ -12,6 +12,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { TopicQuestionsPage } from './pages/TopicQuestionsPage';
 import { TopicsPage } from './pages/TopicsPage';
 import { TicketsPage } from './pages/TicketsPage';
+import { SecretPage } from './pages/SecretPage';
 import type { AuthResponse, AuthUser } from './types';
 
 export function AppShell() {
@@ -73,6 +74,7 @@ export function AppShell() {
           <Route path="/auth" element={<AuthPage onAuthSuccess={handleAuthSuccess} />} />
           <Route path="/admin" element={user?.access ? <AdminPage user={user} /> : <Navigate to="/auth" replace />} />
           <Route path="/profile" element={user ? <ProfilePage user={user} onUserUpdate={handleUserUpdate} /> : <Navigate to="/auth" replace />} />
+          <Route path="/secret" element={user ? <SecretPage user={user} /> : <Navigate to="/auth" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
@@ -90,7 +92,7 @@ export function AppShell() {
       <footer className="app-footer">
         <div className="footer-content">
           <div className="footer-section">
-            <h4>Környezetvédelem</h4>
+            <h4 onClick={() => navigate('/secret')} style={{ cursor: 'pointer' }}>Környezetvédelem</h4>
             <p>Tanulj játékosan a Föld védelméről.</p>
           </div>
           <div className="footer-section">

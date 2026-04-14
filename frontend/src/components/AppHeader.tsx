@@ -110,11 +110,18 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
         onKeyDown={(e) => e.key === 'Enter' && handleLogoClick()}
       >
         <div className="header-main">
-          <h1 style={{ 
-            fontSize: isEnglish ? '18px' : '22px', 
-            transition: 'font-size 0.3s ease',
-            margin: 0
-          }}>Környezetvédelem</h1>
+          <h1 
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/secret');
+            }}
+            style={{ 
+              fontSize: isEnglish ? '18px' : '22px', 
+              transition: 'font-size 0.3s ease',
+              margin: 0,
+              cursor: 'pointer'
+            }}
+          >Környezetvédelem</h1>
           {!isEnglish && (
             <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Tanulj játékosan a Föld védelméről</p>
           )}

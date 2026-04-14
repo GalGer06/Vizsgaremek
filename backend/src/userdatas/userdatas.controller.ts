@@ -72,6 +72,23 @@ export class UserdatasController {
     );
   }
 
+  @Post('user/:userId/achievements/:id/complete')
+  @UseGuards(JwtAuthGuard)
+  markAchievementCompleted(
+    @Param('userId') userId: string,
+    @Param('id') achievementId: string,
+    @Req() req: { user?: { userId?: number } },
+  ) {
+    const targetUserId = +userId;
+    const requesterId = req.user?.userId;
+
+    if (requesterId !== targetUserId) {
+      throw new ForbiddenException('You can only mark your own achievements');
+    }
+
+    return this.userdatasService.markAchievementCompleted(targetUserId, +achievementId);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateUserdataDto: UpdateUserdataDto, @Req() req: { user?: { access?: boolean } }) {

@@ -14,6 +14,7 @@ const DEFAULT_ACHIEVEMENTS = [
   { id: 8, title: 'Közösségi tag', description: 'Adj hozzá legalább 1 barátot.', completed: false },
   { id: 9, title: 'Pontgyűjtő', description: 'Gyűjts össze 500 pontot.', completed: false },
   { id: 10, title: 'Öko mester', description: 'Nyisd meg az összes témát legalább egyszer.', completed: false },
+  { id: 11, title: 'Titkos felfedező', description: 'Megtaláltad a titkos oldalt, gratulálunk!', completed: false },
 ];
 
 type AchievementTemplate = {
@@ -172,15 +173,14 @@ export class UserdatasService {
     const existing = await this.prisma.userDatas.findFirst({
       where: { userId },
       orderBy: { id: 'asc' },
-      select: { id: true },
+      select: { id: true, achievements: true },
     });
 
     const overrides = this.extractAdminOverrides(achievements);
-    const overridesArray = Array.from(overrides.entries()).map(([id, completed]) => ({
+    const achievementsValue = Array.from(overrides.entries()).map(([id, completed]) => ({
       id,
       completed,
     }));
-    const achievementsValue = overridesArray;
 
     if (!existing) {
       const created = await this.prisma.userDatas.create({
@@ -207,6 +207,39 @@ export class UserdatasService {
       userId,
       achievements: updated.achievements ?? [],
     };
+  }
+
+  async markAchievementCompleted(userId: number, achievementId: number) {
+    const userData = await this.prisma.userDatas.findFirst({
+      where: { userId },
+    });
+
+    if (!userData) {
+      return this.prisma.userDatas.create({
+        data: {
+          userId,
+          achievements: [{ id: achievementId, completed: true }],
+        },
+      });
+    }
+
+    const overrides = this.extractAdminOverrides(userData.achievements);
+    if (overrides.get(achievementId)) {
+      return userData; // Already completed
+    }
+
+    overrides.set(achievementId, true);
+    const achievementsValue = Array.from(overrides.entries()).map(([id, completed]) => ({
+      id,
+      completed,
+    }));
+
+    return this.prisma.userDatas.update({
+      where: { id: userData.id },
+      data: {
+        achievements: achievementsValue,
+      },
+    });
   }
 
   private buildAutomaticAchievements(
