@@ -573,10 +573,25 @@ export function AdminPage({ user }: AdminPageProps) {
             padding: 15px;
             max-height: 90vh;
             overflow-y: auto;
+            width: 95%;
+            margin: 20px auto;
           }
           .admin-edit-answers {
             grid-template-columns: 1fr;
           }
+        }
+        .admin-modal-wide {
+          max-width: 800px;
+          max-height: 95vh;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
+        .admin-edit-form {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          overflow-y: auto;
         }
         .topic-selector-modal {
           background: var(--surface-main);
@@ -708,15 +723,7 @@ export function AdminPage({ user }: AdminPageProps) {
                 />
               </label>
 
-              <label>
-                Történelmi háttér:
-                <textarea 
-                  value={editFormData.history} 
-                  onChange={e => setEditFormData({...editFormData, history: e.target.value})}
-                />
-              </label>
-
-              <footer className="modal-footer">
+              <footer className="modal-footer" style={{ display: 'flex', gap: '10px' }}>
                 <button type="submit" className="button primary-green">Mentés</button>
                 <button type="button" className="button secondary" onClick={() => setEditingQuestion(null)}>Mégse</button>
               </footer>

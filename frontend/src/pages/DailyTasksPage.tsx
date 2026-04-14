@@ -114,14 +114,6 @@ export function DailyTasksPage() {
         // 2. Award individual points if correct
         if (isCorrect) {
           setPopupValue(30);
-          await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ points: 30 }),
-          });
           setShowPointPopup(true);
           setTimeout(() => setShowPointPopup(false), 2000);
         }
@@ -146,7 +138,7 @@ export function DailyTasksPage() {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({ points: 500 }),
+              body: JSON.stringify({ points: 500, isDailyBonus: true }),
             });
             setShowBonusModal(true);
           }

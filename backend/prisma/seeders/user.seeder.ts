@@ -34,7 +34,7 @@ export async function seedUsers(prisma: PrismaClient, count: number = 15) {
                 access: false,
                 createdAt,
 
-                userDatas: {
+                userdatas: {
                     create: {
                         streak,
                         totalPoints,

@@ -29,56 +29,69 @@ export class UserdatasService {
   constructor (private prisma: PrismaService) {}
 
   async create(createUserdataDto: CreateUserdataDto) {
-    return this.prisma.userDatas.create({
+    return this.prisma.userdatas.create({
       data: createUserdataDto,
     });
   }
 
   async findAll() {
-    return this.prisma.userDatas.findMany();
+    return this.prisma.userdatas.findMany();
   }
 
   async findOne(id: number) {
-    return this.prisma.userDatas.findUnique({
+    return this.prisma.userdatas.findUnique({
       where:{id}
     });
   }
 
   async update(id: number, updateUserdataDto: UpdateUserdataDto) {
-    return this.prisma.userDatas.update({
+    return this.prisma.userdatas.update({
       where: { id },
       data: updateUserdataDto,
     });
   }
 
   async remove(id: number) {
-    return this.prisma.userDatas.delete({
+    return this.prisma.userdatas.delete({
       where: { id },
     });
   }
 
   async recalculatePoints(userId: number) {
-    // 1. Get all correct answers from UserAnswer table
-    const correctAnswersCount = await this.prisma.userAnswer.count({
+    // 1. Get all correct answers from useranswer table
+    const correctAnswersCount = await this.prisma.useranswer.count({
       where: {
         userId,
         isCorrect: true,
       },
     });
 
-    // 2. Calculate points: 30 points per correct answer
-    // Note: This matches the frontend logic in TopicQuestionsPage.tsx
-    // 3. Update the UserDatas record
-    const userData = await this.prisma.userDatas.findFirst({
+    const userData = await this.prisma.userdatas.findFirst({
       where: { userId },
     });
 
     const adminBonusPoints = userData?.adminBonusPoints || 0;
-    const calculatedPoints = (correctAnswersCount * 30) + adminBonusPoints;
+    const dailyBonusPoints = userData?.dailyBonusPoints || 0;
+
+    let achievementsCount = 0;
+    if (userData?.achievements) {
+      try {
+        const parsed = typeof userData.achievements === 'string' 
+          ? JSON.parse(userData.achievements) 
+          : userData.achievements;
+        if (Array.isArray(parsed)) {
+          achievementsCount = parsed.length;
+        }
+      } catch (e) {
+        console.error('Failed to parse achievements:', e);
+      }
+    }
+    
+    const calculatedPoints = (correctAnswersCount * 30) + (achievementsCount * 50) + adminBonusPoints + dailyBonusPoints;
     const calculatedLevel = Math.floor(calculatedPoints / 500) + 1;
 
     if (userData) {
-      return this.prisma.userDatas.update({
+      return this.prisma.userdatas.update({
         where: { id: userData.id },
         data: {
           totalPoints: calculatedPoints,
@@ -86,7 +99,7 @@ export class UserdatasService {
         },
       });
     } else {
-      return this.prisma.userDatas.create({
+      return this.prisma.userdatas.create({
         data: {
           userId,
           totalPoints: calculatedPoints,
@@ -98,14 +111,14 @@ export class UserdatasService {
   }
 
   async incrementPoints(userId: number, points: number) {
-    const userData = await this.prisma.userDatas.findFirst({
+    const userData = await this.prisma.userdatas.findFirst({
       where: { userId },
     });
 
     if (!userData) {
       const initialPoints = Math.max(0, points);
       const initialLevel = Math.floor(initialPoints / 500) + 1;
-      return this.prisma.userDatas.create({
+      return this.prisma.userdatas.create({
         data: {
           userId,
           totalPoints: initialPoints,
@@ -118,7 +131,7 @@ export class UserdatasService {
     const newTotalPoints = userData.totalPoints + points;
     const newLevel = Math.floor(newTotalPoints / 500) + 1;
 
-    return this.prisma.userDatas.update({
+    return this.prisma.userdatas.update({
       where: { id: userData.id },
       data: {
         totalPoints: newTotalPoints,
@@ -127,14 +140,44 @@ export class UserdatasService {
     });
   }
 
+  async incrementDailyBonus(userId: number, points: number) {
+    const userData = await this.prisma.userdatas.findFirst({
+      where: { userId },
+    });
+
+    if (!userData) {
+      return this.prisma.userdatas.create({
+        data: {
+          userId,
+          totalPoints: points,
+          dailyBonusPoints: points,
+          level: Math.floor(points / 500) + 1,
+        },
+      });
+    }
+
+    const newDailyPoints = userData.dailyBonusPoints + points;
+    const newTotalPoints = userData.totalPoints + points;
+    const newLevel = Math.floor(newTotalPoints / 500) + 1;
+
+    return this.prisma.userdatas.update({
+      where: { id: userData.id },
+      data: {
+        dailyBonusPoints: newDailyPoints,
+        totalPoints: newTotalPoints,
+        level: newLevel,
+      },
+    });
+  }
+
   async getAchievementsByUserId(userId: number) {
-    let userData = await this.prisma.userDatas.findFirst({
+    let userData = await this.prisma.userdatas.findFirst({
       where: { userId },
       orderBy: { id: 'asc' },
     });
 
     if (!userData) {
-      userData = await this.prisma.userDatas.create({
+      userData = await this.prisma.userdatas.create({
         data: {
           userId,
         },
@@ -170,20 +213,20 @@ export class UserdatasService {
   }
 
   async updateAchievementsByUserId(userId: number, achievements: unknown[]) {
-    const existing = await this.prisma.userDatas.findFirst({
+    const existing = await this.prisma.userdatas.findFirst({
       where: { userId },
       orderBy: { id: 'asc' },
       select: { id: true, achievements: true },
     });
 
     const overrides = this.extractAdminOverrides(achievements);
-    const achievementsValue = Array.from(overrides.entries()).map(([id, completed]) => ({
+    const achievementsValue = JSON.stringify(Array.from(overrides.entries()).map(([id, completed]) => ({
       id,
       completed,
-    }));
+    })));
 
     if (!existing) {
-      const created = await this.prisma.userDatas.create({
+      const created = await this.prisma.userdatas.create({
         data: {
           userId,
           achievements: achievementsValue,
@@ -192,11 +235,11 @@ export class UserdatasService {
 
       return {
         userId,
-        achievements: created.achievements,
+        achievements: created.achievements ? JSON.parse(created.achievements as string) : [],
       };
     }
 
-    const updated = await this.prisma.userDatas.update({
+    const updated = await this.prisma.userdatas.update({
       where: { id: existing.id },
       data: {
         achievements: achievementsValue,
@@ -205,20 +248,20 @@ export class UserdatasService {
 
     return {
       userId,
-      achievements: updated.achievements ?? [],
+      achievements: updated.achievements ? JSON.parse(updated.achievements as string) : [],
     };
   }
 
   async markAchievementCompleted(userId: number, achievementId: number) {
-    const userData = await this.prisma.userDatas.findFirst({
+    const userData = await this.prisma.userdatas.findFirst({
       where: { userId },
     });
 
     if (!userData) {
-      return this.prisma.userDatas.create({
+      return this.prisma.userdatas.create({
         data: {
           userId,
-          achievements: [{ id: achievementId, completed: true }],
+          achievements: JSON.stringify([{ id: achievementId, completed: true }]),
         },
       });
     }
@@ -229,12 +272,15 @@ export class UserdatasService {
     }
 
     overrides.set(achievementId, true);
-    const achievementsValue = Array.from(overrides.entries()).map(([id, completed]) => ({
+    const achievementsValue = JSON.stringify(Array.from(overrides.entries()).map(([id, completed]) => ({
       id,
       completed,
-    }));
+    })));
 
-    return this.prisma.userDatas.update({
+    // Award points for completing an achievement: 50 points
+    await this.incrementPoints(userId, 50);
+
+    return this.prisma.userdatas.update({
       where: { id: userData.id },
       data: {
         achievements: achievementsValue,

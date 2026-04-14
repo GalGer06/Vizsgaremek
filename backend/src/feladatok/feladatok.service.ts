@@ -2,10 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateFeladatokDto } from './dto/create-feladatok.dto';
 import { UpdateFeladatokDto } from './dto/update-feladatok.dto';
 import { PrismaService } from 'src/prisma.service';
+import { UserdatasService } from 'src/userdatas/userdatas.service';
 
 @Injectable()
 export class FeladatokService {
-  constructor (private prisma: PrismaService) {}
+  constructor (
+    private prisma: PrismaService,
+    private userdatasService: UserdatasService,
+  ) {}
 
   private parseAnswers(rawAnswers: unknown): string[] {
     let answersSource: unknown = rawAnswers;
@@ -78,7 +82,7 @@ export class FeladatokService {
     return this.prisma.feladatok.create({
       data: {
         ...createFeladatokDto,
-        answers,
+        answers: JSON.stringify(answers),
       },
     });
   }
@@ -90,7 +94,7 @@ export class FeladatokService {
 
   async findAllForUser(userId: number, seedSuffix?: string) {
     const questions = await this.prisma.feladatok.findMany();
-    const answered = await this.prisma.userAnswer.findMany({
+    const answered = await this.prisma.useranswer.findMany({
       where: { userId },
     });
 
@@ -104,7 +108,7 @@ export class FeladatokService {
         // base on question ID so the positions stay the same for the user.
         return this.mapQuestion(q, seedSuffix);
       })
-      .map((q) => {
+      .map((q: any) => {
         const userAns = answeredMap.get(q.id);
         return {
           ...q,
@@ -135,7 +139,7 @@ export class FeladatokService {
   }
 
   async recordAnswer(userId: number, questionId: number, isCorrect: boolean, selectedAnswer: string) {
-    return this.prisma.userAnswer.upsert({
+    const res = await this.prisma.useranswer.upsert({
       where: {
         userId_questionId: { userId, questionId },
       },
@@ -150,10 +154,17 @@ export class FeladatokService {
         selectedAnswer,
       },
     });
+
+    if (isCorrect) {
+      // Award 30 points if the answer is correct
+      await this.userdatasService.incrementPoints(userId, 30);
+    }
+
+    return res;
   }
 
   async resetUserAnswers(userId: number) {
-    return this.prisma.userAnswer.deleteMany({
+    return this.prisma.useranswer.deleteMany({
       where: { userId },
     });
   }
@@ -190,7 +201,7 @@ export class FeladatokService {
       where: { id },
       data: {
         ...updateFeladatokDto,
-        answers,
+        answers: JSON.stringify(answers),
         correct,
       },
     });

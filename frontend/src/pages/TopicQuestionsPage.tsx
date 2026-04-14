@@ -124,15 +124,6 @@ export function TopicQuestionsPage({ user }: Props) {
         });
 
         if (isCorrect) {
-          await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token ?? ''}`,
-            },
-            body: JSON.stringify({ points: 30 }),
-          });
-          
           // Show point popup animation
           setShowPointPopup(true);
           setTimeout(() => setShowPointPopup(false), 2000);

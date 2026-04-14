@@ -108,6 +108,7 @@ export class UserdatasController {
   incrementPoints(
     @Param('userId') userId: string,
     @Body('points') points: number,
+    @Body('isDailyBonus') isDailyBonus: boolean,
     @Req() req: { user?: { userId?: number; access?: boolean } },
   ) {
     const targetUserId = +userId;
@@ -116,6 +117,10 @@ export class UserdatasController {
 
     if (requesterId !== targetUserId && !isAdmin) {
       throw new ForbiddenException('Csak a saját vagy mások pontjait adminisztrátorként növelheted.');
+    }
+
+    if (isDailyBonus) {
+      return this.userdatasService.incrementDailyBonus(targetUserId, points);
     }
 
     return this.userdatasService.incrementPoints(targetUserId, points);

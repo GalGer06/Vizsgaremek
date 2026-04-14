@@ -41,10 +41,10 @@ export class UserService {
     // Check and remove related entities first to avoid foreign key constraint errors
     await this.prisma.$transaction(async (tx) => {
       // Delete user data
-      await tx.userDatas.deleteMany({ where: { userId: id } });
+      await tx.userdatas.deleteMany({ where: { userId: id } });
       
       // Delete friend requests
-      await tx.friendRequest.deleteMany({
+      await tx.friendrequest.deleteMany({
         where: { OR: [{ requesterId: id }, { receiverId: id }] },
       });
       
@@ -84,14 +84,14 @@ export class UserService {
         OR: [{ userId }, { friendId: userId }],
       },
       include: {
-        user: {
+        user_friend_userIdTouser: {
           select: {
             id: true,
             username: true,
             email: true,
           },
         },
-        friend: {
+        user_friend_friendIdTouser: {
           select: {
             id: true,
             username: true,
@@ -104,7 +104,9 @@ export class UserService {
       },
     });
 
-    return links.map((link) => (link.userId === userId ? link.friend : link.user));
+    return links.map((link) => 
+      link.userId === userId ? link.user_friend_friendIdTouser : link.user_friend_userIdTouser
+    );
   }
 
   async addFriend(userId: number, friendId: number) {
@@ -149,10 +151,10 @@ export class UserService {
   }
 
   async findIncomingFriendRequests(userId: number) {
-    return this.prisma.friendRequest.findMany({
+    return this.prisma.friendrequest.findMany({
       where: { receiverId: userId },
       include: {
-        requester: {
+        user_friendrequest_requesterIdTouser: {
           select: {
             id: true,
             username: true,
@@ -167,10 +169,10 @@ export class UserService {
   }
 
   async findSentFriendRequests(userId: number) {
-    return this.prisma.friendRequest.findMany({
+    return this.prisma.friendrequest.findMany({
       where: { requesterId: userId },
       include: {
-        receiver: {
+        user_friendrequest_receiverIdTouser: {
           select: {
             id: true,
             username: true,
@@ -185,7 +187,7 @@ export class UserService {
   }
 
   async friendRequestExists(requesterId: number, receiverId: number) {
-    return this.prisma.friendRequest.findUnique({
+    return this.prisma.friendrequest.findUnique({
       where: {
         requesterId_receiverId: {
           requesterId,
@@ -197,7 +199,7 @@ export class UserService {
   }
 
   async createFriendRequest(requesterId: number, receiverId: number) {
-    return this.prisma.friendRequest.create({
+    return this.prisma.friendrequest.create({
       data: {
         requesterId,
         receiverId,
@@ -207,7 +209,7 @@ export class UserService {
 
   async acceptFriendRequest(requestId: number, receiverId: number) {
     return this.prisma.$transaction(async (tx) => {
-      const request = await tx.friendRequest.findUnique({
+      const request = await tx.friendrequest.findUnique({
         where: { id: requestId },
       });
 
@@ -237,7 +239,7 @@ export class UserService {
         });
       }
 
-      await tx.friendRequest.delete({
+      await tx.friendrequest.delete({
         where: { id: requestId },
       });
 
@@ -246,7 +248,7 @@ export class UserService {
   }
 
   async declineFriendRequest(requestId: number, receiverId: number) {
-    const request = await this.prisma.friendRequest.findUnique({
+    const request = await this.prisma.friendrequest.findUnique({
       where: { id: requestId },
       select: { id: true, receiverId: true },
     });
@@ -255,7 +257,7 @@ export class UserService {
       return null;
     }
 
-    await this.prisma.friendRequest.delete({
+    await this.prisma.friendrequest.delete({
       where: { id: requestId },
     });
 
@@ -263,7 +265,7 @@ export class UserService {
   }
 
   async cancelSentFriendRequest(requesterId: number, receiverId: number) {
-    const request = await this.prisma.friendRequest.findUnique({
+    const request = await this.prisma.friendrequest.findUnique({
       where: {
         requesterId_receiverId: {
           requesterId,
@@ -277,7 +279,7 @@ export class UserService {
       return null;
     }
 
-    await this.prisma.friendRequest.delete({
+    await this.prisma.friendrequest.delete({
       where: { id: request.id },
     });
 
@@ -296,7 +298,7 @@ export class UserService {
         id: { in: allUserIds },
       },
       include: {
-        userDatas: true,
+        userdatas: true,
       },
     });
 
@@ -305,8 +307,8 @@ export class UserService {
     const leaderboardRaw = usersData.map((user) => ({
       id: user.id,
       username: user.username,
-      points: user.userDatas?.[0]?.totalPoints || 0,
-      level: user.userDatas?.[0]?.level || 1,
+      points: user.userdatas?.[0]?.totalPoints || 0,
+      level: user.userdatas?.[0]?.level || 1,
       isCurrentUser: user.id === userId,
     }));
 

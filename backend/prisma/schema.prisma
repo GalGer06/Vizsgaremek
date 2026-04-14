@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,98 +7,100 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model feladatok {
   id        Int      @id @default(autoincrement())
-  name      String
-  username  String   @unique
-  email     String   @unique
-  password  String
-  access    Boolean  @default(false)
+  title     String
+  question  String
+  answers   String   @db.LongText
+  correct   String
+  funfact   String
   createdAt DateTime @default(now())
-
-  userDatas UserDatas[]
-  friendsAdded Friend[] @relation("FriendRequester")
-  friendsReceived Friend[] @relation("FriendReceiver")
-  friendRequestsSent FriendRequest[] @relation("FriendRequestSender")
-  friendRequestsReceived FriendRequest[] @relation("FriendRequestReceiver")
-  tickets   Ticket[]
 }
 
-model Friend {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  friendId  Int
-  createdAt DateTime @default(now())
+model friend {
+  id                         Int      @id @default(autoincrement())
+  userId                     Int
+  friendId                   Int
+  createdAt                  DateTime @default(now())
+  user_friend_friendIdTouser user     @relation("friend_friendIdTouser", fields: [friendId], references: [id], map: "Friend_friendId_fkey")
+  user_friend_userIdTouser   user     @relation("friend_userIdTouser", fields: [userId], references: [id], map: "Friend_userId_fkey")
 
-  user      User     @relation("FriendRequester", fields: [userId], references: [id])
-  friend    User     @relation("FriendReceiver", fields: [friendId], references: [id])
-
-  @@unique([userId, friendId])
+  @@unique([userId, friendId], map: "Friend_userId_friendId_key")
+  @@index([friendId], map: "Friend_friendId_fkey")
 }
 
-model FriendRequest {
-  id          Int      @id @default(autoincrement())
-  requesterId Int
-  receiverId  Int
-  createdAt   DateTime @default(now())
+model friendrequest {
+  id                                   Int      @id @default(autoincrement())
+  requesterId                          Int
+  receiverId                           Int
+  createdAt                            DateTime @default(now())
+  user_friendrequest_receiverIdTouser  user     @relation("friendrequest_receiverIdTouser", fields: [receiverId], references: [id], map: "FriendRequest_receiverId_fkey")
+  user_friendrequest_requesterIdTouser user     @relation("friendrequest_requesterIdTouser", fields: [requesterId], references: [id], map: "FriendRequest_requesterId_fkey")
 
-  requester   User     @relation("FriendRequestSender", fields: [requesterId], references: [id])
-  receiver    User     @relation("FriendRequestReceiver", fields: [receiverId], references: [id])
-
-  @@unique([requesterId, receiverId])
+  @@unique([requesterId, receiverId], map: "FriendRequest_requesterId_receiverId_key")
+  @@index([receiverId], map: "FriendRequest_receiverId_fkey")
 }
 
-model Feladatok {
-  id          Int      @id @default(autoincrement())
-  title       String
-  question    String
-  answers     Json
-  correct     String
-  funfact     String
-  createdAt   DateTime @default(now())
-}
-
-model UserDatas {
-  id          Int      @id @default(autoincrement())
+model ticket {
+  id          Int           @id @default(autoincrement())
   userId      Int
-  streak      Int      @default(0)
-  totalPoints Int      @default(0)
-  adminBonusPoints Int @default(0)
-  level       Int      @default(1)
-  achievements Json?
+  type        ticket_type
+  description String        @db.Text
+  attachment  String?       @db.LongText
+  status      ticket_status @default(OPEN)
+  createdAt   DateTime      @default(now())
+  user        user          @relation(fields: [userId], references: [id], map: "Ticket_userId_fkey")
 
-  user        User     @relation(fields: [userId], references: [id])
+  @@index([userId], map: "Ticket_userId_fkey")
 }
 
-model UserAnswer {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  questionId  Int
-  isCorrect   Boolean
+model user {
+  id                                            Int             @id @default(autoincrement())
+  name                                          String
+  email                                         String          @unique(map: "User_email_key")
+  password                                      String
+  access                                        Boolean         @default(false)
+  createdAt                                     DateTime        @default(now())
+  username                                      String          @unique(map: "User_username_key")
+  friend_friend_friendIdTouser                  friend[]        @relation("friend_friendIdTouser")
+  friend_friend_userIdTouser                    friend[]        @relation("friend_userIdTouser")
+  friendrequest_friendrequest_receiverIdTouser  friendrequest[] @relation("friendrequest_receiverIdTouser")
+  friendrequest_friendrequest_requesterIdTouser friendrequest[] @relation("friendrequest_requesterIdTouser")
+  ticket                                        ticket[]
+  userdatas                                     userdatas[]
+}
+
+model useranswer {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  questionId     Int
+  isCorrect      Boolean
+  createdAt      DateTime @default(now())
   selectedAnswer String?
-  createdAt   DateTime @default(now())
 
-  @@unique([userId, questionId])
+  @@unique([userId, questionId], map: "UserAnswer_userId_questionId_key")
 }
 
-enum TicketType {
+model userdatas {
+  id               Int     @id @default(autoincrement())
+  userId           Int
+  streak           Int     @default(0)
+  totalPoints      Int     @default(0)
+  level            Int     @default(1)
+  achievements     String? @db.LongText
+  adminBonusPoints Int     @default(0)
+  dailyBonusPoints Int     @default(0)
+  user             user    @relation(fields: [userId], references: [id], map: "UserDatas_userId_fkey")
+
+  @@index([userId], map: "UserDatas_userId_fkey")
+}
+
+enum ticket_type {
   BUG
   SUGGEST_QUESTION
 }
 
-enum TicketStatus {
+enum ticket_status {
   OPEN
   CLOSED
-}
-
-model Ticket {
-  id          Int          @id @default(autoincrement())
-  userId      Int
-  type        TicketType
-  description String       @db.Text
-  attachment  Json?        // To store suggested question data
-  status      TicketStatus @default(OPEN)
-  createdAt   DateTime     @default(now())
-
-  user        User         @relation(fields: [userId], references: [id])
 }
