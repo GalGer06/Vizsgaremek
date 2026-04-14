@@ -43,6 +43,7 @@ export type AdminUser = {
   username: string;
   email: string;
   access: boolean;
+  profilePicture?: string;
   createdAt: string;
 };
 

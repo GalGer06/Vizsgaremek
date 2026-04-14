@@ -627,8 +627,19 @@ export function AdminPage({ user }: AdminPageProps) {
               <button className="button secondary small" onClick={() => setSelectedUser(null)}>✕</button>
             </header>
             <div className="modal-body">
-              <p><strong>Felhasználó:</strong> {selectedUser.username}</p>
-              <p><strong>Név:</strong> {selectedUser.name}</p>
+              <div className="user-details-avatar-row" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+                {selectedUser.profilePicture ? (
+                  <img src={selectedUser.profilePicture} alt={selectedUser.username} className="profile-preview-large" style={{ width: '80px', height: '80px', border: '3px solid var(--wood-primary)' }} />
+                ) : (
+                  <div className="profile-preview-large" style={{ width: '80px', height: '80px', border: '3px solid var(--wood-primary)', fontSize: '2rem' }}>
+                    <span className="placeholder-text">{selectedUser.username.charAt(0).toUpperCase()}</span>
+                  </div>
+                )}
+                <div>
+                  <p style={{ margin: 0 }}><strong>Felhasználó:</strong> {selectedUser.username}</p>
+                  <p style={{ margin: 0 }}><strong>Név:</strong> {selectedUser.name}</p>
+                </div>
+              </div>
               <p><strong>Email:</strong> {selectedUser.email}</p>
               <p><strong>Szerepkör:</strong> {selectedUser.access ? 'Admin' : 'Felhasználó'}</p>
               <p><strong>Regisztrált:</strong> {new Date(selectedUser.createdAt).toLocaleDateString('hu-HU')}</p>
@@ -808,12 +819,21 @@ export function AdminPage({ user }: AdminPageProps) {
                 />
                 <ul>
                   {filteredUsers.map((listedUser) => (
-                    <li key={listedUser.id}>
+                    <li key={listedUser.id} style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                      <div className="admin-user-avatar" style={{ flexShrink: 0 }}>
+                        {listedUser.profilePicture ? (
+                          <img src={listedUser.profilePicture} alt={listedUser.username} className="profile-img-small" style={{ width: '45px', height: '45px' }} />
+                        ) : (
+                          <div className="profile-avatar-placeholder" style={{ width: '45px', height: '45px', fontSize: '1rem' }}>
+                            {listedUser.username.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
                       <div className="user-info-text">
                         <span
                           className="user-name-clickable"
                           onClick={() => void viewUserDetails(listedUser.id)}
-                          style={{ cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}
+                          style={{ cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold', fontSize: '1.1rem' }}
                         >
                           {listedUser.username}
                         </span>

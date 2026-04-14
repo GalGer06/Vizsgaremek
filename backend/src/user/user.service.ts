@@ -14,7 +14,17 @@ export class UserService {
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        access: true,
+        profilePicture: true,
+        createdAt: true,
+      },
+    });
   }
 
   async findOne(id: number) {
