@@ -130,8 +130,8 @@ export class FeladatokService {
         return valA - valB;
     });
 
-    // Use dateString as suffix to keep answer options stable for the day
-    return shuffled.slice(0, 15).map((q) => this.mapQuestion(q, dateString));
+    // Pick 10 questions and use dateString as suffix to keep answer options stable for the day
+    return shuffled.slice(0, 10).map((q) => this.mapQuestion(q, dateString));
   }
 
   async recordAnswer(userId: number, questionId: number, isCorrect: boolean, selectedAnswer: string) {

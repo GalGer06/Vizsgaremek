@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL, TOKEN_KEY } from '../constants';
+import { API_BASE_URL, TOKEN_KEY, USER_KEY } from '../constants';
 import type { Question } from '../types';
 
 export function DailyTasksPage() {
@@ -19,18 +19,24 @@ export function DailyTasksPage() {
       setLoading(true);
       setError('');
       try {
-        const savedUser = localStorage.getItem('user');
+        const savedUser = localStorage.getItem(USER_KEY);
         const user = savedUser ? JSON.parse(savedUser) : null;
-        
-        let url = `${API_BASE_URL}/feladatok/daily`;
         const token = localStorage.getItem(TOKEN_KEY);
-        const headers: Record<string, string> = {};
+        
+        // Use daily as fallback, but try to use user-specific URL if logged in
+        let url = `${API_BASE_URL}/feladatok/daily`;
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        };
         
         if (user && token) {
+          // IMPORTANT: We MUST use this URL to get isAnswered status from DB
           url = `${API_BASE_URL}/feladatok/user/${user.id}`;
           headers['Authorization'] = `Bearer ${token}`;
         }
 
+        console.log(`Fetching questions from: ${url}`);
         const response = await fetch(url, { headers });
         if (!response.ok) {
           throw new Error('Nem sikerült lekérdezni a kérdéseket.');
@@ -38,38 +44,26 @@ export function DailyTasksPage() {
         
         let data = (await response.json()) as (Question & { isAnswered?: boolean; userSelectedAnswer?: string })[];
         
-        // If we fetched the full list, we need to pick the daily 3
-        if (url.includes('/user/')) {
-            const today = new Date();
-            const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-            let seed = 0;
-            for (let i = 0; i < dateString.length; i++) seed += dateString.charCodeAt(i);
-            
-            const shuffled = [...data].sort((a, b) => {
-                const valA = (a.id * seed) % 101;
-                const valB = (b.id * seed) % 101;
-                return valA - valB;
-            });
-            data = shuffled.slice(0, 3);
-        }
+        // Pick only the first 10 questions for consistent daily experience
+        data = data.slice(0, 10);
 
         const alreadyChecked: Record<number, boolean> = {};
         const restoredSelections: Record<number, string> = {};
         
+        // Restore selections and results from backend data
         data.forEach(q => {
           if (q.isAnswered) {
+            console.log(`Restoring question ${q.id} (Answered: ${q.userSelectedAnswer})`);
             alreadyChecked[q.id] = true;
             if (q.userSelectedAnswer) {
               restoredSelections[q.id] = q.userSelectedAnswer;
             }
           }
         });
-        
+
+        // Forced batch update
         setCheckedAnswers(alreadyChecked);
-        if (Object.keys(restoredSelections).length > 0) {
-          setSelectedAnswers(restoredSelections);
-        }
-        
+        setSelectedAnswers(restoredSelections);
         setQuestions(data);
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
@@ -80,7 +74,7 @@ export function DailyTasksPage() {
     };
 
     void loadDailyQuestions();
-  }, []);
+  }, [navigate]);
 
   const handleSelectAnswer = (questionId: number, answer: string) => {
     if (checkedAnswers[questionId]) return;
@@ -89,47 +83,84 @@ export function DailyTasksPage() {
 
   const handleCheckAnswer = async (questionId: number) => {
     const question = questions.find((q) => q.id === questionId);
-    if (!selectedAnswers[questionId] || !question) return;
+    if (!selectedAnswers[questionId] || !question || checkedAnswers[questionId]) return;
 
     const isCorrect = selectedAnswers[questionId] === question.correct;
+    
+    // Update local state immediately for UI feedback
     setCheckedAnswers((curr) => ({ ...curr, [questionId]: true }));
 
     try {
-      const savedUser = localStorage.getItem('user');
+      const savedUser = localStorage.getItem(USER_KEY);
       const user = savedUser ? JSON.parse(savedUser) : null;
-      if (user) {
-        const token = localStorage.getItem(TOKEN_KEY);
-        
-        // Save history including selected answer
+      const token = localStorage.getItem(TOKEN_KEY);
+
+      if (user && token) {
+        console.log(`Recording answer for question ${questionId}: ${isCorrect ? 'correct' : 'wrong'}`);
+
+        // 1. Record the answer in DB history
         await fetch(`${API_BASE_URL}/feladatok/${questionId}/answer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token ?? ''}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ 
-            isCorrect,
-            selectedAnswer: selectedAnswers[questionId]
+            isCorrect: Boolean(isCorrect),
+            selectedAnswer: String(selectedAnswers[questionId])
           }),
         });
 
+        // 2. Award individual points if correct
         if (isCorrect) {
           setPopupValue(30);
-          
           await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${token ?? ''}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ points: 30 }),
           });
           setShowPointPopup(true);
           setTimeout(() => setShowPointPopup(false), 2000);
         }
+
+        // 3. Check for 500pt bonus (completion of all 3 daily questions correctly)
+        // Note: we use the functional update to get the very latest count if needed, 
+        // but since we just set it above, currentCheckedCount + 1 is accurate for this sync execution.
+        const currentCheckedCount = Object.keys(checkedAnswers).length;
+        const totalQuestions = questions.length;
+        
+        if (currentCheckedCount + 1 === totalQuestions) {
+          const allOthersCorrect = questions.every(q => {
+            if (q.id === questionId) return isCorrect; 
+            return selectedAnswers[q.id] === q.correct;
+          });
+
+          if (allOthersCorrect) {
+            console.log("AWARDING 500 BONUS POINTS");
+            await fetch(`${API_BASE_URL}/userdatas/user/${user.id}/points`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ points: 500 }),
+            });
+            setShowBonusModal(true);
+          }
+        }
+      } else {
+        console.warn("User or Token missing - points not saved. Looking for keys:", { USER_KEY, TOKEN_KEY });
+        console.log("Actual localStorage items:", { 
+          [USER_KEY]: localStorage.getItem(USER_KEY), 
+          [TOKEN_KEY]: localStorage.getItem(TOKEN_KEY),
+          'user': localStorage.getItem('user') // Debugging if it's named 'user' instead
+        });
       }
     } catch (err) {
-      console.error('Points error:', err);
+      console.error('Submission error:', err);
     }
   };
 
@@ -146,7 +177,7 @@ export function DailyTasksPage() {
             <div className="modal-body">
               <div style={{ fontSize: '4rem', marginBottom: '10px' }}>🏆</div>
               <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-bright)' }}>
-                Teljesítettél 12 napi kérdést helyesen!
+                Mind a 10 napi kérdést helyesen válaszoltad meg!
               </p>
               <p style={{ color: 'var(--duo-green)', fontSize: '1.5rem', fontWeight: '900' }}>
                 +500 EXTRA PONT
@@ -196,16 +227,18 @@ export function DailyTasksPage() {
           if (!isUnlocked) return null;
 
           return (
-            <article 
-              key={question.id} 
-              className="question-card" 
-              style={{ 
-                marginBottom: '0',
-                border: '1px solid var(--border-blue)',
-                padding: '30px',
-                borderRadius: '20px'
-              }}
-            >
+      <article 
+        key={question.id} 
+        className="question-card" 
+        data-id={question.id}
+        data-answered={checkedAnswers[question.id] ? 'true' : 'false'}
+        style={{ 
+          marginBottom: '0',
+          border: '1px solid var(--border-blue)',
+          padding: '30px',
+          borderRadius: '20px'
+        }}
+      >
               <div className="daily-badge">Napi feladat #{index + 1}</div>
               <h3 style={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 800 }}>{question.question}</h3>
               <div className="new-answers-layout">
@@ -233,9 +266,11 @@ export function DailyTasksPage() {
                 Válasz beküldése
               </button>
               {checkedAnswers[question.id] && (
-                <p className={`message ${selectedAnswers[question.id] === question.correct ? 'correct' : 'wrong'}`}>
-                  {selectedAnswers[question.id] === question.correct ? 'Helyes válasz!' : `Sajnos nem. A helyes: ${question.correct}`}
-                </p>
+                <div style={{ marginTop: '15px' }}>
+                  <p className={`message ${selectedAnswers[question.id] === question.correct ? 'correct' : 'wrong'}`}>
+                    {selectedAnswers[question.id] === question.correct ? 'Helyes válasz!' : `Sajnos nem. A helyes: ${question.correct}`}
+                  </p>
+                </div>
               )}
             </article>
           );
