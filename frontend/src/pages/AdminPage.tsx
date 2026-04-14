@@ -253,6 +253,30 @@ export function AdminPage({ user }: AdminPageProps) {
     }
   };
 
+  const resetAdminAnswers = async () => {
+    if (!window.confirm('Biztosan törölni szeretnéd az összes eddigi válaszodat? Ez nem vonható vissza.')) {
+      return;
+    }
+
+    const token = localStorage.getItem(TOKEN_KEY);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/feladatok/reset-answers`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Nem sikerült a válaszok törlése.');
+
+      alert('Válaszaid sikeresen törölve lettek!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Hiba történt.');
+    }
+  };
+
   const handleEditQuestion = (q: Question) => {
     setEditingQuestion(q);
     setEditFormData({ ...q });
@@ -596,7 +620,7 @@ export function AdminPage({ user }: AdminPageProps) {
               <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #ddd' }} />
               <div className="point-editor" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <p><strong>Aktuális szint:</strong> {userLevel}</p>
-                <p><strong>Aktuális pont:</strong> {userPoints}</p>
+                <p><strong>Aktuális pont:</strong> {userPoints} pont</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <label htmlFor="points-input"><strong>Módosítás:</strong></label>
                   <input
@@ -757,6 +781,12 @@ export function AdminPage({ user }: AdminPageProps) {
                   <h3>Kérdések</h3>
                   <p>{questions.length}</p>
                   <span className="card-hint">Váltás a kérdésekre →</span>
+                </article>
+                <article className="admin-card">
+                  <h3>Saját adatok</h3>
+                  <button className="button danger small" onClick={resetAdminAnswers} style={{ width: '100%', marginTop: '10px' }}>
+                    Saját válaszok törlése
+                  </button>
                 </article>
               </div>
 

@@ -53,6 +53,17 @@ export class FeladatokController {
     return this.feladatokService.findDaily();
   }
 
+  @Post('reset-answers')
+  @UseGuards(JwtAuthGuard)
+  resetAnswers(@Req() req: { user?: { userId?: number; access?: boolean } }) {
+    if (!req.user?.access) {
+      throw new ForbiddenException('Csak adminok törölhetik a válaszaikat.');
+    }
+    const userId = req.user?.userId;
+    if (!userId) throw new ForbiddenException();
+    return this.feladatokService.resetUserAnswers(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.feladatokService.findOne(+id);

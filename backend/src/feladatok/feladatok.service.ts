@@ -152,6 +152,12 @@ export class FeladatokService {
     });
   }
 
+  async resetUserAnswers(userId: number) {
+    return this.prisma.userAnswer.deleteMany({
+      where: { userId },
+    });
+  }
+
   async findOne(id: number) {
     const question = await this.prisma.feladatok.findUnique({
       where: { id },

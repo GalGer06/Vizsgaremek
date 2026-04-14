@@ -86,7 +86,7 @@ export function Leaderboard() {
                 {entry.isCurrentUser && ' (Te)'}
               </div>
               <div className="leaderboard-points">
-                <span className="points-value">{entry.points}</span>
+                <span className="points-value">{entry.points} </span>
                 <span className="points-label">pont</span>
               </div>
               <div className="leaderboard-level">
