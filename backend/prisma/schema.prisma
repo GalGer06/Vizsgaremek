@@ -59,6 +59,7 @@ model user {
   name                                          String
   email                                         String          @unique(map: "User_email_key")
   password                                      String
+  profilePicture                                String?         @db.LongText
   access                                        Boolean         @default(false)
   createdAt                                     DateTime        @default(now())
   username                                      String          @unique(map: "User_username_key")

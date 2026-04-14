@@ -30,6 +30,13 @@ export class UserService {
     });
   }
 
+  async updateProfilePicture(id: number, profilePicture: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { profilePicture },
+    });
+  }
+
   async updateAccess(id: number, access: boolean) {
     return this.prisma.user.update({
       where: { id },
@@ -74,6 +81,7 @@ export class UserService {
         id: true,
         username: true,
         email: true,
+        profilePicture: true,
       },
     });
   }
@@ -89,6 +97,7 @@ export class UserService {
             id: true,
             username: true,
             email: true,
+            profilePicture: true,
           },
         },
         user_friend_friendIdTouser: {
@@ -96,6 +105,7 @@ export class UserService {
             id: true,
             username: true,
             email: true,
+            profilePicture: true,
           },
         },
       },
@@ -307,6 +317,7 @@ export class UserService {
     const leaderboardRaw = usersData.map((user) => ({
       id: user.id,
       username: user.username,
+      profilePicture: user.profilePicture, // Add this
       points: user.userdatas?.[0]?.totalPoints || 0,
       level: user.userdatas?.[0]?.level || 1,
       isCurrentUser: user.id === userId,

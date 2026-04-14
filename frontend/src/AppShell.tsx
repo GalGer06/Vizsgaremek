@@ -31,7 +31,7 @@ export function AppShell() {
   const handleAuthSuccess = (result: AuthResponse) => {
     localStorage.setItem(TOKEN_KEY, result.access_token);
     localStorage.setItem(USER_KEY, JSON.stringify(result.user));
-    setUser(result.user);
+    setUser({ ...result.user }); // Create a new object reference to ensure state update
   };
 
   const handleLogout = () => {

@@ -234,19 +234,19 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             <button 
               type="button" 
               onClick={() => navigate('/profile')} 
-              className={`button secondary link-button ${location.pathname === '/profile' ? 'active' : ''}`}
-              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
+              className={`profile-circle-btn ${location.pathname === '/profile' ? 'active' : ''}`}
+              title="Profil"
+              style={mobileMenuOpen ? { width: '60px', height: '60px', margin: '0 auto' } : {}}
             >
-              Profil
-            </button>
-
-            <button 
-              type="button" 
-              onClick={() => setShowLogoutModal(true)} 
-              className="button danger logout-btn"
-              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
-            >
-              Kijelentkezés
+              {user.profilePicture ? (
+                <img 
+                  src={user.profilePicture} 
+                  alt="Profil" 
+                  className="profile-img-mini"
+                />
+              ) : (
+                <span className="profile-placeholder">{user.username.charAt(0).toUpperCase()}</span>
+              )}
             </button>
           </>
         ) : (

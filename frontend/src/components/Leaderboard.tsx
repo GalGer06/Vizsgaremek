@@ -81,6 +81,15 @@ export function Leaderboard() {
                 {entry.rank === 3 && '🥉'}
                 {entry.rank > 3 && `#${entry.rank}`}
               </div>
+              <div className="leaderboard-avatar-container" style={{ margin: '0 10px', display: 'flex', alignItems: 'center' }}>
+                {entry.profilePicture ? (
+                  <img src={entry.profilePicture} alt={entry.username} className="profile-img-small" style={{ width: '32px', height: '32px' }} />
+                ) : (
+                  <div className="profile-avatar-placeholder" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>
+                    {entry.username.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
               <div className="leaderboard-username">
                 {entry.username}
                 {entry.isCurrentUser && ' (Te)'}

@@ -21,6 +21,7 @@ export type AuthUser = {
   username: string;
   email: string;
   access: boolean;
+  profilePicture?: string;
 };
 
 export type AuthResponse = {
@@ -62,6 +63,7 @@ export type FriendUser = {
   id: number;
   username: string;
   email: string;
+  profilePicture?: string;
 };
 
 export type HomeButton = {
@@ -86,6 +88,7 @@ export type LeaderboardEntry = {
   rank: number;
   id: number;
   username: string;
+  profilePicture?: string;
   points: number;
   level: number;
   isCurrentUser: boolean;

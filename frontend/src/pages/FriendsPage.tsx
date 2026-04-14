@@ -346,8 +346,13 @@ export function FriendsPage({ user }: FriendsPageProps) {
 
           <ul className="friends-list">
             {results.map((result) => (
-              <li key={result.id}>
-                <div>
+              <li key={result.id} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                {result.profilePicture ? (
+                  <img src={result.profilePicture} alt={result.username} className="profile-img-small" />
+                ) : (
+                  <div className="profile-avatar-placeholder">{result.username.charAt(0).toUpperCase()}</div>
+                )}
+                <div style={{ flex: 1 }}>
                   <strong>{result.username}</strong>
                   <p>{result.email}</p>
                 </div>
@@ -384,8 +389,13 @@ export function FriendsPage({ user }: FriendsPageProps) {
           {!loadingRequests && (
             <ul className="friends-list">
               {requests.map((request) => (
-                <li key={request.id}>
-                  <div>
+                <li key={request.id} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  {request.requester.profilePicture ? (
+                    <img src={request.requester.profilePicture} alt={request.requester.username} className="profile-img-small" />
+                  ) : (
+                    <div className="profile-avatar-placeholder">{request.requester.username.charAt(0).toUpperCase()}</div>
+                  )}
+                  <div style={{ flex: 1 }}>
                     <strong>{request.requester.username}</strong>
                     <p>{request.requester.email}</p>
                   </div>
@@ -422,8 +432,13 @@ export function FriendsPage({ user }: FriendsPageProps) {
           {!loadingFriends && (
             <ul className="friends-list">
               {friends.map((friend) => (
-                <li key={friend.id}>
-                  <div>
+                <li key={friend.id} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  {friend.profilePicture ? (
+                    <img src={friend.profilePicture} alt={friend.username} className="profile-img-small" />
+                  ) : (
+                    <div className="profile-avatar-placeholder">{friend.username.charAt(0).toUpperCase()}</div>
+                  )}
+                  <div style={{ flex: 1 }}>
                     <strong>{friend.username}</strong>
                     <p>{friend.level}. szint</p>
                   </div>
@@ -449,8 +464,13 @@ export function FriendsPage({ user }: FriendsPageProps) {
           {!loadingSentRequests && (
             <ul className="friends-list">
               {sentRequests.map((request) => (
-                <li key={request.id}>
-                  <div>
+                <li key={request.id} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  {request.receiver?.profilePicture ? (
+                    <img src={request.receiver.profilePicture} alt={request.receiver.username} className="profile-img-small" />
+                  ) : (
+                    <div className="profile-avatar-placeholder">{request.receiver?.username?.charAt(0).toUpperCase() || '?'}</div>
+                  )}
+                  <div style={{ flex: 1 }}>
                     <strong>{request.receiver?.username || 'Ismeretlen felhasználó'}</strong>
                     <p>Függőben...</p>
                   </div>

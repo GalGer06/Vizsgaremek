@@ -314,6 +314,28 @@ export class UserController {
     });
   }
 
+  @Patch(':id/profile-picture')
+  @UseGuards(JwtAuthGuard)
+  updateProfilePicture(
+    @Param('id') id: string,
+    @Body('profilePicture') profilePicture: string,
+    @Req() req: { user?: { userId?: number; access?: boolean } },
+  ) {
+    const targetUserId = +id;
+    const requesterId = req.user?.userId;
+    const isAdmin = !!req.user?.access;
+
+    if (requesterId !== targetUserId && !isAdmin) {
+      throw new ForbiddenException('You can only update your own profile picture');
+    }
+
+    if (!profilePicture) {
+      throw new BadRequestException('Profile picture data is required');
+    }
+
+    return this.userService.updateProfilePicture(targetUserId, profilePicture);
+  }
+
   @Get(':id/leaderboard')
   @UseGuards(JwtAuthGuard)
   getLeaderboard(

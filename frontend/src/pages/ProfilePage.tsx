@@ -16,6 +16,8 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [profilePicture, setProfilePicture] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [recalculating, setRecalculating] = useState(false);
@@ -45,10 +47,11 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
           throw new Error('Nem sikerült betölteni a profilt.');
         }
 
-        const profile = (await response.json()) as ProfileResponse;
+        const profile = (await response.json()) as ProfileResponse & { profilePicture?: string };
         setName(profile.name ?? '');
         setUsername(profile.username ?? '');
         setEmail(profile.email ?? '');
+        setProfilePicture(profile.profilePicture ?? '');
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Ismeretlen hiba történt.';
         setError(message);
@@ -59,6 +62,80 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
 
     void loadProfile();
   }, [user]);
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      setError('A kép mérete nem lehet nagyobb 2MB-nál.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const img = new Image();
+      img.src = reader.result as string;
+      img.onload = async () => {
+        // Create canvas for compression and resizing
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 400;
+        const MAX_HEIGHT = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Export as compressed JPG
+        const base64String = canvas.toDataURL('image/jpeg', 0.82);
+        
+        setUploading(true);
+        setError('');
+
+        try {
+          const token = localStorage.getItem(TOKEN_KEY);
+          const response = await fetch(`${API_BASE_URL}/user/${user.id}/profile-picture`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ profilePicture: base64String }),
+          });
+
+          if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.message || 'Nem sikerült a kép feltöltése.');
+          }
+
+          setProfilePicture(base64String);
+          onUserUpdate({ ...user, profilePicture: base64String });
+          setSuccess('Profilkép sikeresen frissítve.');
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Hiba történt a feltöltés során.');
+        } finally {
+          setUploading(false);
+        }
+      };
+    };
+    reader.readAsDataURL(file);
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -139,6 +216,13 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
     }
   };
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = () => {
+    onUserUpdate(null as any); // This will clear user context and trigger logout
+    navigate('/auth');
+  };
+
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
@@ -147,53 +231,108 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
     <section className="auth-wrapper">
       <div className="section-header">
         <h2>Profil beállítások</h2>
-        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {!showLogoutConfirm ? (
+            <button 
+              type="button" 
+              className="button danger logout-btn-top" 
+              onClick={() => setShowLogoutConfirm(true)}
+              style={{ padding: '8px 16px', fontSize: '0.8rem' }}
+            >
+              Kijelentkezés
+            </button>
+          ) : (
+            <div style={{ display: 'flex', gap: '5px' }}>
+              <button 
+                type="button" 
+                className="button danger" 
+                onClick={handleLogout}
+                style={{ padding: '8px 12px', fontSize: '0.75rem' }}
+              >
+                ✔
+              </button>
+              <button 
+                type="button" 
+                className="button secondary" 
+                onClick={() => setShowLogoutConfirm(false)}
+                style={{ padding: '8px 12px', fontSize: '0.75rem' }}
+              >
+                ✘
+              </button>
+            </div>
+          )}
+          <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
+        </div>
       </div>
 
       {loading && <p className="message">Profil betöltése...</p>}
 
       {!loading && (
-        <form className="auth-form" onSubmit={submit}>
-          <input
-            placeholder="Teljes név"
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-          <input
-            placeholder="Felhasználónév"
-            required
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-          />
-          <input
-            placeholder="Email"
-            required
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
+        <>
+          <form className="auth-form" onSubmit={submit}>
+            <div className="profile-upload-section">
+              <div className="profile-preview-large">
+                {profilePicture ? (
+                  <img src={profilePicture} alt="Profil" />
+                ) : (
+                  <span className="placeholder-text">{username.charAt(0).toUpperCase()}</span>
+                )}
+              </div>
+              <label className="button secondary profile-upload-btn">
+                {uploading ? 'Feltöltés...' : 'Profilkép módosítása'}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleFileChange} 
+                  disabled={uploading}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            </div>
 
-          {error && <p className="message error">{error}</p>}
-          {success && <p className="message">{success}</p>}
+            <input
+              placeholder="Teljes név"
+              required
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+            <input
+              placeholder="Felhasználónév"
+              required
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+            />
+            <input
+              placeholder="Email"
+              required
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
 
-          <button className="button" disabled={saving} type="submit">
-            {saving ? 'Mentés...' : 'Változtatások mentése'}
-          </button>
-          <div style={{ marginTop: '20px', borderTop: '1px solid var(--border-blue)', paddingTop: '20px' }}>
-            <p className="message" style={{ backgroundColor: 'transparent', padding: 0, marginBottom: '10px' }}>
-              Úgy érzed, nem jó a pontszámod? Kérheted a pontjaid újraszámolását az eddigi helyes válaszaid alapján.
-            </p>
-            <button 
-              type="button" 
-              className="button secondary" 
-              onClick={syncPoints} 
-              disabled={recalculating}
-              style={{ width: '100%', borderColor: 'var(--duo-green)' }}
-            >
-              {recalculating ? 'Szinkronizálás...' : 'Pontok szinkronizálása'}
+            {error && <p className="message error">{error}</p>}
+            {success && <p className="message">{success}</p>}
+
+            <button className="button" disabled={saving} type="submit">
+              {saving ? 'Mentés...' : 'Változtatások mentése'}
             </button>
-          </div>        </form>
+            <div style={{ marginTop: '20px', borderTop: '1px solid var(--border-blue)', paddingTop: '20px' }}>
+              <p className="message" style={{ backgroundColor: 'transparent', padding: 0, marginBottom: '10px' }}>
+                Úgy érzed, nem jó a pontszámod? Kérheted a pontjaid újraszámolását az eddigi helyes válaszaid alapján.
+              </p>
+              <button 
+                type="button" 
+                className="button secondary" 
+                onClick={syncPoints} 
+                disabled={recalculating}
+                style={{ width: '100%', borderColor: 'var(--duo-green)' }}
+              >
+                {recalculating ? 'Szinkronizálás...' : 'Pontok szinkronizálása'}
+              </button>
+            </div>
+
+          </form>
+        </>
       )}
     </section>
   );

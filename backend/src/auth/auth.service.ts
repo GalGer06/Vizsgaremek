@@ -39,7 +39,7 @@ export class AuthService {
       },
     });
 
-    return this.createAuthResponse(user.id, user.username, user.email, user.access);
+    return this.createAuthResponse(user.id, user.username, user.email, user.access, user.profilePicture);
   }
 
   async registerAdmin(registerDto: RegisterDto) {
@@ -68,7 +68,7 @@ export class AuthService {
       },
     });
 
-    return this.createAuthResponse(user.id, user.username, user.email, user.access);
+    return this.createAuthResponse(user.id, user.username, user.email, user.access, user.profilePicture);
   }
 
   async login(loginDto: LoginDto) {
@@ -91,7 +91,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.createAuthResponse(user.id, user.username, user.email, user.access);
+    return this.createAuthResponse(user.id, user.username, user.email, user.access, user.profilePicture);
   }
 
   async loginAdmin(loginDto: LoginDto) {
@@ -118,7 +118,7 @@ export class AuthService {
       throw new UnauthorizedException('Admin access required');
     }
 
-    return this.createAuthResponse(user.id, user.username, user.email, user.access);
+    return this.createAuthResponse(user.id, user.username, user.email, user.access, user.profilePicture);
   }
 
   private createAuthResponse(
@@ -126,6 +126,7 @@ export class AuthService {
     username: string,
     email: string,
     access: boolean,
+    profilePicture: string | null = null,
   ) {
     const payload: JwtPayload = {
       sub: userId,
@@ -141,6 +142,7 @@ export class AuthService {
         username,
         email,
         access,
+        profilePicture,
       },
     };
   }
