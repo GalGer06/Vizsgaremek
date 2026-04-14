@@ -15,6 +15,11 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
 
   const [isEnglish, setIsEnglish] = useState(false);
 
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   // Close mobile menu on navigation
   React.useEffect(() => {
     setMobileMenuOpen(false);
@@ -118,13 +123,29 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
 
       <button 
         className="mobile-menu-toggle" 
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        onClick={toggleMobileMenu}
         aria-label="Menü megnyitása"
+        style={{ color: 'white', fontSize: '28px' }}
       >
         {mobileMenuOpen ? '✕' : '☰'}
       </button>
 
-      <div className={`header-actions ${mobileMenuOpen ? 'open' : ''}`}>
+      <div className={`header-actions ${mobileMenuOpen ? 'open' : ''}`} style={mobileMenuOpen ? {
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'fixed',
+        top: '80px',
+        left: '0',
+        right: '0',
+        backgroundColor: '#243b55',
+        padding: '20px',
+        gap: '15px',
+        borderBottom: '4px solid #8b5e3c',
+        boxShadow: '0 10px 20px rgba(0,0,0,0.5)',
+        zIndex: 1000,
+        maxHeight: 'calc(100vh - 80px)',
+        overflowY: 'auto'
+      } : {}}>
         <div id="google_translate_element_hidden" style={{ 
           position: 'absolute', 
           top: '-1000px', 
@@ -137,8 +158,10 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           type="button" 
           className="button secondary language-toggle"
           style={{ 
-            marginRight: '15px',
-            padding: '6px 16px', 
+            marginRight: mobileMenuOpen ? '0' : '15px',
+            width: mobileMenuOpen ? '100%' : 'auto',
+            justifyContent: 'center',
+            padding: '10px 16px', 
             fontSize: '14px',
             display: 'flex',
             alignItems: 'center',
@@ -147,23 +170,23 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             borderRadius: '20px',
             border: `2px solid ${isEnglish ? '#2e7d32' : '#ccc'}`,
             backgroundColor: isEnglish ? '#e8f5e9' : '#fff',
-          color: '#000000',
-          transition: 'all 0.2s ease',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}
-        onClick={toggleLanguage}
-      >
-        <span style={{ filter: isEnglish ? 'none' : 'grayscale(0.3)', color: '#000000' }}>🌐</span>
-        <span style={{ color: '#000000' }}>{isEnglish ? 'HUN' : 'ENG'}</span>
-        <span style={{ 
-          fontSize: '10px', 
-          opacity: 0.8,
-          marginLeft: '4px',
-          color: '#000000'
-        }}>
-          {isEnglish ? '(Vissza)' : '(Translate)'}
-        </span>
-      </button>
+            color: '#000000',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          }}
+          onClick={toggleLanguage}
+        >
+          <span style={{ filter: isEnglish ? 'none' : 'grayscale(0.3)', color: '#000000' }}>🌐</span>
+          <span style={{ color: '#000000' }}>{isEnglish ? 'HUN' : 'ENG'}</span>
+          <span style={{ 
+            fontSize: '10px', 
+            opacity: 0.8,
+            marginLeft: '4px',
+            color: '#000000'
+          }}>
+            {isEnglish ? '(Vissza)' : '(Translate)'}
+          </span>
+        </button>
         
         {user ? (
           <>
@@ -171,6 +194,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               type="button" 
               onClick={handleLogoClick} 
               className={`button secondary link-button ${location.pathname === '/' ? 'active' : ''}`}
+              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
             >
               Főoldal
             </button>
@@ -179,6 +203,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               type="button" 
               onClick={() => navigate('/tickets')} 
               className={`button secondary link-button ${location.pathname === '/tickets' ? 'active' : ''}`}
+              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
             >
               Ticket
             </button>
@@ -189,11 +214,12 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
                 className="role-badge admin"
                 onClick={handleAdminClick}
                 title="Admin panel megnyitása"
+                style={mobileMenuOpen ? { width: '100%', margin: 0, padding: '12px' } : {}}
               >
                 ADMIN
               </button>
             ) : (
-              <div className="role-badge user" title="Felhasználói fiók">
+              <div className="role-badge user" title="Felhasználói fiók" style={mobileMenuOpen ? { width: '100%', margin: 0, padding: '12px' } : {}}>
                 FELHASZNÁLÓ
               </div>
             )}
@@ -202,6 +228,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               type="button" 
               onClick={() => navigate('/profile')} 
               className={`button secondary link-button ${location.pathname === '/profile' ? 'active' : ''}`}
+              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
             >
               Profil
             </button>
@@ -210,6 +237,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               type="button" 
               onClick={() => setShowLogoutModal(true)} 
               className="button secondary link-button logout-btn"
+              style={mobileMenuOpen ? { width: '100%', margin: 0, backgroundColor: '#ff4444' } : {}}
             >
               Kijelentkezés
             </button>
@@ -219,6 +247,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
             type="button" 
             onClick={() => navigate('/auth')} 
             className="button secondary link-button"
+            style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
           >
             Belépés / Regisztráció
           </button>

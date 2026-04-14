@@ -433,12 +433,30 @@ export function AdminPage({ user }: AdminPageProps) {
           justify-content: space-between;
           align-items: center;
           gap: 15px;
+          flex-wrap: wrap;
         }
+
+        .user-info-text {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          min-width: 150px;
+        }
+
+        .admin-user-actions {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+        }
+
         .admin-question-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
+          gap: 15px;
         }
+
         .ticket-item {
           color: var(--text-main);
         }
@@ -450,6 +468,8 @@ export function AdminPage({ user }: AdminPageProps) {
           border-bottom: 1px solid var(--border-blue);
           padding-bottom: 10px;
           color: var(--text-bright);
+          flex-wrap: wrap;
+          gap: 10px;
         }
         .ticket-header small {
           color: var(--text-muted);
@@ -469,6 +489,7 @@ export function AdminPage({ user }: AdminPageProps) {
           color: var(--text-main);
           font-size: 1.05rem;
           line-height: 1.5;
+          word-break: break-word;
         }
         .ticket-attachment {
           background: rgba(0,0,0,0.3);
@@ -478,6 +499,7 @@ export function AdminPage({ user }: AdminPageProps) {
           font-size: 0.95rem;
           color: var(--text-muted);
           border: 1px solid var(--border-blue);
+          overflow-x: auto;
         }
         .ticket-attachment strong {
           color: var(--text-header);
@@ -486,6 +508,51 @@ export function AdminPage({ user }: AdminPageProps) {
           display: flex;
           gap: 10px;
           margin-top: 15px;
+          flex-wrap: wrap;
+        }
+        @media screen and (max-width: 900px) {
+          .admin-tabs {
+            flex-direction: column;
+            width: 100%;
+          }
+          .admin-tabs .button {
+            width: 100%;
+          }
+          .admin-users ul li, .admin-question-item, .ticket-item {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+          }
+          .user-info-text {
+            text-align: center;
+            width: 100%;
+          }
+          .ticket-header {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+          }
+          .ticket-actions {
+            flex-direction: column;
+          }
+          .ticket-actions .button {
+            width: 100%;
+          }
+          .admin-user-actions {
+             flex-direction: column;
+             width: 100%;
+          }
+          .admin-user-actions button {
+             width: 100%;
+          }
+          .admin-modal-wide {
+            padding: 15px;
+            max-height: 90vh;
+            overflow-y: auto;
+          }
+          .admin-edit-answers {
+            grid-template-columns: 1fr;
+          }
         }
         .topic-selector-modal {
           background: var(--surface-main);
@@ -705,15 +772,19 @@ export function AdminPage({ user }: AdminPageProps) {
                 <ul>
                   {filteredUsers.map((listedUser) => (
                     <li key={listedUser.id}>
-                      <span
-                        className="user-name-clickable"
-                        onClick={() => void viewUserDetails(listedUser.id)}
-                        style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                      >
-                        {listedUser.username}
-                      </span>
-                      <span>{listedUser.email}</span>
-                      <span>{listedUser.username === 'Rikimik' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}</span>
+                      <div className="user-info-text">
+                        <span
+                          className="user-name-clickable"
+                          onClick={() => void viewUserDetails(listedUser.id)}
+                          style={{ cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}
+                        >
+                          {listedUser.username}
+                        </span>
+                        <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{listedUser.email}</span>
+                        <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', marginTop: '4px' }}>
+                          {listedUser.username === 'Rikimik' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}
+                        </span>
+                      </div>
                       <div className="admin-user-actions">
                         {listedUser.username !== 'Rikimik' && (
                           <>

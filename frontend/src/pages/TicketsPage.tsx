@@ -198,6 +198,23 @@ export function TicketsPage({ user }: TicketsPageProps) {
           flex-direction: column;
           gap: 15px;
         }
+
+        @media screen and (max-width: 600px) {
+          .ticket-type-selector {
+            flex-direction: column;
+          }
+          .ticket-type-selector button {
+            width: 100%;
+          }
+          .tickets-page {
+            padding: 20px;
+            margin: 0;
+            border-radius: 12px;
+          }
+          .form-actions button {
+            width: 100%;
+          }
+        }
         .message-banner {
           padding: 15px;
           border-radius: 12px;
@@ -229,6 +246,7 @@ export function TicketsPage({ user }: TicketsPageProps) {
           color: white;
           padding: 12px;
         }
+
         .form-group {
           display: flex;
           flex-direction: column;

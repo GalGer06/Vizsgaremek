@@ -41,6 +41,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 60px;
+    background-color: var(--bg-main); /* Ensure background stays blue */
 }
 
 .app-header {
@@ -262,11 +263,24 @@ input::placeholder {
 .leaderboard-row {
     display: grid;
     grid-template-columns: 0.5fr 2fr 1fr;
-    padding: 18px 20px;
+    padding: 10px 15px; /* Reduced padding for mobile */
     border-bottom: 1px solid rgba(58, 92, 131, 0.3);
     align-items: center;
     color: var(--text-main) !important;
     font-weight: 600;
+}
+
+@media screen and (max-width: 600px) {
+    .leaderboard-container {
+        padding: 20px 10px;
+        margin: 0 -5px; /* Slightly overflow to use more space */
+    }
+
+    .leaderboard-header, .leaderboard-row {
+        grid-template-columns: 40px 1fr 80px;
+        padding: 10px 5px;
+        font-size: 0.9rem;
+    }
 }
 
 .leaderboard-row.current-user {
@@ -566,6 +580,148 @@ form div, .auth-form div {
 }
 
 @media screen and (max-width: 900px) {
+    .app-container {
+        padding: 100px 15px 40px;
+        gap: 30px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .home-menu {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .home-menu-button {
+        padding: 30px 20px;
+        font-size: 1.2rem;
+    }
+
+    /* Fix Auth / Profile page forms */
+    .auth-wrapper, .auth-form, form {
+        padding: 25px;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Standardize containers for mobile */
+    .friends-layout, .achievements-grid, .admin-grid, .admin-users, .admin-questions, .admin-tickets, .tickets-list, .profile-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+    }
+
+    /* Standard Layouts for mobile pages */
+    .friends-layout, .achievements-grid, .admin-grid, .question-list, .admin-users, .admin-questions, .admin-tickets, .tickets-list, .profile-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .question-card {
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 16px;
+    }
+
+    /* Fix Question Cards in Daily Tasks / Topic Questions */
+    .answers-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Mobile standard answer options */
+    .answer-option {
+        padding: 16px;
+        font-size: 1.05rem;
+        width: 100%;
+    }
+
+    .check-answer-button {
+        width: 100%;
+        margin-top: 15px;
+        padding: 15px;
+    }
+
+    /* Leaderboard mobile adjustments */
+    .leaderboard-row {
+        grid-template-columns: 40px 1fr 90px;
+        gap: 10px;
+        padding: 12px 10px;
+    }
+
+    /* Footer mobile adjustments */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+
+    .footer-section a:hover {
+        transform: none;
+    }
+
+    .footer-section a::before {
+        display: none;
+    }
+
+    /* Admin specific mobile fixes */
+    .admin-question-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .admin-q-text {
+        margin-right: 0;
+        text-align: center;
+    }
+
+    .admin-search-wrapper input {
+        margin-bottom: 10px;
+    }
+
+    .admin-questions-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Fix Points Popup Animation in Mobile */
+    .points-popup {
+        font-size: 2rem !important;
+        padding: 15px 30px !important;
+        border-width: 3px !important;
+        width: auto !important;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    /* Fix Achievements and Cards */
+    .achievement-card, .friends-panel, .admin-card, .ticket-item, .question-card {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    /* Fix Admin Dashboard grid */
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
     .app-header .header-actions:not(.open) {
         display: none;
     }
@@ -573,6 +729,7 @@ form div, .auth-form div {
     .app-header {
         position: fixed;
         padding: 15px 20px;
+        height: 74px;
     }
 
     .mobile-menu-toggle {
