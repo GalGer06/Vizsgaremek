@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 
 export async function seedQuestions(prisma: PrismaClient) {
+  // Clear existing questions before seeding to ensure fresh start
+  await prisma.feladatok.deleteMany();
+  
   const questions = [
     // 1. Alapfogalmak
     {
@@ -79,7 +82,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       title: 'Alapfogalmak',
       question: 'Mit jelent a dekarbonizáció?',
       answers: JSON.stringify(['A szénbányászat növelését', 'A gyémántkészítés folyamatát', 'A növények szénfelvételének gátlását', 'Az üvegházhatású gázok kibocsátásának csökkentését vagy megszüntetését']),
-      correct: 'Az üvegházhatású gázókat kibocsátásának csökkentését vagy megszüntetését',
+      correct: 'Az üvegházhatású gázok kibocsátásának csökkentését vagy megszüntetését',
       funfact: 'A dekarbonizáció kulcsa a fosszilis tüzelőanyagokról a tiszta energiára való teljes átállás.',
       history: '',
     },

@@ -73,21 +73,58 @@ export class UserdatasService {
     const adminBonusPoints = userData?.adminBonusPoints || 0;
     const dailyBonusPoints = userData?.dailyBonusPoints || 0;
 
-    let achievementsCount = 0;
-    if (userData?.achievements) {
-      try {
-        const parsed = typeof userData.achievements === 'string' 
-          ? JSON.parse(userData.achievements) 
-          : userData.achievements;
-        if (Array.isArray(parsed)) {
-          achievementsCount = parsed.length;
-        }
-      } catch (e) {
-        console.error('Failed to parse achievements:', e);
+    // Award 50 points per completed achievement
+    const friendsCount = await this.prisma.friend.count({
+      where: {
+        OR: [{ userId }, { friendId: userId }],
+      },
+    });
+
+    const totalPointsForAnswers = correctAnswersCount * 30;
+    const currentApproximateLevel = Math.floor((totalPointsForAnswers + adminBonusPoints + dailyBonusPoints) / 500) + 1;
+
+    let achievementsCompletedCount = 0;
+    for (const template of DEFAULT_ACHIEVEMENTS) {
+      if (this.isAutomaticallyCompleted(
+        template.id, 
+        userData?.streak || 0, 
+        totalPointsForAnswers + adminBonusPoints + dailyBonusPoints, 
+        currentApproximateLevel, 
+        friendsCount
+      )) {
+        // Only count manually completed or specific logic achievements
+        // We shouldn't reward points for automated milestones that are already part of the totalPoints logic if they overlap
+        achievementsCompletedCount++;
       }
     }
     
-    const calculatedPoints = (correctAnswersCount * 30) + (achievementsCount * 50) + adminBonusPoints + dailyBonusPoints;
+    // Achievement #2, #3, #4, #5, #9 are just "milestones" for reaching X points.
+    // If we give 30 points per answer AND 50 points for the achievement that you get FOR those points,
+    // it feels like double dipping or "80 points" per answer.
+    
+    // Let's filter out the point-based achievements from the point reward calculation to keep it at 30/answer
+    const pointBasedAchievementIds = [2, 3, 4, 5, 9];
+    let rewardableAchievementsCount = 0;
+    
+    const overrides = this.extractAdminOverrides(userData?.achievements);
+
+    for (const template of DEFAULT_ACHIEVEMENTS) {
+      if (pointBasedAchievementIds.includes(template.id)) continue; // skip point-based ones for extra points
+      
+      const isCompleted = overrides.get(template.id) ?? this.isAutomaticallyCompleted(
+        template.id, 
+        userData?.streak || 0, 
+        totalPointsForAnswers + adminBonusPoints + dailyBonusPoints, 
+        currentApproximateLevel, 
+        friendsCount
+      );
+
+      if (isCompleted) {
+        rewardableAchievementsCount++;
+      }
+    }
+
+    const calculatedPoints = totalPointsForAnswers + (rewardableAchievementsCount * 50) + adminBonusPoints + dailyBonusPoints;
     const calculatedLevel = Math.floor(calculatedPoints / 500) + 1;
 
     if (userData) {

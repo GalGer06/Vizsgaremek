@@ -102,16 +102,11 @@ export function TopicQuestionsPage({ user }: Props) {
 
     const isCorrect = selectedAnswers[questionId] === question.correct;
 
-    setCheckedAnswers((current) => ({
-      ...current,
-      [questionId]: true,
-    }));
-
     if (user) {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
         // Save history including selected answer
-        await fetch(`${API_BASE_URL}/feladatok/${questionId}/answer`, {
+        const response = await fetch(`${API_BASE_URL}/feladatok/${questionId}/answer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -123,7 +118,21 @@ export function TopicQuestionsPage({ user }: Props) {
           }),
         });
 
-        if (isCorrect) {
+        if (!response.ok) {
+          throw new Error('Hiba történt a válasz mentésekor.');
+        }
+
+        const result = await response.json();
+        
+        // Use the server's verification for the UI to be 100% sure
+        const verifiedCorrect = result.isCorrect;
+
+        setCheckedAnswers((current) => ({
+          ...current,
+          [questionId]: true,
+        }));
+
+        if (verifiedCorrect) {
           // Show point popup animation
           setShowPointPopup(true);
           setTimeout(() => setShowPointPopup(false), 2000);
@@ -131,6 +140,12 @@ export function TopicQuestionsPage({ user }: Props) {
       } catch (err) {
         console.error('Hiba törént a mentés során:', err);
       }
+    } else {
+      // For guest users, just update UI
+      setCheckedAnswers((current) => ({
+        ...current,
+        [questionId]: true,
+      }));
     }
   };
 

@@ -37,20 +37,15 @@ export class FeladatokService {
         throw new BadRequestException('All answers must be strings.');
       }
 
-      const trimmed = answer.trim();
-
-      if (!trimmed) {
-        throw new BadRequestException('Answer text cannot be empty.');
-      }
-
-      return trimmed;
+      return answer.trim();
     });
 
     return cleanedAnswers;
   }
 
   private ensureCorrectAnswer(correct: string, answers: string[]) {
-    if (!answers.includes(correct.trim())) {
+    const trimmedCorrect = correct.trim();
+    if (!answers.some(a => a === trimmedCorrect)) {
       throw new BadRequestException('Correct answer must be one of the 4 possible answers.');
     }
   }
@@ -139,28 +134,44 @@ export class FeladatokService {
   }
 
   async recordAnswer(userId: number, questionId: number, isCorrect: boolean, selectedAnswer: string) {
+    const question = await this.prisma.feladatok.findUnique({
+      where: { id: questionId },
+    });
+
+    if (!question) {
+      throw new BadRequestException('Question not found.');
+    }
+
+    // Force server-side check to prevent client-side manipulation or mismatch
+    const actualCorrect = question.correct.trim();
+    const isActuallyCorrect = selectedAnswer.trim() === actualCorrect;
+
     const res = await this.prisma.useranswer.upsert({
       where: {
         userId_questionId: { userId, questionId },
       },
       update: {
-        isCorrect,
+        isCorrect: isActuallyCorrect,
         selectedAnswer,
       },
       create: {
         userId,
         questionId,
-        isCorrect,
+        isCorrect: isActuallyCorrect,
         selectedAnswer,
       },
     });
 
-    if (isCorrect) {
+    if (isActuallyCorrect) {
       // Award 30 points if the answer is correct
-      await this.userdatasService.incrementPoints(userId, 30);
+      // We also recalculate points to ensure achievements are applied
+      await this.userdatasService.recalculatePoints(userId);
     }
 
-    return res;
+    return {
+      ...res,
+      isCorrect: isActuallyCorrect, // Return the verified status
+    };
   }
 
   async resetUserAnswers(userId: number) {
