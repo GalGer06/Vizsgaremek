@@ -8,7 +8,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a környezetvédelem elsődleges célja?',
       answers: JSON.stringify(['Az ipari termelés maximalizálása', 'Kizárólag az állatok védelme', 'Az emberi kényelem mindenáron való kiszolgálása', 'Az élővilág és az emberi életfeltételek megőrzése']),
       correct: 'Az élővilág és az emberi életfeltételek megőrzése',
-      funfact: '',
+      funfact: 'A környezetvédelem nem csak a természetéért van; az emberi egészség és a gazdasági stabilitás is közvetlenül függ a tiszta környezettől.',
       history: '',
     },
     {
@@ -16,7 +16,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit jelent az "ökológiai lábnyom" kifejezés?',
       answers: JSON.stringify(['Az erdőkben hagyott fizikai lábnyomokat', 'Egy ország GDP-jének növekedését', 'A cipőgyártás környezeti hatását', 'Az erőforrások mennyiségét, amire egy embernek vagy társadalomnak szüksége van az életmódja fenntartásához']),
       correct: 'Az erőforrások mennyiségét, amire egy embernek vagy társadalomnak szüksége van az életmódja fenntartásához',
-      funfact: '',
+      funfact: 'Ha mindenki úgy élne, mint egy átlagos európai, közel 3 Földre lenne szükségünk az erőforrások fenntartásához.',
       history: '',
     },
     {
@@ -24,7 +24,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik gáz a felelős leginkább az üvegházhatás fokozódásáért az emberi tevékenység révén?',
       answers: JSON.stringify(['Oxigén', 'Hidrogén', 'Argon', 'Szén-dioxid']),
       correct: 'Szén-dioxid',
-      funfact: '',
+      funfact: 'Bár a vízgőz a legerősebb üvegházhatású gáz, a légköri szén-dioxid szintje az ipari forradalom óta több mint 45%-kal nőtt.',
       history: '',
     },
     {
@@ -32,7 +32,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a fenntartható fejlődés lényege?',
       answers: JSON.stringify(['Csak a jelen generáció igényeinek kielégítése', 'A technológiai fejlődés leállítása', 'A természet teljes érintetlensége', 'A jelen igényeinek kielégítése úgy, hogy az ne veszélyeztesse a jövő generációk szükségleteit']),
       correct: 'A jelen igényeinek kielégítése úgy, hogy az ne veszélyeztesse a jövő generációk szükségleteit',
-      funfact: '',
+      funfact: 'A fogalmat 1987-ben, a Brundtland-jelentésben (Közös jövőnk) határozták meg először hivatalosan.',
       history: '',
     },
     {
@@ -40,7 +40,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit nevezünk biodiverzitásnak?',
       answers: JSON.stringify(['A különböző technológiák sokszínűségét', 'Az elektromos autók elterjedését', 'A szelektív hulladékgyűjtést', 'Az élővilág, a fajok és az ökoszisztémák sokféleségét']),
       correct: 'Az élővilág, a fajok és az ökoszisztémák sokféleségét',
-      funfact: '',
+      funfact: 'A Földön eddig körülbelül 1,7 millió fajt írtak le, de a becslések szerint akár 8-10 millió faj is létezhet.',
       history: '',
     },
     {
@@ -48,7 +48,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a globális felmelegedés egyik fő következménye?',
       answers: JSON.stringify(['Az óceánok szintjének csökkenése', 'A sarki jégsapkák növekedése', 'A vulkáni aktivitás megszűnése', 'A szélsőséges időjárási események gyakoriságának növekedése']),
       correct: 'A szélsőséges időjárási események gyakoriságának növekedése',
-      funfact: '',
+      funfact: 'Az utóbbi évtizedekben a hőhullámok, aszályok és heves esőzések száma világszerte jelentősen megugrott.',
       history: '',
     },
     {
@@ -56,7 +56,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a célja a 2015-ös Párizsi Megállapodásnak?',
       answers: JSON.stringify(['Az űrkutatás támogatása', 'A világgazdaság központosítása', 'A műanyaggyártás betiltása 2020-ig', 'A globális átlaghőmérséklet emelkedésének 2 Celsius-fok alatt tartása']),
       correct: 'A globális átlaghőmérséklet emelkedésének 2 Celsius-fok alatt tartása',
-      funfact: '',
+      funfact: 'Ez volt az első olyan jogilag kötelező erejű nemzetközi szerződés, amely szinte minden országot összefogott a klímaváltozás ellen.',
       history: '',
     },
     {
@@ -64,7 +64,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Milyen típusú erőforrás a napenergia?',
       answers: JSON.stringify(['Fosszilis', 'Véges', 'Kimerülő', 'Megújuló']),
       correct: 'Megújuló',
-      funfact: '',
+      funfact: 'A Nap egyetlen óra alatt annyi energiát sugároz a Földre, amennyit az egész emberiség egy év alatt felhasznál.',
       history: '',
     },
     {
@@ -72,15 +72,15 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit mér az ökoszisztéma-szolgáltatás?',
       answers: JSON.stringify(['A környezetvédelmi hatóságok munkáját', 'A napelemek hatékonyságát', 'Az állatkertek látogatottságát', 'A természet által az emberiségnek nyújtott hasznokat (pl. beporzás, tiszta levegő)']),
       correct: 'A természet által az emberiségnek nyújtott hasznokat (pl. beporzás, tiszta levegő)',
-      funfact: '',
+      funfact: 'A rovarok általi beporzás értékét világszinten évi több százmilliárd euróra becsülik.',
       history: '',
     },
     {
       title: 'Alapfogalmak',
       question: 'Mit jelent a dekarbonizáció?',
       answers: JSON.stringify(['A szénbányászat növelését', 'A gyémántkészítés folyamatát', 'A növények szénfelvételének gátlását', 'Az üvegházhatású gázok kibocsátásának csökkentését vagy megszüntetését']),
-      correct: 'Az üvegházhatású gázok kibocsátásának csökkentését vagy megszüntetését',
-      funfact: '',
+      correct: 'Az üvegházhatású gázókat kibocsátásának csökkentését vagy megszüntetését',
+      funfact: 'A dekarbonizáció kulcsa a fosszilis tüzelőanyagokról a tiszta energiára való teljes átállás.',
       history: '',
     },
     {
@@ -88,7 +88,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi az invazív faj fogalma?',
       answers: JSON.stringify(['Egy veszélyeztetett őshonos állat', 'Egy kihalófélben lévő növény', 'Mesterségesen létrehozott hibrid faj', 'Olyan idegenhonos faj, amely megtelepedése után károsítja az új környezetét']),
       correct: 'Olyan idegenhonos faj, amely megtelepedése után károsítja az új környezetét',
-      funfact: '',
+      funfact: 'Az invazív fajok (pl. parlagfű) világszerte az egyik legfőbb okozói az őshonos élővilág pusztulásának.',
       history: '',
     },
     {
@@ -96,7 +96,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik szervezet az ENSZ legfőbb környezetvédelmi szerve?',
       answers: JSON.stringify(['NASA', 'WHO', 'UNICEF', 'UNEP']),
       correct: 'UNEP',
-      funfact: '',
+      funfact: 'Az UNEP székhelye a kenyai Nairobiban található, és 1972 óta koordinálja a globális környezetvédelmi erőfeszítéseket.',
       history: '',
     },
     {
@@ -104,7 +104,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi az ózonréteg feladata?',
       answers: JSON.stringify(['A szén-dioxid elnyelése', 'A felhőképződés segítése', 'A levegő lehűtése', 'A Nap káros ultraibolya (UV) sugárzásának elnyelése']),
       correct: 'A Nap káros ultraibolya (UV) sugárzásának elnyelése',
-      funfact: '',
+      funfact: 'Az ózonlyuk gyógyulóban van a CFC-gázok betiltásának köszönhetően, ami a modern környezetvédelem egyik legnagyobb sikere.',
       history: '',
     },
     {
@@ -112,7 +112,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit nevezünk túlfogyasztási napnak?',
       answers: JSON.stringify(['A karácsonyi bevásárlási időszakot', 'Amikor a boltokban kiárusítás van', 'Az év utolsó napját', 'Azt a dátumot, amikor az emberiség elhasználja a Föld adott évre vonatkozó erőforrásait']),
       correct: 'Azt a dátumot, amikor az emberiség elhasználja a Föld adott évre vonatkozó erőforrásait',
-      funfact: '',
+      funfact: '1970-ben még december végén volt ez a nap, ma már gyakran júliusra vagy augusztusra esik.',
       history: '',
     },
     {
@@ -120,7 +120,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a megújuló energiaforrások egyik legnagyobb előnye?',
       answers: JSON.stringify(['Hogy drágábbak a szénnél', 'Hogy mindenhol egyformán elérhetőek', 'Hogy nem igényelnek karbantartást', 'Hogy üzemeltetésük során alacsony vagy nulla a károsanyag-kibocsátásuk']),
       correct: 'Hogy üzemeltetésük során alacsony vagy nulla a károsanyag-kibocsátásuk',
-      funfact: '',
+      funfact: 'A szél- és napenergia ára az utóbbi évtizedben drasztikusan csökkent, így ma már sok helyen olcsóbbak a szénnél.',
       history: '',
     },
     {
@@ -128,7 +128,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit jelent a környezetterhelési díj?',
       answers: JSON.stringify(['A szemétszállítási díjat', 'A környezetbarát termékek adóját', 'Egy önkéntes adományt a Greenpeace-nek', 'A környezethasználó által fizetett díjat a környezet igénybevételéért']),
       correct: 'A környezethasználó által fizetett díjat a környezet igénybevételéért',
-      funfact: '',
+      funfact: 'A "szennyező fizet" elv alapján a vállalatokat arra ösztönzi, hogy korszerűsítsék technológiáikat.',
       history: '',
     },
     {
@@ -136,7 +136,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a "zöldmosás" (greenwashing)?',
       answers: JSON.stringify(['A ruhák környezetbarát mosása', 'A napelemek tisztítása vízzel', 'A fák lemosása az erdőtüzek után', 'Egy vállalat megtévesztő stratégiája, amellyel környezetbarátabbnak tünteti fel magát a valóságnál']),
       correct: 'Egy vállalat megtévesztő stratégiája, amellyel környezetbarátabbnak tünteti fel magát a valóságnál',
-      funfact: '',
+      funfact: 'Sok cég használ "természetes" vagy "öko" jelzőket olyan termékekre, amelyek valójában nem fenntarthatók.',
       history: '',
     },
     {
@@ -144,7 +144,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik szektor felelős globálisan a legtöbb üvegházhatású gáz kibocsátásáért?',
       answers: JSON.stringify(['Szemétszállítás', 'Divatipar', 'Turizmus', 'Energiaellátás (villamosenergia- és hőtermelés)']),
       correct: 'Energiaellátás (villamosenergia- és hőtermelés)',
-      funfact: '',
+      funfact: 'Az energiaszektor felelős a globális kibocsátások körülbelül 35%-áért.',
       history: '',
     },
     {
@@ -152,7 +152,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a biomassza?',
       answers: JSON.stringify(['Műanyag hulladék halmaza', 'Ásványi kőzetek összessége', 'Fémhulladék újrahasznosításra', 'Biológiai úton lebomló szerves anyagok összessége']),
       correct: 'Biológiai úton lebomló szerves anyagok összessége',
-      funfact: '',
+      funfact: 'A biomassza elégetésekor CO2 szabadul fel, de mivel a növények növekedés közben ezt elnyelik, karbonsemlegesnek tekinthető.',
       history: '',
     },
     {
@@ -160,7 +160,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit jelent az ökocímke a termékeken?',
       answers: JSON.stringify(['Hogy a termék nagyon drága', 'Hogy a terméket külföldről hozták', 'Hogy a termék zöld színű', 'Hogy a termék életciklusa során bizonyítottan kisebb terhelést jelent a környezetre']),
       correct: 'Hogy a termék életciklusa során bizonyítottan kisebb terhelést jelent a környezetre',
-      funfact: '',
+      funfact: 'Az Európai Unióban a "Virág" logó (EU Ecolabel) az egyik legismertebb tanúsító védjegy.',
       history: '',
     },
 
@@ -170,7 +170,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik anyag hasznosítható újra szinte végtelen alkalommal minőségromlás nélkül?',
       answers: JSON.stringify(['Papír', 'Műanyag', 'Textil', 'Üveg']),
       correct: 'Üveg',
-      funfact: '',
+      funfact: 'Egyetlen üvegpalack újrahasznosításával annyi energiát takaríthatunk meg, amennyivel egy laptop órákig működhetne.',
       history: '',
     },
     {
@@ -178,7 +178,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Milyen színű gyűjtőedénybe kell dobni a tiszta papírhulladékot Magyarországon?',
       answers: JSON.stringify(['Sárga', 'Szürke', 'Fehér', 'Kék']),
       correct: 'Kék',
-      funfact: '',
+      funfact: 'A papír körülbelül 5-7 alkalommal hasznosítható újra, mielőtt a rostok túl gyengék lennének.',
       history: '',
     },
     {
@@ -186,7 +186,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a szelektív hulladékgyűjtés legfontosabb szabálya a műanyag flakonoknál?',
       answers: JSON.stringify(['Tele kell hagyni őket vízzel', 'Nem szabad őket összenyomni', 'Le kell vágni az aljukat', 'Ki kell öblíteni és laposra kell taposni őket']),
       correct: 'Ki kell öblíteni és laposra kell taposni őket',
-      funfact: '',
+      funfact: 'Az összenyomott flakonokból sokkal több fér el a szállítóautókban, így kevesebb CO2-kibocsátással jár a szállításuk.',
       history: '',
     },
     {
@@ -194,7 +194,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi történik a papírral minden egyes újrahasznosítási ciklus során?',
       answers: JSON.stringify(['Fehéredik', 'Egyre vastagabb lesz', 'Megszínesedik', 'A cellulózrostok rövidülnek és gyengülnek']),
       correct: 'A cellulózrostok rövidülnek és gyengülnek',
-      funfact: '',
+      funfact: 'Ezért kell minden ciklusban valamennyi friss farostot is hozzáadni az új papírgyártáshoz.',
       history: '',
     },
     {
@@ -298,7 +298,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik országban vezették be először a sikeres betétdíjas rendszereket?',
       answers: JSON.stringify(['Brazília', 'Egyiptom', 'India', 'Németország és a skandináv országok']),
       correct: 'Németország és a skandináv országok',
-      funfact: '',
+      funfact: 'Németországban a PET-palackok visszaváltási aránya a betétdíjnak köszönhetően meghaladja a 95%-ot.',
       history: '',
     },
     {
@@ -306,7 +306,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi az a "szürkevíz"?',
       answers: JSON.stringify(['Szennyezett ipari víz', 'A tenger vize', 'Esővíz, ami a tetőről folyik le', 'A háztartásokban keletkező, viszonylag tiszta szennyvíz (pl. zuhanyzásból), ami újra felhasználható (pl. öblítésre)']),
       correct: 'A háztartásokban keletkező, viszonylag tiszta szennyvíz (pl. zuhanyzásból), ami újra felhasználható (pl. öblítésre)',
-      funfact: '',
+      funfact: 'A szürkevíz használatával egy átlagos háztartás vízfogyasztása akár 30-50%-kal is csökkenthető.',
       history: '',
     },
     {
@@ -314,7 +314,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a teendő a használt sütőolajjal?',
       answers: JSON.stringify(['Ki kell önteni a mosogatóba', 'Ki kell önteni a vécébe', 'Be kell keverni a kutyatápba', 'Le kell adni kijelölt gyűjtőpontokon (pl. benzinkutak, hulladékudvarok)']),
       correct: 'Le kell adni kijelölt gyűjtőpontokon (pl. benzinkutak, hulladékudvarok)',
-      funfact: '',
+      funfact: 'Egyetlen liter használt sütőolaj akár egymillió liter élővizet is elszennyezhet, ha a lefolyóba kerül.',
       history: '',
     },
     {
@@ -322,7 +322,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mekkora része hasznosítható újra egy átlagos mobiltelefonnak?',
       answers: JSON.stringify(['5%', '20%', '50%', 'Akár 80-90%-a (fémek, műanyagok, ritka földfémek)']),
       correct: 'Akár 80-90%-a (fémek, műanyagok, ritka földfémek)',
-      funfact: '',
+      funfact: 'Egy tonna régi mobiltelefonból több aranyat lehet kinyerni, mint egy tonna aranyércből.',
       history: '',
     },
 
@@ -332,7 +332,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'A Föld vízkészletének körülbelül hány százaléka édesvíz?',
       answers: JSON.stringify(['50%', '25%', '10%', 'Kevesebb mint 3%']),
       correct: 'Kevesebb mint 3%',
-      funfact: '',
+      funfact: 'Ennek az édesvíznek is nagy része (kb. 70%) jégtakarókban és gleccserekben van megkötve.',
       history: '',
     },
     {
@@ -340,7 +340,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'A legnagyobb édesvíz-felhasználó ágazat a világon?',
       answers: JSON.stringify(['Ipar', 'Lakossági fogyasztás', 'Turizmus', 'Mezőgazdaság (öntözés)']),
       correct: 'Mezőgazdaság (öntözés)',
-      funfact: '',
+      funfact: 'A mezőgazdaság felelős a globális édesvíz-felhasználás körülbelül 70%-áért.',
       history: '',
     },
     {
@@ -348,7 +348,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit nevezünk eutrofizációnak?',
       answers: JSON.stringify(['A víz elpárolgását', 'A víz megfagyását', 'A halak vándorlását', 'A vizek tápanyagokkal való túlzott feldúsulását, ami algásodáshoz és oxigénhiányhoz vezet']),
       correct: 'A vizek tápanyagokkal való túlzott feldúsulását, ami algásodáshoz és oxigénhiányhoz vezet',
-      funfact: '',
+      funfact: 'A folyamat gyakran a műtrágyák bemosódása miatt alakul ki, és a halak pusztulásához vezethet.',
       history: '',
     },
     {
@@ -356,7 +356,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Miért káros a mikroműanyag a vizekben?',
       answers: JSON.stringify(['Mert színesebbé teszi a vizet', 'Mert lassítja a hullámzást', 'Mert gátolja a hajózást', 'Mert bekerül a táplálékláncba és mérgező anyagokat köt meg']),
       correct: 'Mert bekerül a táplálékláncba és mérgező anyagokat köt meg',
-      funfact: '',
+      funfact: 'Becslések szerint egy átlagos ember hetente egy bankkártyányi súlyú mikroműanyagot fogyaszt el a vízzel és ételekkel.',
       history: '',
     },
     {
@@ -364,7 +364,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik tó a világ legmélyebb édesvizű tava?',
       answers: JSON.stringify(['Balaton', 'Viktória-tó', 'Felső-tó', 'Bajkál-tó']),
       correct: 'Bajkál-tó',
-      funfact: '',
+      funfact: 'A Bajkál-tóban található a Föld folyékony édesvízkészletének körülbelül 20%-a.',
       history: '',
     },
     {
@@ -372,7 +372,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Hogyan takarékoskodhatunk a legtöbb vízzel a fürdőszobában?',
       answers: JSON.stringify(['Ha gyakrabban mosunk kezet', 'Ha forróbb vizet használunk', 'Ha sokat mosunk fél töltettel', 'Ha fürdés helyett rövid zuhanyzást választunk']),
       correct: 'Ha fürdés helyett rövid zuhanyzást választunk',
-      funfact: '',
+      funfact: 'Egy kádas fürdéshez 120-150 liter víz kell, egy 5 perces zuhanyzáshoz viszont csak 40-50 liter.',
       history: '',
     },
     {
@@ -380,7 +380,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a célja a szennyvíztisztításnak?',
       answers: JSON.stringify(['Hogy a vizet sósabbá tegyék', 'Hogy kinyerjék belőle az aranyat', 'Hogy desztillált vizet készítsenek', 'Hogy eltávolítsák a szennyeződéseket, mielőtt a víz visszakerül a természetbe']),
       correct: 'Hogy eltávolítsák a szennyeződéseket, mielőtt a víz visszakerül a természetbe',
-      funfact: '',
+      funfact: 'A modern tisztítótelepeken mikroorganizmusok "eszik meg" a vízben lévő szerves szennyeződéseket.',
       history: '',
     },
     {
@@ -388,7 +388,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi az a vízlépcső vagy gát negatív környezeti hatása?',
       answers: JSON.stringify(['Túl sok áramot termel', 'Szebbé teszi a tájat', 'Segíti a halak mozgását', 'Megváltoztatja a folyó ökoszisztémáját és gátolja a hordalék vándorlását']),
       correct: 'Megváltoztatja a folyó ökoszisztémáját és gátolja a hordalék vándorlását',
-      funfact: '',
+      funfact: 'Sok helyen már speciális "hallépcsőket" építenek, hogy a halak átjuthassanak a gátakon.',
       history: '',
     },
     {
@@ -396,7 +396,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit jelent a "vízlábnyom" kifejezés?',
       answers: JSON.stringify(['A parton hagyott lábnyomokat', 'A vízmélységet', 'Az úszási sebességet', 'Egy termék előállításához közvetve és közvetlenül felhasznált vízmennyiséget']),
       correct: 'Egy termék előállításához közvetve és közvetlenül felhasznált vízmennyiséget',
-      funfact: '',
+      funfact: 'Egyetlen pamutpóló előállításához például körülbelül 2500-2700 liter vízre van szükség.',
       history: '',
     },
     {
@@ -404,7 +404,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Hol található a legtöbb édesvíz a Földön?',
       answers: JSON.stringify(['Folyókban', 'Tavakban', 'A légkörben', 'Gleccserekben és sarki jégsapkákban tárolva']),
       correct: 'Gleccserekben és sarki jégsapkákban tárolva',
-      funfact: '',
+      funfact: 'Sajnos a klímaváltozás miatt ezek a jégtömegek olvadnak, és sós óceánvízzé válnak, ami visszafordíthatatlan veszteség.',
       history: '',
     },
     {
@@ -412,7 +412,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a legnagyobb szennyező forrás az óceánokban?',
       answers: JSON.stringify(['Elsüllyedt hajók kincsei', 'A bálnák ürüléke', 'A vulkáni hamu', 'A szárazföldről származó műanyaghulladék és vegyi anyagok']),
       correct: 'A szárazföldről származó műanyaghulladék és vegyi anyagok',
-      funfact: '',
+      funfact: 'Az óceáni szemétszigetek (pl. a Nagy Csendes-óceáni Szemétsziget) területe többszöröse Magyarországénak.',
       history: '',
     },
     {
@@ -420,7 +420,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Miért nem szabad gyógyszereket a vécébe dobni?',
       answers: JSON.stringify(['Mert eldugulhat a cső', 'Mert drága a gyógyszer', 'Mert megváltoztatja a víz ízét', 'Mert a szennyvíztisztítók nem tudják teljesen kiszűrni őket, és károsítják a vízi élővilágot']),
       correct: 'Mert a szennyvíztisztítók nem tudják teljesen kiszűrni őket, és károsítják a vízi élővilágot',
-      funfact: '',
+      funfact: 'A vízbe kerülő hormonok és antibiotikumok megváltoztathatják a halak viselkedését és szaporodását.',
       history: '',
     },
     {
@@ -428,7 +428,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik tenger sósabb: a Holt-tenger vagy a Balti-tenger?',
       answers: JSON.stringify(['Egyforma a sótartalmuk', 'A Balti-tenger', 'Egyik sem sós', 'A Holt-tenger (extrém magas sótartalommal)']),
       correct: 'A Holt-tenger (extrém magas sótartalommal)',
-      funfact: '',
+      funfact: 'A Holt-tengerben a sótartalom kb. 34%, ami olyan sűrűvé teszi a vizet, hogy az ember lebeg rajta.',
       history: '',
     },
     {
@@ -436,15 +436,15 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit jelent a "víz stressz" fogalma?',
       answers: JSON.stringify(['Amikor a víz túl gyorsan folyik', 'Amikor a halak félnek', 'Amikor túl sok az eső', 'Amikor a vízigény meghaladja a rendelkezésre álló tiszta víz mennyiségét']),
       correct: 'Amikor a vízigény meghaladja a rendelkezésre álló tiszta víz mennyiségét',
-      funfact: '',
+      funfact: 'Jelenleg a világ lakosságának kb. egynegyede él vízhiányos területeken.',
       history: '',
     },
     {
       title: 'Vízvédelem',
       question: 'Milyen módon segítik az erdők a víz védelmét?',
-      answers: JSON.stringify(['Kiszívják az összes vizet a földből', 'Megállítják a folyókat', 'Elpárologtatják az óceánokat', 'Szűrik a csapadékvizet és szabályozzák a lefolyást, megakadályozva az eróziót']),
+      answers: JSON.stringify(['Kiszívják az összes vizet a földből', 'Megállítják a folyóokat', 'Elpárologtatják az óceánokat', 'Szűrik a csapadékvizet és szabályozzák a lefolyást, megakadályozva az eróziót']),
       correct: 'Szűrik a csapadékvizet és szabályozzák a lefolyást, megakadályozva az eróziót',
-      funfact: '',
+      funfact: 'Az erdő talaja úgy működik, mint egy óriási szivacs, ami visszatartja és megtisztítja a vizet.',
       history: '',
     },
     {
@@ -452,7 +452,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mennyi vizet használ el egy átlagos nyugati ember naponta közvetlenül?',
       answers: JSON.stringify(['5 litert', '10 litert', '50 litert', '120-150 litert']),
       correct: '120-150 litert',
-      funfact: '',
+      funfact: 'Ennek a vízmennyiségnek a jelentős része a vécéöblítésre és a fürdésre megy el, nem pedig ivásra.',
       history: '',
     },
     {
@@ -460,7 +460,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a "Nagy Csendes-óceáni Szemétsziget"?',
       answers: JSON.stringify(['Egy új üdülőhely', 'Egy természetes szigetcsoport', 'Egy úszó jéghegy', 'Egy hatalmas kiterjedésű, lebegő műanyaghulladék-koncentráció az óceánban']),
       correct: 'Egy hatalmas kiterjedésű, lebegő műanyaghulladék-koncentráció az óceánban',
-      funfact: '',
+      funfact: 'A "sziget" valójában nem szilárd föld, hanem egy hatalmas levest állagú terület, ami tele van apró műanyagdarabokkal.',
       history: '',
     },
     {
@@ -468,7 +468,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit nevezünk talajvíznek?',
       answers: JSON.stringify(['A pocsolyákat', 'Az öntözővizet', 'A tengervizet', 'A föld felszíne alatt, a kőzetek és szemcsék közötti üregekben található vizet']),
       correct: 'A föld felszíne alatt, a kőzetek és szemcsék közötti üregekben található vizet',
-      funfact: '',
+      funfact: 'A talajvíz szintje az utóbbi években sok helyen drasztikusan csökkent a túlzott öntözés és a kevés csapadék miatt.',
       history: '',
     },
     {
@@ -476,7 +476,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a deszalinizáció?',
       answers: JSON.stringify(['A víz fagyasztása', 'A víz vitaminokkal való dúsítása', 'A víz klórozása', 'A tengervíz lepárlása vagy szűrése ivóvíz előállítása céljából']),
       correct: 'A tengervíz lepárlása vagy szűrése ivóvíz előállítása céljából',
-      funfact: '',
+      funfact: 'Bár drága és energiaigényes folyamat, sok közel-keleti ország számára ez az egyetlen mód az ivóvíz biztosítására.',
       history: '',
     },
     {
@@ -484,7 +484,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik nemzetközi nap hívja fel a figyelmet a víz fontosságára?',
       answers: JSON.stringify(['Április 1.', 'Január 1.', 'Május 1.', 'Március 22. (Víz Világnapja)']),
       correct: 'Március 22. (Víz Világnapja)',
-      funfact: '',
+      funfact: 'A Víz Világnapját 1993 óta tartják meg az ENSZ kezdeményezésére.',
       history: '',
     },
 
@@ -494,7 +494,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'A Föld szárazföldi területének körülbelül mekkora részét borítják erdők?',
       answers: JSON.stringify(['5%', '10%', '50%', 'Kb. 31%']),
       correct: 'Kb. 31%',
-      funfact: '',
+      funfact: 'Az erdők aránya folyamatosan csökken, de egyes országokban a tudatos erdőtelepítésnek köszönhetően nőni kezdett.',
       history: '',
     },
     {
@@ -502,7 +502,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik erdőtípust nevezzük a "Föld tüdejének"?',
       answers: JSON.stringify(['A szibériai tajgát', 'A magyarországi bükkösöket', 'A kanadai fenyőerdőket', 'Az Amazonas-medence trópusi esőerdőit']),
       correct: 'Az Amazonas-medence trópusi esőerdőit',
-      funfact: '',
+      funfact: 'A trópusi esőerdők nemcsak oxigént termelnek, hanem a világ biodiverzitásának több mint felét is magukba foglalják.',
       history: '',
     },
     {
@@ -510,7 +510,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a fotoszintézis fő mellékterméke, ami létfontosságú az embernek?',
       answers: JSON.stringify(['Szén-dioxid', 'Nitrogén', 'Metán', 'Oxigén']),
       correct: 'Oxigén',
-      funfact: '',
+      funfact: 'Egyetlen nagy lombú fa egyetlen nap alatt annyi oxigént termel, amennyi két felnőtt embernek elég.',
       history: '',
     },
     {
@@ -518,7 +518,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi az erdőirtás egyik legfőbb oka világszerte?',
       answers: JSON.stringify(['A turisták jelenléte', 'A vadászat', 'A természetes elöregedés', 'A mezőgazdasági területek (pl. marhalegelők, pálmaolaj-ültetvények) növelése']),
       correct: 'A mezőgazdasági területek (pl. marhalegelők, pálmaolaj-ültetvények) növelése',
-      funfact: '',
+      funfact: 'Percenként körülbelül 30 futballpályányi erdő tűnik el a Földön az erdőirtások miatt.',
       history: '',
     },
     {
@@ -526,7 +526,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit nevezünk őserdőnek?',
       answers: JSON.stringify(['Ahol régen dínók éltek', 'Minden erdőt, ami 50 évnél idősebb', 'Az ember által telepített fenyveseket', 'Olyan természetes állapotú erdőt, amelyet az emberi tevékenység nem vagy alig módosított']),
       correct: 'Olyan természetes állapotú erdőt, amelyet az emberi tevékenység nem vagy alig módosított',
-      funfact: '',
+      funfact: 'Az őserdőkben sokkal több a holtfa, ami alapvető fontosságú a ritka bogárfajok számára.',
       history: '',
     },
     {
@@ -534,7 +534,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Hogyan védekeznek az erdők a globális felmelegedés ellen?',
       answers: JSON.stringify(['Hűtik a föld magját', 'Visszaverik a fényt a leveleikkel', 'Megállítják a szelet', 'Jelentős mennyiségű szén-dioxidot kötnek meg és tárolnak']),
       correct: 'Jelentős mennyiségű szén-dioxidot kötnek meg és tárolnak',
-      funfact: '',
+      funfact: 'A fák nemcsak a törzsükben, hanem a gyökérzetükben és a talajban is hatalmas mennyiségű szenet raktároznak.',
       history: '',
     },
     {
@@ -542,7 +542,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik ország rendelkezik a legnagyobb erdőterülettel a világon?',
       answers: JSON.stringify(['Kína', 'USA', 'Brazília', 'Oroszország']),
       correct: 'Oroszország',
-      funfact: '',
+      funfact: 'Az orosz tajga a világ legnagyobb egybefüggő erdősége, és hatalmas szén-dioxid-elnyelő kapacitással bír.',
       history: '',
     },
     {
@@ -550,7 +550,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit jelent az erdőfelújítás?',
       answers: JSON.stringify(['A fák lefestését zöldre', 'Az utak építését az erdőben', 'A kidőlt fák elszállítását', 'A kitermelt vagy elpusztult erdő helyén új erdő létrehozását']),
       correct: 'A kitermelt vagy elpusztult erdő helyén új erdő létrehozását',
-      funfact: '',
+      funfact: 'Sok helyen drónokkal szórják ki a magokat, hogy gyorsabban és hatékonyabban újítsák fel a leégett erdőket.',
       history: '',
     },
     {
@@ -558,7 +558,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi az erdők szerepe a talajvédelemben?',
       answers: JSON.stringify(['Elszívják a talaj tápanyagait', 'Növelik a talaj hőmérsékletét', 'Megakadályozzák a talaj megfagyását', 'Gyökérzetükkel megkötik a talajt, megakadályozva az eróziót és a földcsuszamlásokat']),
       correct: 'Gyökérzetükkel megkötik a talajt, megakadályozva az eróziót és a földcsuszamlásokat',
-      funfact: '',
+      funfact: 'Erdő nélküli domboldalakon egyetlen heves esőzés is képes méterekkel lejjebb mosni a termőtalajt.',
       history: '',
     },
     {
@@ -566,7 +566,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a pálmaolaj-termelés fő problémája az erdők szempontjából?',
       answers: JSON.stringify(['Hogy a pálmák túl magasra nőnek', 'Hogy a pálmák sok vizet isznak', 'Hogy a pálmaolaj nem egészséges', 'Hatalmas trópusi esőerdőket vágnak ki és égetnek fel az ültetvények miatt']),
       correct: 'Hatalmas trópusi esőerdőket vágnak ki és égetnek fel az ültetvények miatt',
-      funfact: '',
+      funfact: 'A pálmaolaj-ültetvények terjedése miatt az orangutánok az egyik legveszélyeztetettebb fajtájává váltak a majmoknak.',
       history: '',
     },
     {
@@ -574,7 +574,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik kontinensen található a legtöbb trópusi esőerdő?',
       answers: JSON.stringify(['Európa', 'Ausztrália', 'Antarktisz', 'Dél-Amerika']),
       correct: 'Dél-Amerika',
-      funfact: '',
+      funfact: 'Az Amazonas folyó és esőerdője olyan hatalmas, hogy több víz érkezik belőle az óceánba, mint a következő hét legnagyobb folyóból összesen.',
       history: '',
     },
     {
@@ -582,7 +582,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a holtfa szerepe az erdőben?',
       answers: JSON.stringify(['Nincs szerepe, el kell takarítani', 'Csak rontja az erdő látványát', 'Tűzveszélyes és csak kárt okoz', 'Fontos élőhelyet és táplálékot biztosít számos gombának, rovarnak és madárnak']),
       correct: 'Fontos élőhelyet és táplálékot biztosít számos gombának, rovarnak és madárnak',
-      funfact: '',
+      funfact: 'A holtfa lebomlása során tápanyagok kerülnek vissza a talajba, ami az új generációs fák növekedését segíti.',
       history: '',
     },
     {
@@ -590,7 +590,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik fa a leggyakoribb erdőalkotó faj Magyarországon?',
       answers: JSON.stringify(['Fenyő', 'Nyír', 'Akác', 'Kocsánytalan tölgy és bükk']),
       correct: 'Kocsánytalan tölgy és bükk',
-      funfact: '',
+      funfact: 'A tölgyerdőknek rendkívül gazdag az élőviláguk; több száz különböző rovarfaj élhet egyetlen fán.',
       history: '',
     },
     {
@@ -598,7 +598,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit jelent az FSC tanúsítvány a papírtermékeken vagy bútorokon?',
       answers: JSON.stringify(['Hogy a termék nagyon olcsó', 'Hogy a terméket repülővel hozták', 'Hogy a termék vízálló', 'Hogy a fa alapanyag felelős és fenntartható erdőgazdálkodásból származik']),
       correct: 'Hogy a fa alapanyag felelős és fenntartható erdőgazdálkodásból származik',
-      funfact: '',
+      funfact: 'Az FSC címke segít a vásárlóknak, hogy ne járuljanak hozzá az illegális fakitermeléshez és az esőerdők pusztításához.',
       history: '',
     },
     {
@@ -606,7 +606,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Milyen hatással van az erdőtűz a környezetre?',
       answers: JSON.stringify(['Csak pozitív hatása van', 'Csökkenti a szén-dioxid szintet', 'Megállítja a globális felmelegedést', 'Hatalmas mennyiségű szén-dioxidot szabadít fel és rombolja az élőhelyeket']),
       correct: 'Hatalmas mennyiségű szén-dioxidot szabadít fel és rombolja az élőhelyeket',
-      funfact: '',
+      funfact: 'Bár egyes erdőtípusoknak (pl. bizonyos fenyveseknek) szükségük van a tűzre a megújuláshoz, a gyakoribbá váló intenzív tüzek súlyos károkat okoznak.',
       history: '',
     },
     {
@@ -614,7 +614,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi az erdő szintezettségének sorrendje alulról felfelé?',
       answers: JSON.stringify(['Lombkoronaszint, cserjeszint, gyepszint', 'Csak fakorona létezik', 'Gyepszint, lombkoronaszint, cserjeszint', 'Mohaszint, gyepszint, cserjeszint, lombkoronaszint']),
       correct: 'Mohaszint, gyepszint, cserjeszint, lombkoronaszint',
-      funfact: '',
+      funfact: 'A szintezettség lehetővé teszi, hogy különböző igényű növények és állatok éljenek egymás mellett ugyanazon a területen.',
       history: '',
     },
     {
@@ -622,7 +622,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Miért fontosak az erdők a csapadékképződésben?',
       answers: JSON.stringify(['Mert vonzzák a mágneses hullámokat', 'Mert megállítják a felhőket', 'Mert hideget sugároznak', 'A párologtatásuk révén nedvességet juttatnak a levegőbe, ami segíti az esők kialakulását']),
       correct: 'A párologtatásuk révén nedvességet juttatnak a levegőbe, ami segíti az esők kialakulását',
-      funfact: '',
+      funfact: 'Egyetlen nagy fa naponta akár több száz liter vizet is elpárologtathat a leveleiről.',
       history: '',
     },
     {
@@ -630,7 +630,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Melyik madárfaj az erdők "doktora", mert megszabadítja a fákat a kártevőktől?',
       answers: JSON.stringify(['Sas', 'Veréb', 'Bagoly', 'Harkály']),
       correct: 'Harkály',
-      funfact: '',
+      funfact: 'A harkályok nemcsak esznek, hanem odúkat is készítenek, amiket később más madarak és emlősök is használnak.',
       history: '',
     },
     {
@@ -638,7 +638,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mi a tarvágás?',
       answers: JSON.stringify(['A fák ágainak levágása', 'A beteg fák kivágása', 'Csak a gyomok kiirtása', 'Egy adott területen az összes fa egyidejű kitermelése']),
       correct: 'Egy adott területen az összes fa egyidejű kitermelése',
-      funfact: '',
+      funfact: 'A modern erdőgazdálkodás próbálja kerülni a tarvágást, és inkább a szálaló vágást alkalmazza, ami kíméletesebb a talajnak.',
       history: '',
     },
     {
@@ -646,19 +646,19 @@ export async function seedQuestions(prisma: PrismaClient) {
       question: 'Mit nevezünk városi erdőnek?',
       answers: JSON.stringify(['A virágcserepeket az erkélyen', 'A múzeumok növényeit', 'A műanyag fákat a plázákban', 'A városi környezetben tudatosan fenntartott, erdő jellegű zöldterületeket']),
       correct: 'A városi környezetben tudatosan fenntartott, erdő jellegű zöldterületeket',
-      funfact: '',
+      funfact: 'A városi erdők csökkentik a hőszigethatást és jelentősen javítják a városlakók mentális egészségét.',
       history: '',
     },
   ];
 
   for (const q of questions) {
-    const normalizedAnswers = typeof q.answers === 'string' ? JSON.parse(q.answers) : q.answers;
-
-    await prisma.feladatok.create({
-      data: {
-        ...q,
-        answers: normalizedAnswers,
+    const { history, ...data } = q as any;
+    await prisma.feladatok.upsert({
+      where: {
+        id: questions.indexOf(q) + 1,
       },
+      update: data,
+      create: data,
     });
   }
 

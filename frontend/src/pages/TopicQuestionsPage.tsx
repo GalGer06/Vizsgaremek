@@ -174,6 +174,7 @@ export function TopicQuestionsPage({ user }: Props) {
             }}
           >
             <h3 style={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 800 }}>{question.question}</h3>
+            
             <div className="new-answers-layout">
               {(question.answers ?? []).map((answer, index) => {
                 const optionLabel = String.fromCharCode(65 + index);
@@ -213,9 +214,9 @@ export function TopicQuestionsPage({ user }: Props) {
             )}
 
             {checkedAnswers[question.id] && (
-              <div style={{ marginTop: '20px' }}>
-                <p><strong>Érdekesség:</strong> {question.funfact}</p>
-                <p><strong>Mikor lett a kérdés hozzáadva:</strong> {new Date(question.createdAt).toLocaleDateString()}</p>
+              <div style={{ marginTop: '20px', padding: '15px', borderRadius: '10px' }}>
+                <p style={{ margin: '0 0 10px 0' }}><strong>Érdekesség:</strong> {question.funfact || 'Nincs plusz információ.'}</p>
+                <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.7 }}><strong>Mikor lett a kérdés hozzáadva:</strong> {new Date(question.createdAt).toLocaleDateString()}</p>
               </div>
             )}
           </article>
