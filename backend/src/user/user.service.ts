@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
+import { UserdatasService } from 'src/userdatas/userdatas.service';
 
 @Injectable()
 export class UserService {
-  constructor (private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userdatasService: UserdatasService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     return this.prisma.user.create({
@@ -309,10 +313,16 @@ export class UserService {
   async getLeaderboard(userId: number) {
     // Get all friends
     const friends = await this.findFriends(userId);
-    const friendIds = friends.map(f => f.id);
+    const friendIds = friends.map((f) => f.id);
 
     // Get all users' data (current user + friends)
     const allUserIds = [userId, ...friendIds];
+
+    // Ensure points are recalculated for all relevant users before showing leaderboard
+    await Promise.all(
+      allUserIds.map((id) => this.userdatasService.recalculatePoints(id)),
+    );
+
     const usersData = await this.prisma.user.findMany({
       where: {
         id: { in: allUserIds },
@@ -322,12 +332,11 @@ export class UserService {
       },
     });
 
-    // Format leaderboard, then sort by points manually because Prisma 
-    // sorting on to-many relations with ordering can be tricky or restricted
+    // Format leaderboard
     const leaderboardRaw = usersData.map((user) => ({
       id: user.id,
       username: user.username,
-      profilePicture: user.profilePicture, // Add this
+      profilePicture: user.profilePicture,
       points: user.userdatas?.[0]?.totalPoints || 0,
       level: user.userdatas?.[0]?.level || 1,
       isCurrentUser: user.id === userId,

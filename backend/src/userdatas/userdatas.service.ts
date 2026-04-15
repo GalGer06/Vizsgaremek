@@ -73,6 +73,8 @@ export class UserdatasService {
       dailyBonusPoints;
     const calculatedLevel = Math.floor(totalPoints / 500) + 1;
 
+    console.log(`Recalculating points for user ${userId}: Correct: ${correctAnswersCount}, Achievements: ${completedAchievementsCount}, AdminBonus: ${adminBonusPoints}, DailyBonus: ${dailyBonusPoints}, Total: ${totalPoints}`);
+
     return this.prisma.userdatas.update({
       where: { id: userData.id },
       data: {

@@ -37,6 +37,28 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
     return () => clearInterval(interval);
   }, []);
 
+  const [planetScale, setPlanetScale] = useState(1);
+  const [isPlanetSpinning, setIsPlanetSpinning] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  const handlePlanetClick = () => {
+    setIsPlanetSpinning(true);
+    setPlanetScale(1.3);
+    setIsTransitioning(true);
+    
+    // Smooth sequence: Scale up + Spin -> Scale down -> Navigate
+    setTimeout(() => {
+      setPlanetScale(1);
+    }, 200);
+
+    setTimeout(() => {
+      setIsPlanetSpinning(false);
+      navigate('/environment');
+      // Adding a small delay to reset the transition state after navigation begins
+      setTimeout(() => setIsTransitioning(false), 500);
+    }, 600);
+  };
+
   const toggleLanguage = (e: React.MouseEvent) => {
     e.preventDefault();
     
@@ -102,6 +124,21 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
       transition: 'all 0.3s ease',
       minHeight: 'auto'
     }}>
+      {/* Immersive Green Transition Overlay */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#2e7d32',
+        zIndex: 10001,
+        pointerEvents: 'none',
+        opacity: isTransitioning ? 1 : 0,
+        transform: isTransitioning ? 'scale(1)' : 'scale(1.2)',
+        transition: 'opacity 0.6s ease-in-out'
+      }} />
+
       <div 
         className="header-title-link" 
         onClick={handleLogoClick} 
@@ -113,7 +150,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           <h1 
             onClick={(e) => {
               e.stopPropagation();
-              navigate('/secret');
+              navigate('/environment');
             }}
             style={{ 
               fontSize: isEnglish ? '18px' : '22px', 
@@ -197,6 +234,33 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
         
         {user ? (
           <>
+            <button 
+              type="button" 
+              onClick={handlePlanetClick} 
+              className={`button secondary link-button ${location.pathname === '/environment' ? 'active' : ''} environment-nav-btn`}
+              style={mobileMenuOpen ? { 
+                width: '100%', 
+                margin: 0,
+                backgroundColor: '#2e7d32',
+                color: 'white',
+                border: 'none',
+                transform: `scale(${planetScale}) rotate(${isPlanetSpinning ? '360deg' : '0deg'})`,
+                transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              } : {
+                backgroundColor: '#2e7d32',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '20px',
+                fontWeight: 'bold',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                transform: `scale(${planetScale}) rotate(${isPlanetSpinning ? '360deg' : '0deg'})`,
+                transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              }}
+            >
+              🌱 Bolygónk védelme
+            </button>
+
             <button 
               type="button" 
               onClick={handleLogoClick} 
