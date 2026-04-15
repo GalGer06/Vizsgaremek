@@ -295,12 +295,14 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
               required
               value={name}
               onChange={(event) => setName(event.target.value)}
+              className="notranslate"
             />
             <input
               placeholder="Felhasználónév"
               required
               value={username}
               onChange={(event) => setUsername(event.target.value)}
+              className="notranslate"
             />
             <input
               placeholder="Email"
@@ -308,6 +310,7 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              className="notranslate"
             />
 
             {error && <p className="message error">{error}</p>}

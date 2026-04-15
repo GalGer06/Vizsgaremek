@@ -85,13 +85,13 @@ export function Leaderboard() {
                 {entry.profilePicture ? (
                   <img src={entry.profilePicture} alt={entry.username} className="profile-img-small" style={{ width: '32px', height: '32px' }} />
                 ) : (
-                  <div className="profile-avatar-placeholder" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>
+                  <div className="profile-avatar-placeholder notranslate" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>
                     {entry.username.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
               <div className="leaderboard-username">
-                {entry.username}
+                <span className="notranslate">{entry.username}</span>
                 {entry.isCurrentUser && ' (Te)'}
               </div>
               <div className="leaderboard-points">

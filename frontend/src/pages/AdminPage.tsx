@@ -635,12 +635,12 @@ export function AdminPage({ user }: AdminPageProps) {
                     <span className="placeholder-text">{selectedUser.username.charAt(0).toUpperCase()}</span>
                   </div>
                 )}
-                <div>
+                <div className="notranslate">
                   <p style={{ margin: 0 }}><strong>Felhasználó:</strong> {selectedUser.username}</p>
                   <p style={{ margin: 0 }}><strong>Név:</strong> {selectedUser.name}</p>
                 </div>
               </div>
-              <p><strong>Email:</strong> {selectedUser.email}</p>
+              <p className="notranslate"><strong>Email:</strong> {selectedUser.email}</p>
               <p><strong>Szerepkör:</strong> {selectedUser.access ? 'Admin' : 'Felhasználó'}</p>
               <p><strong>Regisztrált:</strong> {new Date(selectedUser.createdAt).toLocaleDateString('hu-HU')}</p>
               <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #ddd' }} />
@@ -829,7 +829,7 @@ export function AdminPage({ user }: AdminPageProps) {
                           </div>
                         )}
                       </div>
-                      <div className="user-info-text">
+                      <div className="user-info-text notranslate">
                         <span
                           className="user-name-clickable"
                           onClick={() => void viewUserDetails(listedUser.id)}

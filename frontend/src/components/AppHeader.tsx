@@ -309,7 +309,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
                   className="profile-img-mini"
                 />
               ) : (
-                <span className="profile-placeholder">{user.username.charAt(0).toUpperCase()}</span>
+                <span className="profile-placeholder notranslate">{user.username.charAt(0).toUpperCase()}</span>
               )}
             </button>
           </>
