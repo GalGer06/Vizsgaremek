@@ -1629,6 +1629,9 @@ form div, .auth-form div {
 .new-answer-option {
     text-align: center !important;
     width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     padding: 20px !important;
     border-radius: 18px !important;
     border: 2px solid var(--border-blue) !important;

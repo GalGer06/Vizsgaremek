@@ -192,7 +192,7 @@ export function TopicQuestionsPage({ user }: Props) {
             
             <div className="new-answers-layout">
               {(question.answers ?? []).map((answer, index) => {
-                const optionLabel = String.fromCharCode(65 + index);
+                const optionLabel = (index + 1).toString();
                 const selected = selectedAnswers[question.id] === answer;
                 const checked = checkedAnswers[question.id];
                 const isCorrect = checked && answer === question.correct;
@@ -204,8 +204,10 @@ export function TopicQuestionsPage({ user }: Props) {
                     className={`new-answer-option ${selected ? 'selected' : ''} ${isCorrect ? 'correct' : ''} ${isWrongSelected ? 'wrong' : ''}`}
                     type="button"
                     onClick={() => handleSelectAnswer(question.id, answer)}
+                    style={{ position: 'relative', overflow: 'hidden' }}
                   >
-                    <strong>{optionLabel}.</strong> {answer}
+                    <strong style={{ whiteSpace: 'nowrap', position: 'absolute', left: '20px', zIndex: 1 }}>{optionLabel}.</strong>
+                    <span style={{ width: '100%', textAlign: 'center', padding: '0 40px' }}>{answer}</span>
                   </button>
                 );
               })}

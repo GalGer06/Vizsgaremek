@@ -235,7 +235,7 @@ export function DailyTasksPage() {
               <h3 style={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 800 }}>{question.question}</h3>
               <div className="new-answers-layout">
                 {(question.answers ?? []).map((answer, i) => {
-                  const label = String.fromCharCode(65 + i);
+                  const label = (i + 1).toString();
                   const selected = selectedAnswers[question.id] === answer;
                   const checked = checkedAnswers[question.id];
                   return (
@@ -244,8 +244,10 @@ export function DailyTasksPage() {
                       className={`new-answer-option ${selected ? 'selected' : ''} ${checked && answer === question.correct ? 'correct' : ''} ${checked && selected && answer !== question.correct ? 'wrong' : ''}`}
                       onClick={() => handleSelectAnswer(question.id, answer)}
                       disabled={checked}
+                      style={{ position: 'relative', overflow: 'hidden' }}
                     >
-                      <strong>{label}.</strong> {answer}
+                      <strong style={{ whiteSpace: 'nowrap', position: 'absolute', left: '20px', zIndex: 1 }}>{label}.</strong>
+                      <span style={{ width: '100%', textAlign: 'center', padding: '0 40px' }}>{answer}</span>
                     </button>
                   );
                 })}

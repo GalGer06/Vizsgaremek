@@ -704,8 +704,8 @@ export function AdminPage({ user }: AdminPageProps) {
               <div className="admin-edit-answers">
                 <p>Válaszlehetőségek:</p>
                 {(editFormData.answers || []).map((ans, idx) => (
-                  <label key={idx}>
-                    {String.fromCharCode(65 + idx)}:
+                  <label key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ whiteSpace: 'nowrap', minWidth: '25px' }}>{idx + 1}.</span>&nbsp;
                     <input 
                       type="text" 
                       value={ans} 
@@ -963,7 +963,7 @@ export function AdminPage({ user }: AdminPageProps) {
                             <div style={{ paddingLeft: '10px', marginTop: '5px' }}>
                               {ticket.attachment.answers.map((ans: string, i: number) => (
                                 <div key={i} style={{ color: ans === ticket.attachment.correct ? 'var(--duo-green)' : 'inherit' }}>
-                                  {String.fromCharCode(65+i)}: {ans} {ans === ticket.attachment.correct ? '(HELYES)' : ''}
+                                  <span style={{ whiteSpace: 'nowrap' }}>{i + 1}.</span> {ans} {ans === ticket.attachment.correct ? '(HELYES)' : ''}
                                 </div>
                               ))}
                             </div>
