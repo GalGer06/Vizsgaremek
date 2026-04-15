@@ -25,6 +25,7 @@ const ACHIEVEMENT_TEMPLATES = [
     { id: 8, title: 'Közösségi tag', description: 'Adj hozzá legalább 1 barátot.', completed: false, image: 'https://images.pexels.com/photos/461049/pexels-photo-461049.jpeg?auto=compress&cs=tinysrgb&w=300' },
     { id: 9, title: 'Pontgyűjtő', description: 'Gyűjts össze 500 pontot.', completed: false, image: 'https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=300' },
     { id: 10, title: 'Öko mester', description: 'Nyisd meg az összes témát legalább egyszer.', completed: false, image: 'https://images.pexels.com/photos/1173777/pexels-photo-1173777.jpeg?auto=compress&cs=tinysrgb&w=300' },
+    { id: 11, title: 'Föld Védelmezője', description: 'Olvass végig minden környezetvédelmi kategóriát.', completed: false, image: 'http://localhost:3000/images/achievement_saving_planet.jpg' },
 ];
 
 export async function seedUsers(prisma: PrismaClient, count: number = 15) {
