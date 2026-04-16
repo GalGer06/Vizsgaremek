@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Leaderboard } from '../components/Leaderboard';
-import { API_BASE_URL } from '../constants';
+import { API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { HomeButton } from '../types';
 
 export function HomePage() {
   const [buttons, setButtons] = useState<HomeButton[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/home/buttons`)
@@ -20,6 +21,19 @@ export function HomePage() {
         setLoading(false);
       });
   }, []);
+
+  const handleButtonClick = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    const userStr = localStorage.getItem('wdad_user');
+    
+    // Check if user is logged in
+    const isLoggedIn = token && userStr && userStr !== 'null';
+
+    if (!isLoggedIn) {
+      e.preventDefault();
+      navigate('/auth');
+    }
+  };
 
   const buttonStyle = (image: string) => ({
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${API_BASE_URL}/images/${image})`,
@@ -56,6 +70,7 @@ export function HomePage() {
               to={button.link} 
               className="home-menu-button link-button" 
               style={buttonStyle(button.image)}
+              onClick={(e) => handleButtonClick(e, button.link)}
             >
               {button.label}
             </Link>

@@ -50,8 +50,12 @@ export function AdminPage({ user }: AdminPageProps) {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
         const [usersResponse, questionsResponse, ticketsResponse] = await Promise.all([
-          fetch(`${API_BASE_URL}/user`),
-          fetch(`${API_BASE_URL}/feladatok`),
+          fetch(`${API_BASE_URL}/user`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          fetch(`${API_BASE_URL}/feladatok`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
           fetch(`${API_BASE_URL}/tickets`, {
             headers: { Authorization: `Bearer ${token}` }
           })
@@ -94,9 +98,31 @@ export function AdminPage({ user }: AdminPageProps) {
   }
 
   const adminCount = users.filter((item) => item.access).length;
-  const isOriginalAdmin = user.username === 'Rikimik';
+  const isSuperAdmin = user.username && ['Rikimik', 'GalGer'].includes(user.username);
+  const isOriginalAdmin = user.username && ['Rikimik', 'GalGer'].includes(user.username);
+  
   const searchValue = usernameSearch.trim().toLowerCase();
-  const filteredUsers = users.filter((listedUser) =>
+  
+  // Sort users: Super Admins first (Rikimik then GalGer), then other admins, then regular users
+  const sortedUsers = [...users].sort((a, b) => {
+    const superAdmins = ['Rikimik', 'GalGer'];
+    const aIsSuper = superAdmins.includes(a.username);
+    const bIsSuper = superAdmins.includes(b.username);
+
+    if (aIsSuper && bIsSuper) {
+      return superAdmins.indexOf(a.username) - superAdmins.indexOf(b.username);
+    }
+    if (aIsSuper) return -1;
+    if (bIsSuper) return 1;
+    
+    // Then other admins
+    if (a.access && !b.access) return -1;
+    if (!a.access && b.access) return 1;
+    
+    return 0;
+  });
+
+  const filteredUsers = sortedUsers.filter((listedUser) =>
     listedUser.username.toLowerCase().includes(searchValue),
   );
 
@@ -839,11 +865,11 @@ export function AdminPage({ user }: AdminPageProps) {
                         </span>
                         <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{listedUser.email}</span>
                         <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', marginTop: '4px' }}>
-                          {listedUser.username === 'Rikimik' ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}
+                          {['Rikimik', 'GalGer'].includes(listedUser.username) ? 'szuperadmin' : (listedUser.access ? 'admin' : 'user')}
                         </span>
                       </div>
                       <div className="admin-user-actions">
-                        {listedUser.username !== 'Rikimik' && (
+                        {!['Rikimik', 'GalGer'].includes(listedUser.username) && (
                           <>
                             <button
                               className="button danger small"
@@ -856,17 +882,18 @@ export function AdminPage({ user }: AdminPageProps) {
                             {listedUser.access ? (
                               <button
                                 className="button secondary small"
-                                disabled={!isOriginalAdmin || updatingUserId === listedUser.id}
+                                style={(['Rikimik', 'GalGer'].includes(listedUser.username)) ? { backgroundColor: '#2196F3', borderColor: '#1976D2', color: 'white', opacity: 1, cursor: 'default' } : {}}
+                                disabled={!isSuperAdmin || (['Rikimik', 'GalGer'].includes(listedUser.username)) || updatingUserId === listedUser.id}
                                 onClick={() => void setAdminAccess(listedUser.id, false)}
                                 type="button"
                               >
-                                {updatingUserId === listedUser.id ? '...' : 'Admin visszavonás'}
+                                {updatingUserId === listedUser.id ? '...' : (['Rikimik', 'GalGer'].includes(listedUser.username) ? 'Szuperadmin' : 'Admin visszavonás')}
                               </button>
                             ) : (
                               <button
                                 className="button small"
                                 style={{ backgroundColor: 'var(--duo-green)', borderBottomColor: 'var(--duo-green-shadow)', color: 'white' }}
-                                disabled={updatingUserId === listedUser.id}
+                                disabled={updatingUserId === listedUser.id || !isSuperAdmin}
                                 onClick={() => void setAdminAccess(listedUser.id, true)}
                                 type="button"
                               >

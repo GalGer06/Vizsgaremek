@@ -23,17 +23,19 @@ export function DailyTasksPage() {
         const user = savedUser ? JSON.parse(savedUser) : null;
         const token = localStorage.getItem(TOKEN_KEY);
         
-        // Use daily as fallback, but try to use user-specific URL if logged in
+        // Use user-specific URL as primary for logged-in users
         let url = `${API_BASE_URL}/feladatok/daily`;
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         };
         
-        if (user && token) {
-          // IMPORTANT: We MUST use this URL to get isAnswered status from DB
-          url = `${API_BASE_URL}/feladatok/user/${user.id}`;
+        if (token) {
           headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        if (user && token) {
+          url = `${API_BASE_URL}/feladatok/user/${user.id}`;
         }
 
         console.log(`Fetching questions from: ${url}`);

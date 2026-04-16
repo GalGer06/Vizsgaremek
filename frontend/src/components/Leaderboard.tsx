@@ -12,12 +12,18 @@ export function Leaderboard() {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
         const userStr = localStorage.getItem('wdad_user');
-        if (!token || !userStr) {
-          setError('Not authenticated');
+        if (!token || !userStr || userStr === 'null') {
+          setError('A ranglista megtekintéséhez be kell jelentkezned.');
+          setLoading(false);
           return;
         }
 
         const user = JSON.parse(userStr);
+        if (!user || !user.id) {
+          setError('A ranglista megtekintéséhez be kell jelentkezned.');
+          setLoading(false);
+          return;
+        }
         const response = await fetch(
           `${API_BASE_URL}/user/${user.id}/leaderboard`,
           {
@@ -53,10 +59,13 @@ export function Leaderboard() {
   }
 
   if (error) {
+    const isNotLoggedIn = error === 'A ranglista megtekintéséhez be kell jelentkezned.';
     return (
       <div className="leaderboard-container">
         <h3>Rangsor</h3>
-        <div className="leaderboard-error">Hiba: {error}</div>
+        <div className={isNotLoggedIn ? "leaderboard-info" : "leaderboard-error"}>
+          {isNotLoggedIn ? error : `Hiba: ${error}`}
+        </div>
       </div>
     );
   }

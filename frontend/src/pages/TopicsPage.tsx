@@ -1,25 +1,61 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../constants';
+import { API_BASE_URL, TOKEN_KEY } from '../constants';
 import type { Topic } from '../types';
 
 export function TopicsPage() {
   const navigate = useNavigate();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/topics`)
-      .then(res => res.json())
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      navigate('/auth', { replace: true });
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/topics`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (res.status === 401) {
+          navigate('/auth', { replace: true });
+          return;
+        }
+        if (!res.ok) throw new Error('Hiba történt az adatok letöltése közben.');
+        return res.json();
+      })
       .then(data => {
         setTopics(data);
         setLoading(false);
       })
       .catch(err => {
         console.error('Error fetching topics:', err);
+        setError(err.message);
         setLoading(false);
       });
   }, []);
+
+  if (error) {
+    return (
+      <section>
+        <div className="section-header">
+          <h2>Témák</h2>
+          <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
+        </div>
+        <div className="leaderboard-container" style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>{error}</p>
+          <button onClick={() => navigate('/auth')} className="button primary" style={{ marginTop: '1rem' }}>
+            Bejelentkezés
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section>

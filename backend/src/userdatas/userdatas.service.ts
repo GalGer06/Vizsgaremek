@@ -103,12 +103,14 @@ export class UserdatasService {
     }
 
     const newTotalPoints = userData.totalPoints + points;
+    const newAdminBonusPoints = (userData.adminBonusPoints || 0) + points;
     const newLevel = Math.floor(newTotalPoints / 500) + 1;
 
     return this.prisma.userdatas.update({
       where: { id: userData.id },
       data: {
         totalPoints: newTotalPoints,
+        adminBonusPoints: newAdminBonusPoints,
         level: newLevel,
       },
     });

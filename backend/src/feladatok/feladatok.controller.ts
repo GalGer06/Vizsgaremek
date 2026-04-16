@@ -14,6 +14,7 @@ export class FeladatokController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.feladatokService.findAll();
   }
@@ -49,6 +50,7 @@ export class FeladatokController {
   }
 
   @Get('daily')
+  @UseGuards(JwtAuthGuard)
   findDaily() {
     return this.feladatokService.findDaily();
   }
@@ -65,6 +67,7 @@ export class FeladatokController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.feladatokService.findOne(+id);
   }

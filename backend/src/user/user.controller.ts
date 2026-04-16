@@ -21,6 +21,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { SetUserAccessDto } from './dto/set-user-access.dto';
 
 const ORIGINAL_ADMIN_USERNAME = 'Rikimik';
+const SUPER_ADMINS = ['Rikimik', 'GalGer'];
 
 @Controller('user')
 export class UserController {
@@ -299,8 +300,10 @@ export class UserController {
 
     const targetUserId = +id;
 
-    if (!setUserAccessDto.access && req.user.username !== ORIGINAL_ADMIN_USERNAME) {
-      throw new ForbiddenException('Only the original Admin can remove admin access');
+    if (!setUserAccessDto.access) {
+      if (!req.user.username || !SUPER_ADMINS.includes(req.user.username)) {
+        throw new ForbiddenException('Only super admins can remove admin access');
+      }
     }
 
     return this.userService.findOne(targetUserId).then((targetUser) => {
@@ -308,8 +311,8 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      if (!setUserAccessDto.access && targetUser.username === ORIGINAL_ADMIN_USERNAME) {
-        throw new ForbiddenException('Original Admin access cannot be removed');
+      if (!setUserAccessDto.access && targetUser.username && SUPER_ADMINS.includes(targetUser.username)) {
+        throw new ForbiddenException('Super admin access cannot be revoked');
       }
 
       return this.userService.updateAccess(targetUserId, setUserAccessDto.access);
