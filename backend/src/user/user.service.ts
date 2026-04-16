@@ -175,7 +175,7 @@ export class UserService {
   }
 
   async findIncomingFriendRequests(userId: number) {
-    return this.prisma.friendrequest.findMany({
+    const list = await this.prisma.friendrequest.findMany({
       where: { receiverId: userId },
       include: {
         user_friendrequest_requesterIdTouser: {
@@ -183,6 +183,7 @@ export class UserService {
             id: true,
             username: true,
             email: true,
+            profilePicture: true,
           },
         },
       },
@@ -190,10 +191,15 @@ export class UserService {
         createdAt: 'desc',
       },
     });
+
+    return list.map((item) => ({
+      id: item.id,
+      requester: item.user_friendrequest_requesterIdTouser,
+    }));
   }
 
   async findSentFriendRequests(userId: number) {
-    return this.prisma.friendrequest.findMany({
+    const list = await this.prisma.friendrequest.findMany({
       where: { requesterId: userId },
       include: {
         user_friendrequest_receiverIdTouser: {
@@ -201,6 +207,7 @@ export class UserService {
             id: true,
             username: true,
             email: true,
+            profilePicture: true,
           },
         },
       },
@@ -208,17 +215,22 @@ export class UserService {
         createdAt: 'desc',
       },
     });
+
+    return list.map((item) => ({
+      id: item.id,
+      receiver: item.user_friendrequest_receiverIdTouser,
+    }));
   }
 
-  async friendRequestExists(requesterId: number, receiverId: number) {
-    return this.prisma.friendrequest.findUnique({
+  async friendRequestExists(userId1: number, userId2: number) {
+    return this.prisma.friendrequest.findFirst({
       where: {
-        requesterId_receiverId: {
-          requesterId,
-          receiverId,
-        },
+        OR: [
+          { requesterId: userId1, receiverId: userId2 },
+          { requesterId: userId2, receiverId: userId1 },
+        ],
       },
-      select: { id: true },
+      select: { id: true, requesterId: true, receiverId: true },
     });
   }
 

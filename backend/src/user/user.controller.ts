@@ -114,29 +114,31 @@ export class UserController {
       throw new ConflictException('You are already friends');
     }
 
-    const directRequest = await this.userService.friendRequestExists(
+    const existingRequest = await this.userService.friendRequestExists(
       targetUserId,
       targetFriendId,
     );
-    if (directRequest) {
-      throw new ConflictException('Friend request already sent');
-    }
 
-    const reverseRequest = await this.userService.friendRequestExists(
-      targetFriendId,
-      targetUserId,
-    );
-
-    if (reverseRequest) {
-      await this.userService.acceptFriendRequest(reverseRequest.id, targetUserId);
-      return {
-        status: 'accepted-existing-request',
-        friends: await this.userService.findFriends(targetUserId),
-      };
+    if (existingRequest) {
+      if (existingRequest.requesterId === targetUserId) {
+        throw new ConflictException('Friend request already sent');
+      } else {
+        await this.userService.acceptFriendRequest(
+          existingRequest.id,
+          targetUserId,
+        );
+        return {
+          status: 'accepted-existing-request',
+          friends: await this.userService.findFriends(targetUserId),
+        };
+      }
     }
 
     await this.userService.createFriendRequest(targetUserId, targetFriendId);
-    return { status: 'request-sent' };
+    return {
+      status: 'request-sent',
+      sentRequests: await this.userService.findSentFriendRequests(targetUserId),
+    };
   }
 
   @Get(':id/friend-requests')

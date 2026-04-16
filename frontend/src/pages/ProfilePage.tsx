@@ -261,7 +261,21 @@ export function ProfilePage({ user, onUserUpdate }: ProfilePageProps) {
               </button>
             </div>
           )}
-          <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
+          <button 
+            onClick={() => navigate(-1)} 
+            className="button primary-green link-button"
+            style={{ 
+              backgroundColor: 'var(--duo-green)', 
+              borderColor: 'var(--duo-green-shadow)',
+              color: 'white',
+              fontWeight: 'bold',
+              padding: '10px 20px',
+              borderRadius: '12px',
+              borderBottomWidth: '4px'
+            }}
+          >
+            Vissza
+          </button>
         </div>
       </div>
 
