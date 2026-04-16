@@ -112,7 +112,7 @@ export function AppShell() {
             <h4>Közösségi média</h4>
             <p><a href="https://facebook.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Facebook</a></p>
             <p><a href="https://twitter.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Twitter</a></p>
-            <p><a href="https://instagram.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Instagram</a></p>
+            <p><a href="https://www.instagram.com/termeszetvedelemvizsgaremek/" target="_blank" rel="noopener noreferrer">Instagram</a></p>
           </div>
         </div>
         <div className="footer-bottom">
