@@ -1015,14 +1015,15 @@ export function AdminPage({ user }: AdminPageProps) {
                         )}
                         {ticket.status === 'OPEN' ? (
                           <button 
-                            className="button primary small" 
+                            className="button danger small" 
                             onClick={() => updateTicketStatus(ticket.id, 'CLOSED')}
                           >
                             Lezárás
                           </button>
                         ) : (
                           <button 
-                            className="button secondary small" 
+                            className="button primary small" 
+                            style={{ backgroundColor: 'var(--duo-green)', borderBottomColor: 'var(--duo-green-shadow)', color: 'white' }}
                             onClick={() => updateTicketStatus(ticket.id, 'OPEN')}
                           >
                             Újranyitás

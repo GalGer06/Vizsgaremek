@@ -100,10 +100,6 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
   };
 
   const handleLogoClick = () => {
-    if (location.pathname.startsWith('/topics/') && location.pathname.split('/').length > 2) {
-      const confirmExit = window.confirm('Biztosan ki szeretnél lépni? A folyamatban lévő feladatok elvesznek.');
-      if (!confirmExit) return;
-    }
     navigate('/');
   };
 

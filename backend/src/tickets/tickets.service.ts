@@ -7,19 +7,23 @@ export class TicketsService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: number, createTicketDto: CreateTicketDto) {
+    const attachmentStr = createTicketDto.attachment 
+      ? JSON.stringify(createTicketDto.attachment) 
+      : null;
+
     return this.prisma.ticket.create({
       data: {
         userId,
         type: createTicketDto.type,
         description: createTicketDto.description,
-        attachment: createTicketDto.attachment || null,
+        attachment: attachmentStr,
         status: 'OPEN',
       },
     });
   }
 
   async findAll() {
-    return this.prisma.ticket.findMany({
+    const tickets = await this.prisma.ticket.findMany({
       include: {
         user: {
           select: {
@@ -33,6 +37,11 @@ export class TicketsService {
         createdAt: 'desc',
       },
     });
+
+    return tickets.map(ticket => ({
+      ...ticket,
+      attachment: ticket.attachment ? JSON.parse(ticket.attachment) : null
+    }));
   }
 
   async findOne(id: number) {
@@ -53,7 +62,10 @@ export class TicketsService {
       throw new NotFoundException(`Ticket with ID ${id} not found`);
     }
 
-    return ticket;
+    return {
+      ...ticket,
+      attachment: ticket.attachment ? JSON.parse(ticket.attachment) : null
+    };
   }
 
   async updateStatus(id: number, status: 'OPEN' | 'CLOSED') {

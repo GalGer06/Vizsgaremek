@@ -14,7 +14,7 @@ export function TopicQuestionsPage({ user }: Props) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [checkedAnswers, setCheckedAnswers] = useState<Record<number, boolean>>({});
-  const [showPointPopup, setShowPointPopup] = useState(false);
+  const [popups, setPopups] = useState<{ id: number; value: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -134,8 +134,11 @@ export function TopicQuestionsPage({ user }: Props) {
 
         if (verifiedCorrect) {
           // Show point popup animation
-          setShowPointPopup(true);
-          setTimeout(() => setShowPointPopup(false), 2000);
+          const popupId = Date.now();
+          setPopups((prev) => [...prev, { id: popupId, value: 30 }]);
+          setTimeout(() => {
+            setPopups((prev) => prev.filter((p) => p.id !== popupId));
+          }, 2000);
         }
       } catch (err) {
         console.error('Hiba törént a mentés során:', err);
@@ -151,11 +154,11 @@ export function TopicQuestionsPage({ user }: Props) {
 
   return (
     <section>
-      {showPointPopup && (
-        <div className="new-points-popup">
-          +30
+      {popups.map((popup) => (
+        <div key={popup.id} className="new-points-popup">
+          +{popup.value}
         </div>
-      )}
+      ))}
       <div className="section-header">
         <h2>{topic.icon} {topic.title} kérdései</h2>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>

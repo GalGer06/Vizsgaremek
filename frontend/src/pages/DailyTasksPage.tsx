@@ -8,9 +8,8 @@ export function DailyTasksPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [checkedAnswers, setCheckedAnswers] = useState<Record<number, boolean>>({});
-  const [showPointPopup, setShowPointPopup] = useState(false);
+  const [popups, setPopups] = useState<{ id: number; value: number }[]>([]);
   const [showBonusModal, setShowBonusModal] = useState(false);
-  const [popupValue, setPopupValue] = useState(30);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -115,9 +114,11 @@ export function DailyTasksPage() {
 
         // 2. Award individual points if correct
         if (isCorrect) {
-          setPopupValue(30);
-          setShowPointPopup(true);
-          setTimeout(() => setShowPointPopup(false), 2000);
+          const popupId = Date.now();
+          setPopups((prev) => [...prev, { id: popupId, value: 30 }]);
+          setTimeout(() => {
+            setPopups((prev) => prev.filter((p) => p.id !== popupId));
+          }, 2000);
         }
 
         // 3. Check for 500pt bonus (completion of all 3 daily questions correctly)
@@ -160,7 +161,11 @@ export function DailyTasksPage() {
 
   return (
     <section>
-      {showPointPopup && <div className="new-points-popup">+{popupValue}</div>}
+      {popups.map((popup) => (
+        <div key={popup.id} className="new-points-popup">
+          +{popup.value}
+        </div>
+      ))}
       
       {showBonusModal && (
         <div className="user-details-overlay" onClick={() => setShowBonusModal(false)}>
