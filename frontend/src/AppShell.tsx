@@ -94,7 +94,7 @@ export function AppShell() {
       <footer className="app-footer">
         <div className="footer-content">
           <div className="footer-section">
-            <h4 onClick={() => navigate('/environment')} style={{ cursor: 'pointer' }}>Környezetvédelem</h4>
+            <h4 onClick={() => navigate('/environment')} style={{ cursor: 'pointer' }}>Future Nature</h4>
             <p>Tanulj játékosan a Föld védelméről.</p>
           </div>
           <div className="footer-section">
@@ -113,8 +113,8 @@ export function AppShell() {
           <div className="footer-section">
             <h4>Közösségi média</h4>
             <p><a href="https://facebook.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Facebook</a></p>
-            <p><a href="https://twitter.com/vizsgaremek" target="_blank" rel="noopener noreferrer">Twitter</a></p>
-            <p><a href="https://www.instagram.com/termeszetvedelemvizsgaremek/" target="_blank" rel="noopener noreferrer">Instagram</a></p>
+            <p><a href="https://twitter.com/vizsgaremek" target="_blank" rel="noopener noreferrer">X</a></p>
+            <p><a href="https://www.instagram.com/future__nature/" target="_blank" rel="noopener noreferrer">Instagram</a></p>
           </div>
         </div>
         <div className="footer-bottom">

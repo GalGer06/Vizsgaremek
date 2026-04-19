@@ -121,6 +121,25 @@ export function DailyTasksPage() {
           }, 2000);
         }
 
+        // Smooth scroll to next daily question
+        setTimeout(() => {
+          const currentIndex = questions.findIndex(q => q.id === questionId);
+          const nextQuestion = questions[currentIndex + 1];
+          if (nextQuestion) {
+            // Wait for React to render and then use Window.scrollTo for better control
+            setTimeout(() => {
+              const nextCard = document.querySelector(`[data-id="${nextQuestion.id}"]`);
+              if (nextCard) {
+                const targetPosition = nextCard.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2) + (nextCard.clientHeight / 2);
+                window.scrollTo({
+                  top: targetPosition,
+                  behavior: 'smooth'
+                });
+              }
+            }, 100);
+          }
+        }, 1500);
+
         // 3. Check for 500pt bonus (completion of all 3 daily questions correctly)
         // Note: we use the functional update to get the very latest count if needed, 
         // but since we just set it above, currentCheckedCount + 1 is accurate for this sync execution.

@@ -362,9 +362,9 @@ input::placeholder {
     padding: 24px 20px;
     border-radius: 28px;
     border: var(--duo-border-width) solid var(--duo-green);
-    box-shadow: 0 8px 0 var(--duo-green-shadow);
+    box-shadow: 0 4px 0 var(--duo-green-shadow);
     color: var(--text-main) !important;
-    height: 100%;
+    height: calc(100% - 14px);
     display: flex;
     flex-direction: column;
 }

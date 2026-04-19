@@ -418,9 +418,9 @@ export function AdminPage({ user }: AdminPageProps) {
 
   return (
     <section style={{ color: 'white' }}>
-      <div className="section-header">
-        <h2 style={{ color: 'white' }}>Admin dashboard</h2>
-        <div className="admin-tabs">
+      <div className="section-header" style={{ alignItems: 'flex-end', paddingBottom: '10px' }}>
+        <h2 style={{ color: 'white', margin: 0 }}>Admin dashboard</h2>
+        <div className="admin-tabs" style={{ marginBottom: 0 }}>
           <button 
             className={`button ${activeTab === 'users' ? 'primary' : 'secondary'}`}
             onClick={() => setActiveTab('users')}
@@ -440,7 +440,7 @@ export function AdminPage({ user }: AdminPageProps) {
             Ticketek ({tickets.filter(t => t.status === 'OPEN').length})
           </button>
         </div>
-        <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
+        <button onClick={() => navigate(-1)} className="button secondary link-button" style={{ marginBottom: -5 }}>Vissza</button>
       </div>
 
       <style>{`

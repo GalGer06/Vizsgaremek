@@ -384,6 +384,38 @@ export function FriendsPage({ user }: FriendsPageProps) {
         </div>
 
         <div className="friends-panel">
+          <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--text-header)' }}>Elküldött várólistán</h3>
+          {loadingSentRequests && <p className="message">Betöltés...</p>}
+          {!loadingSentRequests && (
+            <ul className="friends-list">
+              {sentRequests.map((request) => (
+                <li key={request.id} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  {request.receiver?.profilePicture ? (
+                    <img src={request.receiver.profilePicture} alt={request.receiver.username} className="profile-img-small" />
+                  ) : (
+                    <div className="profile-avatar-placeholder">{request.receiver?.username?.charAt(0).toUpperCase() || '?'}</div>
+                  )}
+                  <div style={{ flex: 1 }}>
+                    <strong>{request.receiver?.username || 'Ismeretlen felhasználó'}</strong>
+                    <p>Függőben...</p>
+                  </div>
+                  <button
+                    className="button danger"
+                    style={{ fontSize: '0.85rem', padding: '8px 14px' }}
+                    type="button"
+                    disabled={cancelingReceiverId === request.receiver?.id}
+                    onClick={() => request.receiver?.id && void cancelSentRequest(request.receiver.id)}
+                  >
+                    Mégse
+                  </button>
+                </li>
+              ))}
+              {!sentRequests.length && <li className="friends-empty" style={{ opacity: 0.7, fontStyle: 'italic', background: 'transparent', border: 'none' }}>Nincs elküldött kérelem.</li>}
+            </ul>
+          )}
+        </div>
+
+        <div className="friends-panel">
           <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--text-header)' }}>Beérkező kérelmek</h3>
           {loadingRequests && <p className="message">Kérelmek betöltése...</p>}
           {!loadingRequests && (
@@ -454,38 +486,6 @@ export function FriendsPage({ user }: FriendsPageProps) {
                 </li>
               ))}
               {!friends.length && <li className="friends-empty" style={{ opacity: 0.7, fontStyle: 'italic', background: 'transparent', border: 'none' }}>Még nincsenek barátaid.</li>}
-            </ul>
-          )}
-        </div>
-
-        <div className="friends-panel">
-          <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--text-header)' }}>Elküldött várólistán</h3>
-          {loadingSentRequests && <p className="message">Betöltés...</p>}
-          {!loadingSentRequests && (
-            <ul className="friends-list">
-              {sentRequests.map((request) => (
-                <li key={request.id} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  {request.receiver?.profilePicture ? (
-                    <img src={request.receiver.profilePicture} alt={request.receiver.username} className="profile-img-small" />
-                  ) : (
-                    <div className="profile-avatar-placeholder">{request.receiver?.username?.charAt(0).toUpperCase() || '?'}</div>
-                  )}
-                  <div style={{ flex: 1 }}>
-                    <strong>{request.receiver?.username || 'Ismeretlen felhasználó'}</strong>
-                    <p>Függőben...</p>
-                  </div>
-                  <button
-                    className="button secondary"
-                    style={{ fontSize: '0.85rem', padding: '8px 14px', background: '#666' }}
-                    type="button"
-                    disabled={cancelingReceiverId === request.receiver?.id}
-                    onClick={() => request.receiver?.id && void cancelSentRequest(request.receiver.id)}
-                  >
-                    Mégse
-                  </button>
-                </li>
-              ))}
-              {!sentRequests.length && <li className="friends-empty" style={{ opacity: 0.7, fontStyle: 'italic', background: 'transparent', border: 'none' }}>Nincs elküldött kérelem.</li>}
             </ul>
           )}
         </div>

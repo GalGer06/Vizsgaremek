@@ -140,6 +140,25 @@ export function TopicQuestionsPage({ user }: Props) {
             setPopups((prev) => prev.filter((p) => p.id !== popupId));
           }, 2000);
         }
+
+        // Smooth scroll to next question after result
+        setTimeout(() => {
+          const nextIndex = filteredQuestions.findIndex(q => q.id === questionId) + 1;
+          if (nextIndex < filteredQuestions.length) {
+            const nextQuestionId = filteredQuestions[nextIndex].id;
+            setTimeout(() => {
+              const nextCard = document.querySelector(`[data-question-id="${nextQuestionId}"]`);
+              if (nextCard) {
+                const targetPosition = nextCard.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2) + (nextCard.clientHeight / 2);
+                window.scrollTo({
+                  top: targetPosition,
+                  behavior: 'smooth'
+                });
+              }
+            }, 100);
+          }
+        }, 1500);
+
       } catch (err) {
         console.error('Hiba törént a mentés során:', err);
       }
@@ -184,6 +203,7 @@ export function TopicQuestionsPage({ user }: Props) {
           <article 
             key={question.id} 
             className="question-card" 
+            data-question-id={question.id}
             style={{ 
               marginBottom: '0',
               border: '1px solid var(--border-blue)',

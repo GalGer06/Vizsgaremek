@@ -146,7 +146,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           <h1 
             onClick={(e) => {
               e.stopPropagation();
-              navigate('/environment');
+              navigate('/');
             }}
             style={{ 
               fontSize: isEnglish ? '18px' : '22px', 
@@ -154,10 +154,15 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               margin: 0,
               cursor: 'pointer'
             }}
-          >Környezetvédelem</h1>
-          {!isEnglish && (
-            <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>Tanulj játékosan a Föld védelméről</p>
-          )}
+          >Future Nature</h1>
+          <p style={{ 
+            margin: 0, 
+            fontSize: isEnglish ? '10px' : '12px', 
+            opacity: 0.9,
+            transition: 'all 0.3s ease'
+          }}>
+            {isEnglish ? 'Learn playfully about protecting the Earth' : 'Tanulj játékosan a Föld védelméről'}
+          </p>
         </div>
       </div>
 
@@ -217,14 +222,14 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           onClick={toggleLanguage}
         >
           <span style={{ filter: isEnglish ? 'none' : 'grayscale(0.3)', color: '#000000' }}>🌐</span>
-          <span style={{ color: '#000000' }}>{isEnglish ? 'ENGLISH' : 'MAGYAR'}</span>
-          <span style={{ 
+          <span className="notranslate" style={{ color: '#000000' }}>{isEnglish ? 'MAGYAR' : 'ENGLISH'}</span>
+          <span className="notranslate" style={{ 
             fontSize: '10px', 
             opacity: 0.8,
             marginLeft: '4px',
             color: '#000000'
           }}>
-            {isEnglish ? '(Vissza)' : '(Translate)'}
+            {isEnglish ? '(Fordítás)' : '(Translate)'}
           </span>
         </button>
         
@@ -263,7 +268,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               className={`button secondary link-button ${location.pathname === '/' ? 'active' : ''}`}
               style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
             >
-              Főoldal
+              🏠 Főoldal
             </button>
 
             <button 
@@ -272,7 +277,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               className={`button secondary link-button ${location.pathname === '/tickets' ? 'active' : ''}`}
               style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
             >
-              Ticket
+              🎫 Ticket
             </button>
 
             {user.access ? (
@@ -283,11 +288,11 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
                 title="Admin panel megnyitása"
                 style={mobileMenuOpen ? { width: '100%', margin: 0, padding: '12px' } : {}}
               >
-                ADMIN
+                🛠️ ADMIN
               </button>
             ) : (
               <div className="role-badge user" title="Felhasználói fiók" style={mobileMenuOpen ? { width: '100%', margin: 0, padding: '12px' } : {}}>
-                FELHASZNÁLÓ
+                🧑 FELHASZNÁLÓ
               </div>
             )}
 
