@@ -14,6 +14,7 @@ import { TopicQuestionsPage } from './pages/TopicQuestionsPage';
 import { TopicsPage } from './pages/TopicsPage';
 import { TicketsPage } from './pages/TicketsPage';
 import FAQ from './pages/FAQ';
+import AboutPage from './pages/AboutPage';
 import type { AuthResponse, AuthUser } from './types';
 
 export function AppShell() {
@@ -77,6 +78,7 @@ export function AppShell() {
           <Route path="/profile" element={user ? <ProfilePage user={user} onUserUpdate={handleUserUpdate} /> : <Navigate to="/auth" replace />} />
           <Route path="/environment" element={<EnvironmentalPage user={user} />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

@@ -49,7 +49,7 @@ export function HomePage() {
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: '24px',
-    border: '2px solid rgba(255, 255, 255, 0.2)',
+    //border: '2px solid rgba(255, 255, 255, 0.2)',
     transition: 'transform 0.2s, border-color 0.2s',
   });
 
