@@ -497,6 +497,13 @@ export function AdminPage({ user }: AdminPageProps) {
           display: flex;
           gap: 10px;
           align-items: center;
+          flex-direction: row;
+        }
+
+        .admin-user-actions button {
+          white-space: nowrap;
+          margin: 0;
+          width: auto;
         }
 
         .admin-question-item {
@@ -646,14 +653,24 @@ export function AdminPage({ user }: AdminPageProps) {
       {error && <p className="message error">{error}</p>}
 
       {selectedUser && (
-        <div className="user-details-overlay" onClick={() => setSelectedUser(null)}>
-          <article className="user-details-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="user-details-overlay" onClick={() => setSelectedUser(null)} style={{ padding: '20px 0', alignItems: 'flex-start' }}>
+          <article 
+            className="user-details-modal" 
+            onClick={(e) => e.stopPropagation()}
+            style={{ 
+              width: '95%', 
+              maxWidth: '500px', 
+              maxHeight: 'calc(100vh - 40px)', 
+              overflowY: 'auto',
+              margin: 'auto'
+            }}
+          >
             <header className="modal-header">
               <h3>Felhasználó részletei</h3>
               <button className="button secondary small" onClick={() => setSelectedUser(null)}>✕</button>
             </header>
             <div className="modal-body">
-              <div className="user-details-avatar-row" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+              <div className="user-details-avatar-row" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px', flexWrap: 'wrap' }}>
                 {selectedUser.profilePicture ? (
                   <img src={selectedUser.profilePicture} alt={selectedUser.username} className="profile-preview-large" style={{ width: '80px', height: '80px', border: '3px solid var(--wood-primary)' }} />
                 ) : (
@@ -661,49 +678,84 @@ export function AdminPage({ user }: AdminPageProps) {
                     <span className="placeholder-text">{selectedUser.username.charAt(0).toUpperCase()}</span>
                   </div>
                 )}
-                <div className="notranslate">
+                <div className="notranslate" style={{ minWidth: '150px' }}>
                   <p style={{ margin: 0 }}><strong>Felhasználó:</strong> {selectedUser.username}</p>
                   <p style={{ margin: 0 }}><strong>Név:</strong> {selectedUser.name}</p>
                 </div>
               </div>
-              <p className="notranslate"><strong>Email:</strong> {selectedUser.email}</p>
+              <p className="notranslate" style={{ wordBreak: 'break-word' }}><strong>Email:</strong> {selectedUser.email}</p>
               <p><strong>Szerepkör:</strong> {selectedUser.access ? 'Admin' : 'Felhasználó'}</p>
               <p><strong>Regisztrált:</strong> {new Date(selectedUser.createdAt).toLocaleDateString('hu-HU')}</p>
               <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #ddd' }} />
               <div className="point-editor" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <p><strong>Aktuális szint:</strong> {userLevel}</p>
                 <p><strong>Aktuális pont:</strong> {userPoints} pont</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <label htmlFor="points-input"><strong>Módosítás:</strong></label>
-                  <input
-                    id="points-input"
-                    type="number"
-                    value={pointAdjust}
-                    onChange={(e) => setPointAdjust(Number(e.target.value))}
-                    className="input"
-                    style={{ width: '80px', marginBottom: 0 }}
-                  />
-                  <button 
-                    onClick={() => handleUpdatePoints(pointAdjust)} 
-                    className="button accent small"
-                    disabled={savingPoints}
-                    style={{ backgroundColor: 'var(--duo-green)', borderBottomColor: 'var(--duo-green-shadow)' }}
-                  >
-                    Hozzáad (+)
-                  </button>
-                  <button 
-                    onClick={() => handleUpdatePoints(-pointAdjust)} 
-                    className="button accent small"
-                    disabled={savingPoints}
-                    style={{ backgroundColor: 'var(--error-light)', borderBottomColor: '#d32f2f' }}
-                  >
-                    Levon (-)
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px', width: '100%', flexWrap: 'wrap' }}>
+                    <input
+                      id="points-input"
+                      type="number"
+                      value={pointAdjust}
+                      onChange={(e) => setPointAdjust(Number(e.target.value))}
+                      className="input"
+                      style={{ 
+                        width: '80px', 
+                        height: '45px', 
+                        margin: 0, 
+                        padding: '8px 12px',
+                        boxSizing: 'border-box',
+                        fontSize: '1.1rem'
+                      }}
+                    />
+                    <button 
+                      onClick={() => handleUpdatePoints(pointAdjust)} 
+                      className="button accent small"
+                      disabled={savingPoints}
+                      style={{ 
+                        backgroundColor: 'var(--duo-green)', 
+                        borderBottomColor: 'var(--duo-green-shadow)',
+                        height: '45px',
+                        flex: '1',
+                        minWidth: '110px',
+                        margin: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        whiteSpace: 'nowrap',
+                        padding: '0 15px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      Hozzáad (+)
+                    </button>
+                    <button 
+                      onClick={() => handleUpdatePoints(-pointAdjust)} 
+                      className="button accent small"
+                      disabled={savingPoints}
+                      style={{ 
+                        backgroundColor: 'var(--error-light)', 
+                        borderBottomColor: '#d32f2f',
+                        height: '45px',
+                        flex: '1',
+                        minWidth: '100px',
+                        margin: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        whiteSpace: 'nowrap',
+                        padding: '0 15px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      Levon (-)
+                    </button>
+                  </div>
                 </div>
-                <small style={{ color: '#666' }}>Minden 500 pont után egy szintlépés jár (automatikusan számolva). A pontszám nem mehet 0 alá.</small>
+                <small style={{ color: '#bb6161' }}>Minden 500 pont után egy szintlépés jár (automatikusan számolva). A pontszám nem mehet 0 alá.</small>
               </div>
             </div>
-            <footer className="modal-footer">
+            <footer className="modal-footer" style={{ paddingBottom: '20px' }}>
               <button className="button secondary" onClick={() => setSelectedUser(null)}>Bezárás</button>
             </footer>
           </article>
@@ -869,16 +921,16 @@ export function AdminPage({ user }: AdminPageProps) {
                         </span>
                       </div>
                       <div className="admin-user-actions">
+                        <button
+                          className="button primary small"
+                          onClick={() => setSelectedUser(listedUser)}
+                          type="button"
+                          style={{ backgroundColor: '#2196F3', borderColor: '#1976D2', color: 'white' }}
+                        >
+                          Részletek
+                        </button>
                         {!['Rikimik', 'GalGer'].includes(listedUser.username) && (
                           <>
-                            <button
-                              className="button danger small"
-                              disabled={updatingUserId === listedUser.id}
-                              onClick={() => void deleteUser(listedUser.id)}
-                              type="button"
-                            >
-                              {updatingUserId === listedUser.id ? '...' : 'Törlés'}
-                            </button>
                             {listedUser.access ? (
                               <button
                                 className="button secondary small"
@@ -900,6 +952,14 @@ export function AdminPage({ user }: AdminPageProps) {
                                 {updatingUserId === listedUser.id ? '...' : 'Adminná tétel'}
                               </button>
                             )}
+                            <button
+                              className="button danger small"
+                              disabled={updatingUserId === listedUser.id}
+                              onClick={() => void deleteUser(listedUser.id)}
+                              type="button"
+                            >
+                              {updatingUserId === listedUser.id ? '...' : 'Törlés'}
+                            </button>
                           </>
                         )}
                       </div>
