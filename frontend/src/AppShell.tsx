@@ -13,6 +13,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { TopicQuestionsPage } from './pages/TopicQuestionsPage';
 import { TopicsPage } from './pages/TopicsPage';
 import { TicketsPage } from './pages/TicketsPage';
+import FAQ from './pages/FAQ';
 import type { AuthResponse, AuthUser } from './types';
 
 export function AppShell() {
@@ -75,6 +76,7 @@ export function AppShell() {
           <Route path="/admin" element={user?.access ? <AdminPage user={user} /> : <Navigate to="/auth" replace />} />
           <Route path="/profile" element={user ? <ProfilePage user={user} onUserUpdate={handleUserUpdate} /> : <Navigate to="/auth" replace />} />
           <Route path="/environment" element={<EnvironmentalPage user={user} />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
@@ -105,7 +107,7 @@ export function AppShell() {
             <p><a href="/">Főoldal</a></p>
             <p><a href="/topics">Témakörök</a></p>
             <p><a href="/daily-tasks">Napi feladatok</a></p>
-            <p><a href="/gyik">Gyakran ismételt kérdések</a></p>
+            <p><a href="/faq">Gyakran ismételt kérdések</a></p>
             <p><a href="/about">Rólunk</a></p>
           </div>
           <div className="footer-section">
