@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import path from 'node:path';
 import { ValidationPipe } from '@nestjs/common';
 import { json, urlencoded } from 'express';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -19,6 +20,20 @@ async function bootstrap() {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('Vizsgaremek API')
+    .setDescription('A Vizsgaremek projekt backend API dokumentációja')
+    .setVersion('1.0')
+    .addTag('auth')
+    .addTag('user')
+    .addTag('feladatok')
+    .addTag('topics')
+    .addTag('tickets')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
 

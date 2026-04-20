@@ -75,6 +75,7 @@ npm run dev
 
 - A frontend alapértelmezetten a `http://localhost:5173` címen érhető el.
 - A backend a `http://localhost:3000` porton fut.
+- **API Dokumentáció (Swagger):** A backend API-ja és a tesztelési felület elérhető a: [http://localhost:3000/api](http://localhost:3000/api) címen.
 - Regisztráció után kezdheted el a küldetések megoldását és a pontgyűjtést!
 
 ---

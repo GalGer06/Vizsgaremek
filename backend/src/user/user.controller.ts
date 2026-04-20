@@ -19,26 +19,34 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { SetUserAccessDto } from './dto/set-user-access.dto';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags, ApiResponse } from '@nestjs/swagger';
 
 const ORIGINAL_ADMIN_USERNAME = 'Rikimik';
 const SUPER_ADMINS = ['Rikimik', 'GalGer'];
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Felhasználó létrehozása' })
+  @ApiResponse({ status: 201, description: 'Felhasználó sikeresen létrehozva.' })
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Összes felhasználó lekérése' })
   findAll() {
     return this.userService.findAll();
   }
 
   @Get('search/by-username')
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Keresés felhasználónév alapján' })
+  @ApiQuery({ name: 'username', required: false, description: 'A keresett felhasználónév részlete' })
   searchByUsername(
     @Query('username') username: string,
     @Req() req: { user?: { userId?: number } },
@@ -53,7 +61,9 @@ export class UserController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Egy felhasználó lekérése ID alapján' })
   findOne(
     @Param('id') id: string,
     @Req() req: { user?: { userId?: number; access?: boolean } },
@@ -70,7 +80,9 @@ export class UserController {
   }
 
   @Get(':id/friends')
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Egy felhasználó barátainak lekérése' })
   findFriends(
     @Param('id') id: string,
     @Req() req: { user?: { userId?: number; access?: boolean } },

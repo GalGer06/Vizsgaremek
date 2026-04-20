@@ -418,29 +418,32 @@ export function AdminPage({ user }: AdminPageProps) {
 
   return (
     <section style={{ color: 'white' }}>
-      <div className="section-header" style={{ alignItems: 'flex-end', paddingBottom: '10px' }}>
+      <div className="section-header" style={{ alignItems: 'center', paddingBottom: '10px' }}>
         <h2 style={{ color: 'white', margin: 0 }}>Admin dashboard</h2>
-        <div className="admin-tabs" style={{ marginBottom: 0 }}>
+        <div className="admin-tabs" style={{ marginBottom: 0, display: 'flex', alignItems: 'stretch' }}>
           <button 
             className={`button ${activeTab === 'users' ? 'primary' : 'secondary'}`}
             onClick={() => setActiveTab('users')}
+            style={{ margin: 0 }}
           >
             Felhasználók
           </button>
           <button 
             className={`button ${activeTab === 'questions' ? 'primary' : 'secondary'}`}
             onClick={() => setActiveTab('questions')}
+            style={{ margin: 0 }}
           >
             Kérdések
           </button>
           <button 
             className={`button ${activeTab === 'tickets' ? 'primary' : 'secondary'}`}
             onClick={() => setActiveTab('tickets')}
+            style={{ margin: 0 }}
           >
             Ticketek ({tickets.filter(t => t.status === 'OPEN').length})
           </button>
         </div>
-        <button onClick={() => navigate(-1)} className="button secondary link-button" style={{ marginBottom: -5 }}>Vissza</button>
+        <button onClick={() => navigate(-1)} className="button secondary link-button" style={{ margin: 0 }}>Vissza</button>
       </div>
 
       <style>{`
