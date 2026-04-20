@@ -44,7 +44,7 @@ JWT_SECRET="change-this-to-a-strong-secret"
 
 Futtasd a Prisma migrációkat és a seed-et (adatbázis feltöltése):
 ```bash
-npx prisma migrate dev
+npx prisma db push
 npx prisma db seed
 ```
 

@@ -35,6 +35,24 @@ export async function seedAdmin(prisma: PrismaClient) {
     const hashedAdminPassword = await hash(DEFAULT_ADMIN.password, 10);
     const hashedNewAdminPassword = await hash(NEW_ADMIN.password, 10);
 
+    // Create achievements master data
+    for (const template of ACHIEVEMENT_TEMPLATES) {
+        await prisma.achievement.upsert({
+            where: { id: template.id },
+            update: {
+                title: template.title,
+                description: template.description,
+                image: template.image
+            },
+            create: {
+                id: template.id,
+                title: template.title,
+                description: template.description,
+                image: template.image
+            }
+        });
+    }
+
     const admins = [
         {
             data: DEFAULT_ADMIN,
@@ -103,24 +121,6 @@ export async function seedAdmin(prisma: PrismaClient) {
                 }
             });
         }
-    }
-
-    // Create achievements master data
-    for (const template of ACHIEVEMENT_TEMPLATES) {
-        await prisma.achievement.upsert({
-            where: { id: template.id },
-            update: {
-                title: template.title,
-                description: template.description,
-                image: template.image
-            },
-            create: {
-                id: template.id,
-                title: template.title,
-                description: template.description,
-                image: template.image
-            }
-        });
     }
 
     // Ensure only the intended admins have access=true, reset others if needed
