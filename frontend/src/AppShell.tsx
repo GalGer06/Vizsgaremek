@@ -119,6 +119,15 @@ export function AppShell() {
             <p><a href="https://twitter.com/vizsgaremek" target="_blank" rel="noopener noreferrer">X</a></p>
             <p><a href="https://www.instagram.com/future__nature/" target="_blank" rel="noopener noreferrer">Instagram</a></p>
           </div>
+          <div className="footer-section">
+            <h4>Nézd meg az ökolábnyomodat</h4>
+            <p><a href="https://www.mnb.hu/fogyasztovedelem/kalkulatorok/okolabnyom-kalkulator" target="_blank" rel="noopener noreferrer">Ökolábnyom kalkulátor </a></p>
+          </div>
+          <div className="footer-section">
+            <h4>Hasznos források</h4>
+            <p><a href="https://www.nationalgeographic.com/" target="_blank" rel="noopener noreferrer">National Geographic</a></p>
+            <p><a href="https://www.worldwildlife.org/" target="_blank" rel="noopener noreferrer">WWF</a></p>
+          </div>
         </div>
         <div className="footer-bottom">
           <p>&copy; 2026 Vizsgaremek - Minden jog fenntartva</p>
