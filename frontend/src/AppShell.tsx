@@ -103,6 +103,7 @@ export function AppShell() {
             <h4>Kapcsolat</h4>
             <p>Email: rikimik@vizsgaremek.local</p>
             <p>Tel: +36 1 234 5678</p>
+            <p>Cím: Budapest, Thököly út 48-54, 1146</p>
           </div>
           <div className="footer-section">
             <h4>Linkek</h4>

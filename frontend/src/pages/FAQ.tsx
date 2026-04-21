@@ -13,7 +13,7 @@ const FAQ: React.FC = () => {
       answer: "Pontokat a feladatok helyes megoldásával, napi bejelentkezéssel és a különböző mérföldkövek elérésével szerezhetsz."
     },
     {
-      question: "Mik azok a jegyek (ticket)?",
+      question: "Mik azok a ticket-ek?",
       answer: "A jegyek lehetővé teszik, hogy írj nekünk esetleg felfedezett hibákról vagy adhatsz nekünk ötleteket, kérdéseket amikkel kibővíthetjük az oldalt."
     },
     {
