@@ -115,8 +115,8 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
   };
 
   return (
-    <header className={`app-header ${isEnglish ? 'compact' : ''}`} style={{
-      padding: isEnglish ? '8px 20px' : '12px 20px',
+    <header className="app-header" style={{
+      padding: '12px 20px',
       transition: 'all 0.3s ease',
       minHeight: 'auto'
     }}>
@@ -149,7 +149,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
               navigate('/');
             }}
             style={{ 
-              fontSize: isEnglish ? '18px' : '22px', 
+              fontSize: '22px', 
               transition: 'font-size 0.3s ease',
               margin: 0,
               cursor: 'pointer'
@@ -157,7 +157,7 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
           >Future Nature</h1>
           <p style={{ 
             margin: 0, 
-            fontSize: isEnglish ? '10px' : '12px', 
+            fontSize: '12px', 
             opacity: 0.9,
             transition: 'all 0.3s ease'
           }}>

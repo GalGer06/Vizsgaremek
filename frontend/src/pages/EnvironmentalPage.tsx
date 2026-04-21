@@ -119,11 +119,72 @@ export const EnvironmentalPage: React.FC<EnvironmentalPageProps> = ({ user }) =>
       <style>{`
         .environmental-container::-webkit-scrollbar { display: none; }
         section { scroll-snap-align: start; scroll-snap-stop: always; }
+        
+        .content-card {
+            position: relative;
+            zIndex: 3;
+            max-width: 850px;
+            padding: 3.5rem;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            text-align: center;
+            margin: 0 2rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: all 0.8s ease-in-out;
+        }
+
+        .content-card h2 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            margin-top: 0;
+            font-weight: 900;
+        }
+
+        .content-card p {
+            font-size: 1.6rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .content-card {
+                padding: 2rem;
+                margin: 0 1rem;
+                border-radius: 30px;
+            }
+            .content-card h2 {
+                font-size: 2.2rem;
+                margin-bottom: 1rem;
+            }
+            .content-card p {
+                font-size: 1.1rem;
+            }
+            .back-btn {
+                padding: 10px 18px !important;
+                font-size: 0.9rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-card {
+                padding: 1.5rem;
+                margin: 0 0.8rem;
+            }
+            .content-card h2 {
+                font-size: 1.8rem;
+            }
+            .content-card p {
+                font-size: 1rem;
+            }
+        }
       `}</style>
 
       {/* Persistent Floating Back Button */}
       <button
         onClick={() => navigate('/')}
+        className="back-btn"
         style={{
           position: 'fixed',
           top: '20px',
@@ -183,20 +244,13 @@ export const EnvironmentalPage: React.FC<EnvironmentalPageProps> = ({ user }) =>
             }} />
 
             {/* Content Card with Smooth Animation */}
-            <div style={{
-                position: 'relative',
+            <div 
+              className="content-card"
+              style={{
                 zIndex: 3,
-                maxWidth: '850px',
-                padding: '3.5rem',
-                background: 'rgba(0,0,0,0.7)',
-                backdropFilter: 'blur(15px)',
-                borderRadius: '40px',
                 border: `2px solid ${fact.color}33`,
-                textAlign: 'center',
-                margin: '0 2rem',
-                boxShadow: `0 20px 50px rgba(0,0,0,0.5)`,
-                transition: 'all 0.8s ease-in-out'
-            }}>
+              }}
+            >
                 <span style={{
                 color: fact.color,
                 fontSize: '1.1rem',
@@ -208,8 +262,8 @@ export const EnvironmentalPage: React.FC<EnvironmentalPageProps> = ({ user }) =>
                 }}>
                 {fact.id === 7 ? '🏗️ Te is Része vagy' : fact.impact === 'negative' ? '⚠️ Környezeti Kihívás' : '🌟 Fenntartható Megoldás'}
                 </span>
-                <h2 style={{ fontSize: '4rem', marginBottom: '1.5rem', marginTop: 0, fontWeight: 900 }}>{fact.title}</h2>
-                <p style={{ fontSize: '1.6rem', lineHeight: '1.5', color: '#e0e0e0', fontWeight: 300 }}>
+                <h2 style={{ color: 'white' }}>{fact.title}</h2>
+                <p>
                 {fact.description}
                 </p>
                 {fact.id === 7 && (

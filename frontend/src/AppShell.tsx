@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { AppHeader } from './components/AppHeader';
 import { TOKEN_KEY, USER_KEY } from './constants';
 import { AchievementsPage } from './pages/AchievementsPage';
@@ -18,6 +18,7 @@ import AboutPage from './pages/AboutPage';
 import type { AuthResponse, AuthUser } from './types';
 
 export function AppShell() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<AuthUser | null>(() => {
     const savedUser = localStorage.getItem(USER_KEY);
     if (!savedUser) {
