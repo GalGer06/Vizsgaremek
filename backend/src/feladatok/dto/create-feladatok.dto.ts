@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateFeladatokDto {
@@ -36,8 +36,8 @@ export class CreateFeladatokDto {
   @IsNotEmpty()
   funfact: string;
 
-  @ApiProperty({ example: 'Történelmi adatok a tóról...', description: 'Háttérinformációk' })
+  @ApiProperty({ example: 'Történelmi adatok a tóról...', description: 'Háttérinformációk', required: false })
   @IsString()
-  @IsNotEmpty()
-  history: string;
+  @IsOptional()
+  history?: string;
 }

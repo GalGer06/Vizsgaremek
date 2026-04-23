@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_BASE_URL, TOKEN_KEY } from '../constants';
+import { API_BASE_URL, TOKEN_KEY, TOPICS } from '../constants';
 import type { AdminUser, AuthUser, Question } from '../types';
 
 type Ticket = {
@@ -30,7 +30,7 @@ export function AdminPage({ user }: AdminPageProps) {
   const [activeTab, setActiveTab] = useState<'users' | 'questions' | 'tickets'>('users');
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
   const [addingQuestionFromTicket, setAddingQuestionFromTicket] = useState<Ticket | null>(null);
-  const [selectedTopic, setSelectedTopic] = useState<string>('Környezetvédelem');
+  const [selectedTopic, setSelectedTopic] = useState<string>(TOPICS[0]?.title || 'Alapfogalmak');
   const [usernameSearch, setUsernameSearch] = useState('');
   const [questionSearch, setQuestionSearch] = useState('');
   const [ticketSearch, setTicketSearch] = useState('');
@@ -392,7 +392,7 @@ export function AdminPage({ user }: AdminPageProps) {
           answers: ticket.attachment.answers,
           correct: ticket.attachment.correct,
           funfact: ticket.attachment.funfact || '',
-          history: '' // Optional, empty by default
+          // No history needed anymore as it's optional in DTO
         }),
       });
 
@@ -838,11 +838,11 @@ export function AdminPage({ user }: AdminPageProps) {
                 value={selectedTopic}
                 onChange={(e) => setSelectedTopic(e.target.value)}
               >
-                <option value="Környezetvédelem">Környezetvédelem</option>
-                <option value="Történelem">Történelem</option>
-                <option value="Biológia">Biológia</option>
-                <option value="Földrajz">Földrajz</option>
-                <option value="Technológia">Technológia</option>
+                {TOPICS.map((topic) => (
+                  <option key={topic.slug} value={topic.title}>
+                    {topic.title}
+                  </option>
+                ))}
               </select>
             </div>
             <footer className="modal-footer" style={{ display: 'flex', gap: '10px' }}>

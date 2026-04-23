@@ -77,6 +77,7 @@ export class FeladatokService {
     return this.prisma.feladatok.create({
       data: {
         ...createFeladatokDto,
+        history: createFeladatokDto.history ?? '',
         answers: JSON.stringify(answers),
       },
     });
