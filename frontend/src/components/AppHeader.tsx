@@ -245,6 +245,11 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
                 backgroundColor: '#2e7d32',
                 color: 'white',
                 border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
                 transform: `scale(${planetScale}) rotate(${isPlanetSpinning ? '360deg' : '0deg'})`,
                 transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
               } : {
@@ -255,29 +260,62 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
                 borderRadius: '20px',
                 fontWeight: 'bold',
                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
                 transform: `scale(${planetScale}) rotate(${isPlanetSpinning ? '360deg' : '0deg'})`,
                 transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }}
             >
-              🌱 Bolygónk védelme
+              <span>🌱</span> <span>Bolygónk védelme</span>
             </button>
 
             <button 
               type="button" 
               onClick={handleLogoClick} 
               className={`button secondary link-button ${location.pathname === '/' ? 'active' : ''}`}
-              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
+              style={mobileMenuOpen ? { 
+                width: '100%', 
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap'
+              } : {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap'
+              }}
             >
-              🏠 Főoldal
+              <span>🏠</span> <span>Főoldal</span>
             </button>
 
             <button 
               type="button" 
               onClick={() => navigate('/tickets')} 
               className={`button secondary link-button ${location.pathname === '/tickets' ? 'active' : ''}`}
-              style={mobileMenuOpen ? { width: '100%', margin: 0 } : {}}
+              style={mobileMenuOpen ? { 
+                width: '100%', 
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap'
+              } : {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap'
+              }}
             >
-              🎫 Ticket
+              <span>🎫</span> <span>Ticket</span>
             </button>
 
             {user.access ? (
@@ -286,13 +324,43 @@ export function AppHeader({ user, onLogout }: AppHeaderProps) {
                 className="role-badge admin"
                 onClick={handleAdminClick}
                 title="Admin panel megnyitása"
-                style={mobileMenuOpen ? { width: '100%', margin: 0, padding: '12px' } : {}}
+                style={mobileMenuOpen ? { 
+                  width: '100%', 
+                  margin: 0, 
+                  padding: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  whiteSpace: 'nowrap'
+                } : {
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  whiteSpace: 'nowrap'
+                }}
               >
-                🛠️ ADMIN
+                <span>🛠️</span> <span>ADMIN</span>
               </button>
             ) : (
-              <div className="role-badge user" title="Felhasználói fiók" style={mobileMenuOpen ? { width: '100%', margin: 0, padding: '12px' } : {}}>
-                🧑 FELHASZNÁLÓ
+              <div className="role-badge user" title="Felhasználói fiók" style={mobileMenuOpen ? { 
+                width: '100%', 
+                margin: 0, 
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap'
+              } : {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap'
+              }}>
+                <span>🧑</span> <span>FELHASZNÁLÓ</span>
               </div>
             )}
 

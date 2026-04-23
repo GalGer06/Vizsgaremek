@@ -265,7 +265,7 @@ export class FeladatokService {
 
     const answers = updateFeladatokDto.answers
       ? this.parseAnswers(updateFeladatokDto.answers)
-      : this.parseAn(updateFeladatokDto.correct ?? existing.correct).trim()
+      : this.parseAnswers(existing.answers);
 
     const correct = updateFeladatokDto.correct ?? existing.correct;
     this.ensureCorrectAnswer(correct, answers);
