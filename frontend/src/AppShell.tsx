@@ -110,7 +110,6 @@ export function AppShell() {
             <h4>Linkek</h4>
             <p><a href="/">Főoldal</a></p>
             <p><a href="/topics">Témakörök</a></p>
-            <p><a href="/daily-tasks">Napi feladatok</a></p>
             <p><a href="/faq">Gyakran ismételt kérdések</a></p>
             <p><a href="/about">Rólunk</a></p>
           </div>
