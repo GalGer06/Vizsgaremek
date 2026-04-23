@@ -73,8 +73,28 @@ export class FeladatokController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Napi kérdés lekérése' })
-  findDaily() {
+  findDaily(@Req() req: { user?: { userId?: number } }) {
+    const userId = req.user?.userId;
+    if (userId) {
+      return this.feladatokService.findDailyForUser(userId);
+    }
     return this.feladatokService.findDaily();
+  }
+
+  @Post('daily/:id/answer')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Napi válasz rögzítése egy kérdésre' })
+  @ApiParam({ name: 'id', description: 'Kérdés egyedi azonosítója' })
+  recordDailyAnswer(
+    @Param('id') id: string,
+    @Body('isCorrect') isCorrect: boolean,
+    @Body('selectedAnswer') selectedAnswer: string,
+    @Req() req: { user?: { userId?: number } }
+  ) {
+    const userId = req.user?.userId;
+    if (!userId) throw new ForbiddenException();
+    return this.feladatokService.recordDailyAnswer(userId, +id, isCorrect, selectedAnswer);
   }
 
   @Post('reset-answers')

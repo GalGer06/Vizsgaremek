@@ -133,6 +133,24 @@ export class FeladatokService {
     return shuffled.slice(0, 10).map((q) => this.mapQuestion(q, dateString));
   }
 
+  async findDailyForUser(userId: number) {
+    const dailyQuestions = await this.findDaily();
+    const answered = await this.prisma.userdailyanswer.findMany({
+      where: { userId },
+    });
+
+    const answeredMap = new Map(answered.map((a) => [a.questionId, a]));
+
+    return dailyQuestions.map((q) => {
+      const userAns = answeredMap.get(q.id);
+      return {
+        ...q,
+        isAnswered: !!userAns,
+        userSelectedAnswer: userAns?.selectedAnswer || null,
+      };
+    });
+  }
+
   async recordAnswer(userId: number, questionId: number, isCorrect: boolean, selectedAnswer: string) {
     const question = await this.prisma.feladatok.findUnique({
       where: { id: questionId },
@@ -171,6 +189,45 @@ export class FeladatokService {
     return {
       ...res,
       isCorrect: isActuallyCorrect, // Return the verified status
+    };
+  }
+
+  async recordDailyAnswer(userId: number, questionId: number, isCorrect: boolean, selectedAnswer: string) {
+    const question = await this.prisma.feladatok.findUnique({
+      where: { id: questionId },
+    });
+
+    if (!question) {
+      throw new BadRequestException('Question not found.');
+    }
+
+    const actualCorrect = question.correct.trim();
+    const isActuallyCorrect = selectedAnswer.trim() === actualCorrect;
+
+    const res = await this.prisma.userdailyanswer.upsert({
+      where: {
+        userId_questionId: { userId, questionId },
+      },
+      update: {
+        isCorrect: isActuallyCorrect,
+        selectedAnswer,
+      },
+      create: {
+        userId,
+        questionId,
+        isCorrect: isActuallyCorrect,
+        selectedAnswer,
+      },
+    });
+
+    if (isActuallyCorrect) {
+      // Award 30 points if the answer is correct
+      await this.userdatasService.recalculatePoints(userId);
+    }
+
+    return {
+      ...res,
+      isCorrect: isActuallyCorrect,
     };
   }
 

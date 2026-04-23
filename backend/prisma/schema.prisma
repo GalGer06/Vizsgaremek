@@ -82,6 +82,17 @@ model useranswer {
   @@unique([userId, questionId], map: "UserAnswer_userId_questionId_key")
 }
 
+model userdailyanswer {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  questionId     Int
+  isCorrect      Boolean
+  createdAt      DateTime @default(now())
+  selectedAnswer String?
+
+  @@unique([userId, questionId], map: "UserDailyAnswer_userId_questionId_key")
+}
+
 model userdatas {
   id               Int     @id @default(autoincrement())
   userId           Int     @unique

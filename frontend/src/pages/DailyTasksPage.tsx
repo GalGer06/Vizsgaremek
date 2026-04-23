@@ -23,7 +23,7 @@ export function DailyTasksPage() {
         const token = localStorage.getItem(TOKEN_KEY);
         
         // Use user-specific URL as primary for logged-in users
-        let url = `${API_BASE_URL}/feladatok/daily`;
+        const url = `${API_BASE_URL}/feladatok/daily`;
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -31,10 +31,6 @@ export function DailyTasksPage() {
         
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        if (user && token) {
-          url = `${API_BASE_URL}/feladatok/user/${user.id}`;
         }
 
         console.log(`Fetching questions from: ${url}`);
@@ -97,10 +93,10 @@ export function DailyTasksPage() {
       const token = localStorage.getItem(TOKEN_KEY);
 
       if (user && token) {
-        console.log(`Recording answer for question ${questionId}: ${isCorrect ? 'correct' : 'wrong'}`);
+        console.log(`Recording daily answer for question ${questionId}: ${isCorrect ? 'correct' : 'wrong'}`);
 
-        // 1. Record the answer in DB history
-        await fetch(`${API_BASE_URL}/feladatok/${questionId}/answer`, {
+        // 1. Record the answer in DB history for daily tasks
+        await fetch(`${API_BASE_URL}/feladatok/daily/${questionId}/answer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
