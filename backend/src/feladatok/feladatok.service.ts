@@ -45,13 +45,14 @@ export class FeladatokService {
 
   private ensureCorrectAnswer(correct: string, answers: string[]) {
     const trimmedCorrect = correct.trim();
-    if (!answers.some(a => a === trimmedCorrect)) {
+    if (!answers.some(a => a.trim() === trimmedCorrect)) {
       throw new BadRequestException('Correct answer must be one of the 4 possible answers.');
     }
   }
 
   private mapQuestion(question: { id: number; answers: unknown; correct: string; [key: string]: any }, seedSuffix?: string) {
     const answers = this.parseAnswers(question.answers);
+    const correct = question.correct.trim();
     
     // Use a deterministic seed to keep answer positions stable for the same user/question
     const seedBase = seedSuffix ? `${seedSuffix}-${question.id}` : `${question.id}`;
@@ -67,18 +68,21 @@ export class FeladatokService {
     return {
       ...question,
       answers: shuffledAnswers,
+      correct,
     };
   }
 
   async create(createFeladatokDto: CreateFeladatokDto) {
     const answers = this.parseAnswers(createFeladatokDto.answers);
-    this.ensureCorrectAnswer(createFeladatokDto.correct, answers);
+    const trimmedCorrect = createFeladatokDto.correct.trim();
+    this.ensureCorrectAnswer(trimmedCorrect, answers);
 
     return this.prisma.feladatok.create({
       data: {
         ...createFeladatokDto,
         history: createFeladatokDto.history ?? '',
         answers: JSON.stringify(answers),
+        correct: trimmedCorrect,
       },
     });
   }
@@ -261,7 +265,7 @@ export class FeladatokService {
 
     const answers = updateFeladatokDto.answers
       ? this.parseAnswers(updateFeladatokDto.answers)
-      : this.parseAnswers(existing.answers);
+      : this.parseAn(updateFeladatokDto.correct ?? existing.correct).trim()
 
     const correct = updateFeladatokDto.correct ?? existing.correct;
     this.ensureCorrectAnswer(correct, answers);

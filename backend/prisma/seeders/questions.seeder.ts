@@ -10,7 +10,7 @@ export async function seedQuestions(prisma: PrismaClient) {
       title: 'Alapfogalmak',
       question: 'Mi a környezetvédelem elsődleges célja?',
       answers: JSON.stringify(['Az ipari termelés maximalizálása fenntartható módon', 'Kizárólag a vadon élő állatfajok populációjának védelme', 'Az emberi kényelem és technológiai fölény kiszolgálása', 'Az élővilág és az emberi életfeltételek hosszú távú megőrzése']),
-      correct: 'Az élővilág and az emberi életfeltételek hosszú távú megőrzése',
+      correct: 'Az élővilág és az emberi életfeltételek hosszú távú megőrzése',
       funfact: 'A környezetvédelem nem csak a természetéért van; az emberi egészség és a gazdasági stabilitás is közvetlenül függ a tiszta környezettől.',
       history: '',
     },
