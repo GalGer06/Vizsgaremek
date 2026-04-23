@@ -10,6 +10,7 @@ export function DailyTasksPage() {
   const [checkedAnswers, setCheckedAnswers] = useState<Record<number, boolean>>({});
   const [popups, setPopups] = useState<{ id: number; value: number }[]>([]);
   const [showBonusModal, setShowBonusModal] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -159,6 +160,9 @@ export function DailyTasksPage() {
               body: JSON.stringify({ points: 500, isDailyBonus: true }),
             });
             setShowBonusModal(true);
+          } else {
+            // All questions answered, but not all were correct
+            setShowCompletionModal(true);
           }
         }
       } else {
@@ -207,6 +211,39 @@ export function DailyTasksPage() {
                 style={{ minWidth: '150px' }}
               >
                 Szuper!
+              </button>
+            </footer>
+          </article>
+        </div>
+      )}
+
+      {showCompletionModal && (
+        <div className="user-details-overlay" onClick={() => setShowCompletionModal(false)}>
+          <article className="user-details-modal" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+            <header className="modal-header">
+              <h3 style={{ width: '100%', textAlign: 'center' }}>🌟 Szép munka!</h3>
+            </header>
+            <div className="modal-body">
+              <div style={{ fontSize: '4rem', marginBottom: '10px' }}>🌈</div>
+              <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-bright)' }}>
+                A mai feladatok végére értél!
+              </p>
+              <p style={{ color: 'var(--text-muted)', marginTop: '10px' }}>
+                Gratulálunk a kitartásodhoz. Nézz körül a témák között további érdekességekért, vagy ha van egy jó kérdésed, oszd meg velünk a Ticket oldalon!
+              </p>
+            </div>
+            <footer className="modal-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button 
+                className="button secondary" 
+                onClick={() => navigate('/topics')}
+              >
+                Témák böngészése
+              </button>
+              <button 
+                className="button primary-green" 
+                onClick={() => navigate('/tickets')}
+              >
+                Kérdés beküldése
               </button>
             </footer>
           </article>

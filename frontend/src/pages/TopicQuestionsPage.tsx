@@ -15,6 +15,7 @@ export function TopicQuestionsPage({ user }: Props) {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [checkedAnswers, setCheckedAnswers] = useState<Record<number, boolean>>({});
   const [popups, setPopups] = useState<{ id: number; value: number }[]>([]);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -156,6 +157,11 @@ export function TopicQuestionsPage({ user }: Props) {
                 });
               }
             }, 100);
+          } else {
+            // No more questions in this topic
+            setTimeout(() => {
+              setShowCompletionModal(true);
+            }, 1000);
           }
         }, 1500);
 
@@ -178,6 +184,40 @@ export function TopicQuestionsPage({ user }: Props) {
           +{popup.value}
         </div>
       ))}
+      
+      {showCompletionModal && (
+        <div className="user-details-overlay" onClick={() => setShowCompletionModal(false)}>
+          <article className="user-details-modal" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+            <header className="modal-header">
+              <h3 style={{ width: '100%', textAlign: 'center' }}>🎉 Gratulálunk!</h3>
+            </header>
+            <div className="modal-body">
+              <div style={{ fontSize: '4rem', marginBottom: '10px' }}>🌍</div>
+              <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-bright)' }}>
+                Végére értél a(z) {topic.title} témának!
+              </p>
+              <p style={{ color: 'var(--text-muted)', marginTop: '10px' }}>
+                Köszönjük, hogy velünk tanultál. Nézz körül más témák között is, vagy ajánlj nekünk új kérdéseket a Ticket oldalon!
+              </p>
+            </div>
+            <footer className="modal-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button 
+                className="button secondary" 
+                onClick={() => navigate('/topics')}
+              >
+                Más témák
+              </button>
+              <button 
+                className="button primary-green" 
+                onClick={() => navigate('/tickets')}
+              >
+                Kérdés beküldése
+              </button>
+            </footer>
+          </article>
+        </div>
+      )}
+
       <div className="section-header">
         <h2>{topic.icon} {topic.title} kérdései</h2>
         <button onClick={() => navigate(-1)} className="button secondary link-button">Vissza</button>
